@@ -1,0 +1,58 @@
+.title h3 {
+
+  color: #14145D;
+  font-size: 24px;
+  margin-top: 0;
+  margin-bottom: 20px;
+}
+.deleteBtn {
+  background-color: transparent;
+  border: 0 !important;
+  margin-bottom: 4px;
+  }
+  .deleteBtn img {
+    height: 21px;
+    object-fit: contain;
+    width: 21px;
+  }
+.planBtn button {
+  position: absolute;
+  right: 0;
+  top: -40px;
+  border-radius: 5px !important;
+  width:130px !important;
+  height: 38px !important;
+  padding: 0 !important;
+  background: #0285AC !important;
+  border: 0;
+  box-shadow: none !important;
+  font-size: 16px !important;
+  color: #fff !important;
+}
+.title {
+  position: relative;
+}
+  .planDetail {
+    display: flex;
+    align-items: center;
+  }
+  .planDetail label {
+    font-size: 16px;
+    margin-right: 14px;
+  }
+  .planDetail p {
+    margin: 0;
+    color: #575757;
+    font-size: 15px;
+    position: relative;
+    bottom: 2px;
+  }
+  .details {
+    display: flex;
+    align-items: center;
+  }
+  .or {
+    margin-left: 10px;
+    bottom: 2px;
+    position: relative;
+  }

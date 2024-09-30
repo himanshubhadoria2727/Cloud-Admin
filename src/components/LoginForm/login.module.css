@@ -1,0 +1,61 @@
+
+.rightBody {
+  display: flex;
+  background-color: #14145D;
+  align-items: center;
+  height: 100vh;
+  justify-content: center;
+}
+.title h2 {
+  margin: 14px;
+  font-size: 40px;
+  margin-top: 7px;
+  font-family: 'League Spartan', sans-serif !important;
+  text-transform: uppercase;
+}
+.loginBox img {
+  width: 150px;
+  object-fit: contain;
+}
+.loginBox h3 {
+  color: #14145D;
+  margin-top: 0;
+  font-size: 36px;
+}
+.loginBox {
+  background: #fff;
+  width: 530px;
+  text-align: -webkit-center;
+  box-shadow: 0px 0px 10px #000;
+  border-radius: 10px;
+  padding: 20px;
+}
+.loginBox label {
+  font-weight: 500;
+  color: #14145D;
+  display: block;
+  margin: 7px 0;
+  font-size: 16px;
+  text-align: left;
+}
+.loginBox input {
+  height: 55px;
+  border-radius: 12px;
+  background: #FFF;
+  box-shadow: 0px 10px 30px 0px rgba(41, 17, 80, 0.05);
+  border: 1px solid #ccc;
+
+}
+.submitBtn {
+  height: 55px;
+  background-color: #14145D;
+  border-radius: 12px;
+  border: 0;
+
+  font-size: 20px;
+  color: #fff;
+  font-weight: bold;
+  width: 100%;
+  font-family: 'Gothic A1', sans-serif !important;
+  margin-top: 20px;
+}

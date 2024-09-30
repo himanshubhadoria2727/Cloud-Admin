@@ -1,0 +1,89 @@
+.Header {
+  box-shadow: 9px 0px 10px #ccc;
+  background-color: #14145D;
+  position: fixed;
+  width: 100%;
+  z-index: 9;
+  color: #fff;
+}
+.logoTitle {
+  color: #fff;
+  font-size: 30px;
+  text-transform: uppercase;
+}
+.dropdownList {
+  width: 130px;
+  position: absolute;
+  right: 0;
+  background: #fff;
+  box-shadow: 0px 0px 10px #ccc;
+  border-radius: 7px;
+}
+.dropdownList h5 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  position: relative;
+  bottom: 16px;
+  left: 10px;
+}
+.list {
+  cursor:pointer;
+   display:flex;
+    align-items: center;
+    justify-content: end;
+}
+.headers {
+ position: relative;
+  width: 93%;
+  
+}
+.headers img {
+  width: 32px;
+  height: 32px;
+
+}
+.headers h6 {
+  margin: 0;
+   font-family: 'Gothic A1', sans-serif !important;
+  font-size: 14px;
+  font-weight: 500;
+  margin-left: 4px;
+}
+.sideBar {
+  background-color: #fff !important;
+  position: sticky !important;
+  top: 0;
+}
+.logoImg {
+  margin: 2px 5px;
+  padding: 2px;
+  object-fit: contain;
+  width: auto;
+  height: auto;
+  position: relative;
+}
+.mainLayout {
+  margin: 100px 30px !important;
+  border-radius: 10px;
+}
+
+.dropdown {
+  width: 143px;
+  display: flex;
+  align-items: center;
+  justify-content: end;
+  cursor: pointer;
+  position: absolute;
+  right: 10%;
+
+
+}
+.dropdown h6 {
+  margin: 0;
+   font-family: 'Gothic A1', sans-serif !important;
+  font-size: 14px;
+  font-weight: 500;
+  margin-left: 4px;
+}

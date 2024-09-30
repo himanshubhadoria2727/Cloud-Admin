@@ -1,0 +1,15 @@
+.title h3 {
+  color: #14145D;
+  font-size: 24px;
+  margin-top: 0;
+  margin-bottom: 20px;
+}
+  .options svg {
+    width: 26px;
+    height: 20px;
+    margin-right: 10px;
+  }
+  .options svg path {
+    fill: 
+    rgb(77, 235, 77);
+  }

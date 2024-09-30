@@ -1,0 +1,36 @@
+.title h3 {
+  color: #14145D;
+  font-size: 24px;
+  margin-bottom: 10px;
+  margin-top: 0;
+  margin-left: 9px;
+  }
+
+  .card {
+    background: #fff;
+    box-shadow: 0px 0px 10px #ccc;
+    border-radius: 10px;
+    display: flex;
+    margin: 10px;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px
+  }
+  .card h4 {
+    font-size: 22px;
+    font-weight: 500;
+    color: #14145D;
+  }
+  .card span {
+    font-size: 16px;
+    background: #14145D;
+    color: #fff;
+    display: flex;
+    width: 64px;
+    text-align: center;
+    height: 63px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 100%;
+    box-shadow: 0px 0px 5px #000;
+  }

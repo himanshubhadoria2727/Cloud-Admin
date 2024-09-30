@@ -1,0 +1,35 @@
+.title h3 {
+    color: #14145D;
+    font-size: 24px;
+    margin-top: 0;
+    margin-bottom: 0px;
+  }
+  
+  .editBtn svg {
+    width: 20px;
+    height: 20px;
+  }
+  .optionBtn {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+  }
+  .title button {
+    border-radius: 5px;
+    height: 38px;
+    background: #14145D;
+    border: 0;
+    font-size: 16px !important;
+    color: #fff !important;
+  }
+  .title button svg {
+    margin-right: 6px;
+    position: relative;
+    top: 3px;
+  }
