@@ -205,26 +205,41 @@ export default function AddTabla() {
 
   console.log(subRaagOption, "nduwuwfue");
 
-  const handleSubmit = (values)=>{
+  const handleSubmit = (values) => {
     const formdata = new FormData();
     formdata.append("taalname", values?.taalname);
     formdata.append("subtaalname", values?.subtaalname);
     formdata.append("pitch", values?.pitch);
 
-    for (let i = 0; i <= values?.taal?.length; i++) {
-      formdata.append(`taal[${i}][name]`, values?.taal[i]?.name);
-    }
-    for (let i = 0; i <= values?.bpm?.length; i++) {
-      formdata.append(`bpm[${i}]`, values?.bpm[i]);
-      formdata.append("taalfiles", values?.taalfiles[i]);
+    // Append non-empty taal entries
+    if (Array.isArray(values?.taal)) {
+        values.taal.forEach((item, index) => {
+            if (item?.name) {
+                formdata.append(`taal[${index}][name]`, item.name);
+            }
+        });
     }
 
+    // Append non-empty bpm entries and taalfiles
+    if (Array.isArray(values?.bpm)) {
+        values.bpm.forEach((item, index) => {
+            if (item) {
+                formdata.append(`bpm[${index}]`, item);
+            }
+            if (values.taalfiles && values.taalfiles[index]) {
+                formdata.append("taalfiles", values.taalfiles[index]);
+            }
+        });
+    }
+
+    // Submit the form data
     addTabla(formdata).then((data) => {
-      console.log(data?.data?.message, "challllllllllllllllllllll");
-      toast.success(`${data?.data?.message}`);
-      router.back();
+        console.log(data?.data?.message, "challllllllllllllllllllll");
+        toast.success(`${data?.data?.message}`);
+        router.back();
     });
-  }
+};
+
 
   return (
     <>
@@ -430,7 +445,7 @@ export default function AddTabla() {
                   ))}
 
                 <Col style={{ textAlign: "end", marginTop: "15px" }}>
-                  <button className="btn submit" type="submit" onClick={handleSubmit}>
+                  <button className="btn submit" type="submit">
                     Save
                   </button>
                 </Col>

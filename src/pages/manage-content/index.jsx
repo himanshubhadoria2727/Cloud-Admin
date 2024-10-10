@@ -8,6 +8,7 @@ import Image from "next/image";
 import { IMAGES } from "@/assest/images";
 import { SVG } from "@/assest/svg";
 import DateRangePickerComponent from "@/components/TextFields/datepicker";
+import FilledButtonComponent from '@/components/Button'
 import { allContent, deletedcontent } from "@/api/contentapi";
 import Swal from "sweetalert2";
 import { deleteAlertContext } from "@/HOC/alert";
@@ -106,6 +107,7 @@ export default function ManageContent() {
     <LayoutHoc>
       <Col className={`${styles.title}`}>
         <h3>Manage Content</h3>
+        <Link href="/manage-content/add-content"><FilledButtonComponent className={`${styles.addBtn}`}>Add</FilledButtonComponent></Link> 
         {/* <DateRangePickerComponent/> */}
       </Col>
       <Col className="tableBox">

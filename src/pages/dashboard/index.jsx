@@ -21,7 +21,7 @@ export default function Dashboard() {
       
         userapi().then((data) => {
           setuser(data?.data?.users);
-          console.log(data, "checking data");
+        //   console.log(data, "checking data");
         }).catch(error => {
           console.error("Error fetching data:", error);
         });

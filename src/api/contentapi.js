@@ -9,6 +9,10 @@ export const deletedcontent = (id) => {
     return AuthClient().delete(`/api/content/${id}`)
 }
 
+export const addContent = (data) => {
+    return AuthClient().post('/api/content/addContent', data); // Use the appropriate endpoint
+};
+
 export const singlecontent = (id) => {
     return AuthClient().get(`/api/content/editContent/${id}`)
 }
