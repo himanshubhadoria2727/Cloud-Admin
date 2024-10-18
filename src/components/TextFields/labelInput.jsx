@@ -11,7 +11,7 @@ function LabelInputComponent({
   maxLength,
   ...rest
 }) {
-  const { getFieldProps, setFieldValue } = useFormikContext();
+  const { getFieldProps, setFieldValue, touched, errors } = useFormikContext();
 
   // Function to handle numeric input (allows decimal values)
   const handleNumericChange = (e) => {
@@ -28,25 +28,29 @@ function LabelInputComponent({
 
   // Determine the input type based on the name or custom logic
   const handleChange = (e) => {
-    if (name.includes('amount')) {
+    if (name.includes('amount') || name.includes('phone_no')) {
       handleNumericChange(e); // Numeric input for 'amount' fields
     } else {
-      handleStringChange(e); // String input for 'planname' or other fields
+      handleStringChange(e); // String input for other fields
     }
   };
 
   return (
-    <div>
-      {title && <label>{title}</label>}
+    <div className={`label-input-component ${className}`}>
+      {title && <label htmlFor={name}>{title}</label>}
       <Input
+        id={name} // Use id for better accessibility
         {...getFieldProps(name)}
         placeholder={placeholder}
-        className={className}
         disabled={disabledStatus}
         maxLength={maxLength}
         onChange={handleChange} // Custom onChange handler for dynamic input types
         {...rest}
       />
+      {/* Display error message if the field has been touched and there is an error */}
+      {touched[name] && errors[name] && (
+        <div className="error-message">{errors[name]}</div>
+      )}
     </div>
   );
 }

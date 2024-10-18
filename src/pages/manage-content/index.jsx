@@ -107,7 +107,7 @@ export default function ManageContent() {
     <LayoutHoc>
       <Col className={`${styles.title}`}>
         <h3>Manage Content</h3>
-        <Link href="/manage-content/add-content"><FilledButtonComponent className={`${styles.addBtn}`}>Add</FilledButtonComponent></Link> 
+        {/* <Link href="/manage-content/add-content"><FilledButtonComponent className={`${styles.addBtn}`}>Add</FilledButtonComponent></Link>  */}
         {/* <DateRangePickerComponent/> */}
       </Col>
       <Col className="tableBox">
@@ -122,7 +122,7 @@ export default function ManageContent() {
               </Link>
 
 
-              <Image src={IMAGES.Delete} alt="" style={{ width: "20px", height: "20px", objectFit: "contain" }} onClick={() => deleteduser(data?._id)} />
+              {/* <Image src={IMAGES.Delete} alt="" style={{ width: "20px", height: "20px", objectFit: "contain" }} onClick={() => deleteduser(data?._id)} /> */}
 
 
             </>
