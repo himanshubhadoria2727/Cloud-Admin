@@ -2,7 +2,7 @@
 const nextConfig = {
   reactStrictMode: true,
   images: {
-    domains: ['localhost','main--tabla-admin.netlify.app'],
+    domains: ['localhost', 'main--tabla-admin.netlify.app', 'digimonk.net'], // Add 'digimonk.net' to allowed domains
   },
   webpack(config) {
     config.module.rules.push({

@@ -14,9 +14,9 @@ export const userapi = (paidUsersChecked, freeUsersChecked) => {
     return AuthClient().get("/api/userplan", { params })
 }
 
-export const getUser = (page = 1, pageSize = 5) => {
+export const getUser = (page = 1, pageSize = 5, search='') => {
     return AuthClient().get('/api/user/getUser', {
-      params: { page, pageSize }, // Pass page and pageSize as query parameters
+      params: { page, pageSize,search }, // Pass page and pageSize as query parameters
     });
   };
   

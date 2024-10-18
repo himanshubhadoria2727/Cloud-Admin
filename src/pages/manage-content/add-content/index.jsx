@@ -61,11 +61,11 @@ export default function AddContent() {
             {({ setFieldValue, values }) => (
               <Form>
                 <LabelInputComponent title="Heading" name="title" />
-                <BannerUpload
+                {/* <BannerUpload
                   title="Manage Banner"
                   addimage={setFieldValue}
                   image={values?.bannerImage}
-                />
+                /> */}
                 <MyQuillEditor
                   label="Description"
                   name="description"

@@ -143,22 +143,30 @@ export default function SubscriptionSetting() {
     setloading(true);
 
     Swal.fire(deleteAlertContext).then((data) => {
-      if (data.isConfirmed) {
-        deletdsubcription(id)
-          .then((data) => {
-            console.log(data, "cheking respond is");
-            Swal.fire("Deleted!", "Your file has been deleted.", "success");
-            setloading(false);
-          })
-          .catch((err) => {
-            if (err) {
-              setloading(false);
-            }
-          });
-      }
-      setloading(false);
+        if (data.isConfirmed) {
+            deletdsubcription(id)
+                .then((data) => {
+                    console.log(data, "checking response is");
+                    Swal.fire("Deleted!", "Your file has been deleted.", "success");
+                })
+                .catch((err) => {
+                    setloading(false);
+                    console.error("Error deleting subscription:", err);
+                    // Show error message using SweetAlert
+                    Swal.fire({
+                        icon: "error",
+                        title: "Oops...",
+                        text: err.response.data.message || "An error occurred while deleting the subscription.",
+                    });
+                })
+                .finally(() => {
+                    setloading(false); // Ensures loading state is cleared
+                });
+        } else {
+            setloading(false); // Clear loading if the user cancels
+        }
     });
-  };
+};
 
   if (loading) {
     return <h6>loading...</h6>;
@@ -199,7 +207,11 @@ export default function SubscriptionSetting() {
               <Col className="tableBox">
                 <h3>Create Subscription</h3>
                 <Col>
-                  <LabelInputComponent title="Plan name" name="planname" />
+                  <LabelInputComponent
+                    title="Plan name"
+                    name="planname"
+                    maxLength={30} // Limit the input to 30 characters
+                  />{""}
                   <ErrorMessage name="planname">
                     {(msg) => <div className={styles.error}>{msg}</div>}
                   </ErrorMessage>
@@ -234,6 +246,7 @@ export default function SubscriptionSetting() {
                         <LabelInputComponent
                           title={`Plan Amount (Monthly)`}
                           name={`plantype[${index}].amount`}
+                          maxLength={10}
                         />
                         <ErrorMessage name={`plantype[${index}].amount`}>
                           {(msg) => <div className={styles.error}>{msg}</div>}

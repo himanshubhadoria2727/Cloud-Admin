@@ -15,15 +15,16 @@ function ManageUser() {
   const [users, setUsers] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalUsers, setTotalUsers] = useState(0);
-  const [pageSize] = useState(5); // Set your page size
+  const [pageSize] = useState(5);
+  const [searchTerm, setSearchTerm] = useState(""); // State for search term
 
-  const fetchUsers = async (page = 1) => {
+  const fetchUsers = async (page = 1, search = "") => {
     setLoading(true);
     try {
-      const response = await getUser(page, pageSize); // Pass current page and page size
+      const response = await getUser(page, pageSize, search); // Pass search term to the API
       const userData = response?.data || {};
-      setUsers(userData.data); // Assuming your API returns users under `data.data`
-      setTotalUsers(userData.pagination.total); // Update total number of users
+      setUsers(userData.data);
+      setTotalUsers(userData.pagination.total);
     } catch (err) {
       console.error(err);
     } finally {
@@ -32,22 +33,37 @@ function ManageUser() {
   };
 
   useEffect(() => {
-    fetchUsers(currentPage); // Fetch users when the page changes
-  }, [currentPage]);
+    fetchUsers(currentPage, searchTerm); // Fetch users when the page changes
+  }, [currentPage]); // Remove searchTerm from dependency array
+
+  const handleSearch = (event) => {
+    if (event.key === "Enter") {
+      fetchUsers(currentPage, searchTerm); // Trigger fetch when Enter is pressed
+    }
+  };
 
   const handleDeleteUser = (id) => {
-    Swal.fire(deleteAlertContext).then((result) => {
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Yes, delete it!",
+      cancelButtonText: "No, keep it",
+    }).then((result) => {
       if (result.isConfirmed) {
         setLoading(true);
-        deleteduserapi(id).then(() => {
-          Swal.fire("Deleted!", "The user has been deleted.", "success");
-          // Filter out the deleted user without a full reload
-          setUsers((prevUsers) => prevUsers.filter(user => user._id !== id));
-        }).catch((err) => {
-          console.error(err);
-        }).finally(() => {
-          setLoading(false);
-        });
+        deleteduserapi(id)
+          .then(() => {
+            Swal.fire("Deleted!", "The user has been deleted.", "success");
+            setUsers((prevUsers) => prevUsers.filter((user) => user._id !== id));
+          })
+          .catch((err) => {
+            console.error(err);
+          })
+          .finally(() => {
+            setLoading(false);
+          });
       }
     });
   };
@@ -58,7 +74,7 @@ function ManageUser() {
       dataIndex: "createdAt",
       key: "createdAt",
       width: "16%",
-      render: (createdAt) => new Date(createdAt).toLocaleDateString(), // Format date
+      render: (createdAt) => new Date(createdAt).toLocaleDateString(),
     },
     {
       title: "User Id",
@@ -78,7 +94,7 @@ function ManageUser() {
       dataIndex: "email",
       key: "email",
       width: "20%",
-      render: (email) => email || "N/A", // Handle empty email
+      render: (email) => email || "N/A",
     },
     {
       title: "Phone Number",
@@ -114,15 +130,24 @@ function ManageUser() {
           <Col md={14}>
             <h3>Manage User</h3>
           </Col>
+          <Col md={10}>
+            <input
+              type="text"
+              placeholder="Search by Name, ID or Phone"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)} // Update search term
+              onKeyPress={handleSearch} // Call the search handler
+              style={{ width: "100%", padding: "8px", margin: "10px 0" }}
+            />
+          </Col>
         </Row>
         <Col className={styles.dateFilter}>
           <DateRangePickerComponent />
         </Col>
       </Col>
       <Col className="tableBox">
-        {/* Data Table with Loader */}
         <div className={styles.tableWrapper}>
-          {loading && <div className={styles.loader}></div>} {/* Loader inside table */}
+          {loading && <div className={styles.loader}></div>}
           <Datatable
             rowData={users.map((user) => ({
               key: user._id,
@@ -136,7 +161,6 @@ function ManageUser() {
             }))}
             colData={columns}
           />
-          {/* Pagination Component */}
           <Pagination
             current={currentPage}
             total={totalUsers}
