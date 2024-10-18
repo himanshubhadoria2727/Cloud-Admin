@@ -118,6 +118,9 @@ const items = [
             <Menu.Item icon={<SVG.User />} className={router.pathname === '/manage-content' ? 'settings active' : 'settings'}>
               <Link href="/manage-content">Manage Content</Link>
             </Menu.Item>
+            <Menu.Item icon={<SVG.User />} className={router.pathname === '/enquiries' ? 'settings active' : 'settings'}>
+              <Link href="/enquiries">Enquiries</Link>
+            </Menu.Item>
             <Menu.Item icon={<SVG.Setting />} className={router.pathname === '/admin-setting' ? ' settings active' : 'settings'}>
               <Link href="/admin-setting">Admin Settings</Link>
             </Menu.Item>

@@ -1,0 +1,67 @@
+.title h3 {
+    font-family: 'Poppins', sans-serif;
+    color: #0285AC;
+    font-size: 24px;
+    margin-bottom: 0;
+    margin-top: 0;
+  }
+  
+  .title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+  }
+  
+  .title button {
+    border-radius: 5px;
+    height: 38px;
+    background: #0285AC;
+    border: 0;
+    font-size: 16px !important;
+    color: #fff !important;
+  }
+  
+  .title button svg {
+    margin-right: 6px;
+    position: relative;
+    top: 3px;
+  }
+  
+  .tableBox {
+    background-color: #f9f9f9; /* Light background for the table */
+    padding: 20px;
+    border-radius: 8px; /* Rounded corners */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+  }
+  
+  .tableBox form {
+    display: flex;
+    flex-direction: column; /* Stack inputs vertically */
+  }
+  
+  .tableBox textarea {
+    resize: none; /* Disable resizing for the textarea */
+    border: 1px solid #ccc; /* Border style */
+    border-radius: 5px; /* Rounded corners */
+    padding: 10px; /* Padding inside the textarea */
+    margin-bottom: 20px; /* Space below the textarea */
+    font-family: 'Poppins', sans-serif; /* Font family for consistency */
+    font-size: 16px; /* Font size for text */
+    color: #333; /* Text color */
+  }
+  
+  .tableBox .btn.submit {
+    background-color: #0285AC; /* Submit button color */
+    color: #fff; /* Text color for submit button */
+    border: none; /* Remove border */
+    border-radius: 5px; /* Rounded corners */
+    padding: 10px 15px; /* Padding for button */
+    cursor: pointer; /* Change cursor on hover */
+    font-size: 16px; /* Font size for button */
+  }
+  
+  .tableBox .btn.submit:hover {
+    background-color: #026e90; /* Darker shade on hover */
+  }
+  
