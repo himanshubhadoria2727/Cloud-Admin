@@ -4,6 +4,25 @@
     margin-top: 0;
     margin-bottom: 0px;
   }
+
+  .bolInput  {
+    display: flex;
+    /* justify-content: space-between; */
+    width: 100%;
+  }
+  .bolInput input {
+    width: 50px!important;
+    border-radius: 6px !important;
+      background: #FFF;
+      /* box-shadow: 0px 0px 5px #ccc !important; */
+    margin-bottom: 0 !important;
+  
+  }
+  .bolBox {
+    width: 100%;
+    margin-bottom: 18px;
+  
+  }
   
   .editBtn svg {
     width: 20px;

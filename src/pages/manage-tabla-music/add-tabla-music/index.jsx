@@ -168,11 +168,11 @@ export default function AddTabla() {
     pitch: "",
     taalname: "",
     subtaalname: "",
-    taal: [
-      {
-        name: "",
-      },
-    ],
+    // taal: [
+    //   {
+    //     name: "",
+    //   },
+    // ],
 
     bpm: [""],
     taalfiles: [],
@@ -191,13 +191,6 @@ export default function AddTabla() {
     pitch: Yup.string().required("Pitch is required"),
     taalname: Yup.string().required("Taal Name is required"),
     subtaalname: Yup.string().required("SubTaal Name is required"),
-    taal: Yup.array()
-      .of(
-        Yup.object().shape({
-          name: Yup.string().required("Taal Name is required"),
-        })
-      )
-      .min(1, "At least one Taal is required"),
     bpm: Yup.array()
       .of(Yup.string().required("BPM is required"))
       .min(1, "At least one BPM is required"),
@@ -212,13 +205,13 @@ export default function AddTabla() {
     formdata.append("pitch", values?.pitch);
 
     // Append non-empty taal entries
-    if (Array.isArray(values?.taal)) {
-        values.taal.forEach((item, index) => {
-            if (item?.name) {
-                formdata.append(`taal[${index}][name]`, item.name);
-            }
-        });
-    }
+    // if (Array.isArray(values?.taal)) {
+    //     values.taal.forEach((item, index) => {
+    //         if (item?.name) {
+    //             formdata.append(`taal[${index}][name]`, item.name);
+    //         }
+    //     });
+    // }
 
     // Append non-empty bpm entries and taalfiles
     if (Array.isArray(values?.bpm)) {
@@ -309,62 +302,7 @@ export default function AddTabla() {
                     }
                   />
                 </Col>
-                <Col className={styles.taalBox}>
-                  <label>Taal</label>
-                  {/* Render input fields based on inputCount state */}
-
-                  <Row className={styles.taalInput}>
-                    {values?.taal?.length > 0 &&
-                      values?.taal.map((tal, index) => (
-                        <>
-                          <Col md={2} key={index} className="taalInput">
-                            <LabelInputComponent name={`taal[${index}].name`} />
-                            <ErrorMessage
-                              name={`taal[${index}].name`}
-                              style={{ color: "red" }}
-                            />
-                          </Col>
-                          {index > 0 && (
-                            <Image
-                              src={IMAGES.Delete}
-                              alt=""
-                              onClick={() => {
-                                setFieldValue(
-                                  "taal",
-                                  values?.taal?.filter((o, i) => i !== index)
-                                );
-                              }}
-                              style={{
-                                cursor: "pointer",
-                                height: "20px",
-                                width: "20px",
-                                marginTop: "12px",
-                              }}
-                            />
-                          )}
-                        </>
-                      ))}
-                  </Row>
-
-                  <Col>
-                    <Image
-                      src={IMAGES.Add}
-                      alt=""
-                      style={{
-                        // Image with cursor pointer
-                        cursor: "pointer",
-                        height: "20px",
-                        width: "20px",
-                        position: "relative",
-                        top: "7px",
-                      }}
-                      onClick={() => {
-                        setFieldValue("taal", [...values?.taal, { name: "" }]);
-                      }}
-                    />{" "}
-                    {/* onClick event to add input */}
-                  </Col>
-                </Col>
+                
                 {values?.bpm?.length > 0 &&
                   values?.bpm?.map((taalfile, index) => (
                     <Row key={index} className={`${styles.appendRow}`}>

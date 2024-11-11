@@ -118,16 +118,6 @@ export default function ManageCategory() {
       searchable: true,
       // ...getColumnSearchProps("name"),
     },
-
-    {
-      title: "Category Image",
-      dataIndex: "category_image",
-      key: "category_image",
-      width: "20%",
-      searchable: true,
-      // ...getColumnSearchProps("slug"),
-    },
-
     {
       title: "Action",
       dataIndex: "option",
@@ -174,19 +164,6 @@ export default function ManageCategory() {
                   creation_date: moment(data?.createdAt).format("L"),
                   raag_name: subCategoryName,
                   taal_name: categoryName,
-                  category_image: (
-                    <Image
-                      src={`${linkbase}/${data?.category?.CategoryImage}`}
-                      width={200}
-                      height={200}
-                      alt=""
-                      style={{
-                        width: "100px",
-                        height: "60px",
-                        objectFit: "contain",
-                      }}
-                    />
-                  ),
                   option: (
                     <Col className={`${styles.optionBtn}`}>
                       <Image

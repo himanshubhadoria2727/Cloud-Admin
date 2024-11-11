@@ -156,7 +156,7 @@ function ManageUser() {
               firstname: user.firstname,
               lastname: user.lastname,
               email: user.email,
-              phone_no: user.phone_no,
+              phone_no: `${user.country_code} ${user.phone_no}`,
               country_name: user.country_name,
             }))}
             colData={columns}
