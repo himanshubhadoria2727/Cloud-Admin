@@ -16,6 +16,7 @@ import { addTabla } from "@/api/tabla";
 import { toast } from "react-toastify";
 import { useRouter } from "next/router";
 import * as Yup from "yup";
+import { sub } from "date-fns";
 
 export default function AddTabla() {
   const router = useRouter();
@@ -58,14 +59,14 @@ export default function AddTabla() {
       value: "G#",
       label: "G#",
     },
-    {
-      value: "F",
-      label: "F",
-    },
-    {
-      value: "F#",
-      label: "F#",
-    },
+    // {
+    //   value: "F",
+    //   label: "F",
+    // },
+    // {
+    //   value: "F#",
+    //   label: "F#",
+    // },
     {
       value: "B",
       label: "B",
@@ -117,7 +118,7 @@ export default function AddTabla() {
       label: "Purvi",
     },
   ];
-
+  const [loading, setLoading] = useState(false);
   const [selectedValue, setSelectedValue] = useState("C");
   const [raagValue, setRaagValue] = useState("Purvi");
   const [subraagValue, setSubRaagValue] = useState("Asaravi");
@@ -125,8 +126,45 @@ export default function AddTabla() {
     { title: "File 1", bpm: "100HZ" },
   ]);
 
-  const handleCategoryChange = (value) => {
-    setSelectedValue(value);
+  const [allSubCategories, setAllSubCategories] = useState([]);
+  console.log(allSubCategories, "allSubCategories");
+
+  const handleCategoryChange = async (value) => {
+    try {
+      // Step 1: Set the selected category value.
+      setSelectedValue(value);
+      console.log("Category selected:", value);
+
+      // Simulating an asynchronous operation with a Promise, e.g., fetching subcategories from a server
+      const fetchSubcategories = new Promise((resolve, reject) => {
+        const filteredSubcategories = allSubCategories.filter(
+          (subCategory) => subCategory.category._id === value
+        );
+
+        if (filteredSubcategories.length === 0) {
+          reject(
+            new Error("No subcategories found for the selected category.")
+          );
+        } else {
+          resolve(filteredSubcategories);
+        }
+      });
+
+      // Step 2: Await the promise to filter subcategories and handle async flow
+      const filteredSubcategories = await fetchSubcategories;
+      console.log("Filtered Subcategories: ", filteredSubcategories);
+
+      // Step 3: Update subRaagOption with the filtered subcategories.
+      setsubRaagOption(filteredSubcategories);
+      console.log("Updated subRaagOption", filteredSubcategories);
+    } catch (error) {
+      // Handle any errors during the async operation
+      console.error("Error handling category change:", error.message);
+
+      // If no subcategories were found, clear the subRaagOption.
+      setsubRaagOption([]);
+      console.log("Cleared subRaagOption due to error or no subcategories.");
+    }
   };
 
   const handleRaagChange = (value) => {
@@ -180,17 +218,27 @@ export default function AddTabla() {
   useEffect(() => {
     getCategoryapi().then((data) => {
       console.log(data, "defhrghf");
-      setRaagOption(data?.data?.allcategory);
+      setRaagOption(data?.data?.allCategories);
     });
     getSubcategory().then((data) => {
       console.log(data, "dhceugyur");
-      setsubRaagOption(data?.data);
+      // setsubRaagOption(data?.data);
+      setAllSubCategories(data?.data);
     });
   }, []);
   const tablaschema = Yup.object().shape({
     pitch: Yup.string().required("Pitch is required"),
     taalname: Yup.string().required("Taal Name is required"),
-    subtaalname: Yup.string().required("SubTaal Name is required"),
+    subtaalname: Yup.string().nullable("SubTaal Name is required"),
+    taalfiles: Yup.array()
+      .of(
+        Yup.mixed()
+          .test("fileType", "Only .mp3 files are allowed", (value) => {
+            return value && value.type === "audio/mpeg";
+          })
+          .required("File is required")
+      )
+      .min(1, "At least one file is required"),
     bpm: Yup.array()
       .of(Yup.string().required("BPM is required"))
       .min(1, "At least one BPM is required"),
@@ -199,9 +247,10 @@ export default function AddTabla() {
   console.log(subRaagOption, "nduwuwfue");
 
   const handleSubmit = (values) => {
+    setLoading(true);
     const formdata = new FormData();
     formdata.append("taalname", values?.taalname);
-    formdata.append("subtaalname", values?.subtaalname);
+    formdata.append("subtaalname", values ? values?.subtaalname : undefined);
     formdata.append("pitch", values?.pitch);
 
     // Append non-empty taal entries
@@ -215,24 +264,24 @@ export default function AddTabla() {
 
     // Append non-empty bpm entries and taalfiles
     if (Array.isArray(values?.bpm)) {
-        values.bpm.forEach((item, index) => {
-            if (item) {
-                formdata.append(`bpm[${index}]`, item);
-            }
-            if (values.taalfiles && values.taalfiles[index]) {
-                formdata.append("taalfiles", values.taalfiles[index]);
-            }
-        });
+      values.bpm.forEach((item, index) => {
+        if (item) {
+          formdata.append(`bpm[${index}]`, item);
+        }
+        if (values.taalfiles && values.taalfiles[index]) {
+          formdata.append("taalfiles", values.taalfiles[index]);
+        }
+      });
     }
 
     // Submit the form data
     addTabla(formdata).then((data) => {
-        console.log(data?.data?.message, "challllllllllllllllllllll");
-        toast.success(`${data?.data?.message}`);
-        router.back();
+      console.log(data?.data?.message, "challllllllllllllllllllll");
+      toast.success(`${data?.data?.message}`);
+      setLoading(false);
+      router.back();
     });
-};
-
+  };
 
   return (
     <>
@@ -258,51 +307,52 @@ export default function AddTabla() {
                 <Col className={styles.titleBox}>
                   <SearchCategory
                     title="Select Pitch"
-                    defaultValue={selectedValue}
+                    defaultValue={dynamicOptions}
                     onChange={(value) => {
                       setFieldValue("pitch", value);
                     }}
                     options={dynamicOptions}
                   />
-                  <ErrorMessage name="pitch" style={{ color: "red" }} />
+                  <ErrorMessage name="pitch">
+                    {(msg) => <div className={styles.errorMessage}>{msg}</div>}
+                  </ErrorMessage>{" "}
                 </Col>
                 <Col className={styles.titleBox}>
                   <SearchCategory
-                    title="Select Taal Name "
+                    title="Select Taal Name"
                     defaultValue={RaagOption}
                     onChange={(value) => {
                       setFieldValue("taalname", value);
+                      // Fetch subcategories specific to the selected Taal
+                      handleCategoryChange(value); // Filter and update subcategories here
                     }}
-                    options={
-                      RaagOption &&
-                      RaagOption.length > 0 &&
-                      RaagOption?.map((data) => ({
-                        value: data?._id,
-                        label: data?.CategoryName,
-                      }))
-                    }
+                    options={RaagOption?.map((data) => ({
+                      value: data?._id,
+                      label: data?.CategoryName,
+                    }))}
                   />
-                  <ErrorMessage name="taalname" style={{ color: "red" }} />
+                  <ErrorMessage name="taalname">
+                    {(msg) => <div className={styles.errorMessage}>{msg}</div>}
+                  </ErrorMessage>
                 </Col>
 
-                <Col className={styles.titleBox}>
-                  <SearchCategory
-                    title="Select Sub Taal Name"
-                    defaultValue={subRaagOption}
-                    onChange={(value) => {
-                      setFieldValue("subtaalname", value);
-                    }}
-                    options={
-                      subRaagOption &&
-                      subRaagOption.length > 0 &&
-                      subRaagOption?.map((data) => ({
+                {/* Conditionally render the "Sub Taal Name" dropdown only if there are filtered subcategories */}
+                {subRaagOption?.length > 0 && (
+                  <Col className={styles.titleBox}>
+                    <SearchCategory
+                      title="Select Sub Taal Name"
+                      defaultValue={subRaagOption}
+                      onChange={(value) => {
+                        setFieldValue("subtaalname", value);
+                      }}
+                      options={subRaagOption?.map((data) => ({
                         value: data?._id,
                         label: data?.subCategory,
-                      }))
-                    }
-                  />
-                </Col>
-                
+                      }))}
+                    />
+                  </Col>
+                )}
+
                 {values?.bpm?.length > 0 &&
                   values?.bpm?.map((taalfile, index) => (
                     <Row key={index} className={`${styles.appendRow}`}>
@@ -328,6 +378,11 @@ export default function AddTabla() {
                             marginBottom: "18px",
                           }}
                         />
+                        <ErrorMessage name="taalfiles">
+                          {(msg) => (
+                            <div className={styles.errorMessage}>{msg}</div>
+                          )}
+                        </ErrorMessage>
                       </Col>
                       <Col md={1}></Col>
                       <Col md={12}>
@@ -336,10 +391,11 @@ export default function AddTabla() {
                             title="BPM"
                             name={`bpm[${index}]`}
                           />
-                          <ErrorMessage
-                            name={`bpm[${index}]`}
-                            style={{ color: "red" }}
-                          />
+                          <ErrorMessage name={`bpm[${index}]`}>
+                            {(msg) => (
+                              <div className={styles.errorMessage}>{msg}</div>
+                            )}
+                          </ErrorMessage>
                         </Col>
                       </Col>
 
@@ -383,8 +439,23 @@ export default function AddTabla() {
                   ))}
 
                 <Col style={{ textAlign: "end", marginTop: "15px" }}>
-                  <button className="btn submit" type="submit">
-                    Save
+                  <button
+                    className="btn submit"
+                    type="submit"
+                    disabled={loading}
+                    style={{
+                      backgroundColor: "#4CAF50", // Adjust background color as needed
+                      border: "none",
+                      borderRadius: "5px",
+                      color: "#FFF",
+                      cursor: loading ? "not-allowed" : "pointer",
+                    }}
+                  >
+                    {loading ? (
+                      <span className="loader">Saving...</span> // Add loader here
+                    ) : (
+                      "Save"
+                    )}
                   </button>
                 </Col>
               </Col>

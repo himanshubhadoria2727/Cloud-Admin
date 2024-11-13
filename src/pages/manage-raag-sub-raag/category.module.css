@@ -52,3 +52,7 @@
     position: relative;
     top: 3px;
   }
+
+  .errorMessage{
+    color: red;
+  }

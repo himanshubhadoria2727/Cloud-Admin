@@ -47,10 +47,10 @@ function LabelInputComponent({
         onChange={handleChange} // Custom onChange handler for dynamic input types
         {...rest}
       />
-      {/* Display error message if the field has been touched and there is an error */}
+      {/* Display error message if the field has been touched and there is an error
       {touched[name] && errors[name] && (
         <div className="error-message">{errors[name]}</div>
-      )}
+      )} */}
     </div>
   );
 }

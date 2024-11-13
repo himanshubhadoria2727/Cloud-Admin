@@ -37,11 +37,11 @@ export default function AddCategory() {
 
     // Check if bol is an array and then append valid bol names to the FormData
     if (Array.isArray(values.bol)) {
-        values.bol.forEach((item, index) => {
-            if (item?.name) {
-                formData.append(`Bol[${index}][name]`, item.name); // Format Bol array properly
-            }
-        });
+      values.bol.forEach((item, index) => {
+        if (item?.name) {
+          formData.append(`Bol[${index}][name]`, item.name); // Format Bol array properly
+        }
+      });
     }
 
     try {
@@ -67,7 +67,7 @@ export default function AddCategory() {
       <Formik
         initialValues={{
           categoryName: "",
-          bol: [{ name: "Dha" }], // Default value for bol field
+          bol: [{ name: "" }], // Default value for bol field
         }}
         validationSchema={validationSchema}
         onSubmit={handleSubmit}
@@ -83,6 +83,9 @@ export default function AddCategory() {
                   placeholder="Enter category name"
                 />
               </Col>
+              <ErrorMessage name="categoryName">
+                {(msg) => <div className={styles.errorMessage}>{msg}</div>}
+              </ErrorMessage>
               <Col className={styles.bolBox}>
                 <label>Bol</label>
 
@@ -92,10 +95,11 @@ export default function AddCategory() {
                       <React.Fragment key={index}>
                         <Col md={2} className="bolInput">
                           <LabelInputComponent name={`bol[${index}].name`} />
-                          <ErrorMessage
-                            name={`bol[${index}].name`}
-                            style={{ color: "red" }}
-                          />
+                          <ErrorMessage name={`bol[${index}].name`}>
+                            {(msg) => (
+                              <div className={styles.errorMessage}>{msg}</div>
+                            )}
+                          </ErrorMessage>
                         </Col>
                         {index > 0 && (
                           <Image

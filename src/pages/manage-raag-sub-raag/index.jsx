@@ -102,7 +102,7 @@ export default function ManageCategory() {
     },
 
     {
-      title: "Taal Name",
+      title: "Sub Taal Name",
       dataIndex: "raag_name",
       key: "raag_name",
       width: "25%",
@@ -111,7 +111,7 @@ export default function ManageCategory() {
     },
 
     {
-      title: "Sub Taal Name",
+      title: "Taal Name",
       dataIndex: "taal_name",
       key: "taal_name",
       width: "25%",
