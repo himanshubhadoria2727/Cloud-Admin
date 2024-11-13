@@ -167,7 +167,7 @@ function ManageUser() {
             pageSize={pageSize}
             onChange={(page) => setCurrentPage(page)}
             showSizeChanger={false}
-            style={{ marginTop: "20px", textAlign: "center" }}
+            style={{ marginTop: "20px", textAlign: "right" }}
           />
         </div>
       </Col>

@@ -1,5 +1,5 @@
 import LayoutHoc from "@/HOC/LayoutHoc";
-import { Col } from "antd";
+import { Col, Pagination } from "antd";
 import React, { useState, useEffect } from "react";
 import styles from "./category.module.css";
 import LabelInputComponent from "@/components/TextFields/labelInput";
@@ -9,7 +9,11 @@ import DataTable from "@/components/Datatable";
 import Link from "next/link";
 import Image from "next/image";
 import { IMAGES } from "@/assest/images";
-import { delSubcategory, getSubcategory, getCategoryapi } from "@/api/Categoryapi";
+import {
+  delSubcategory,
+  getSubcategory,
+  getCategoryapi,
+} from "@/api/Categoryapi";
 import moment from "moment";
 import { linkbase } from "@/HOC/constant";
 import Swal from "sweetalert2";
@@ -19,6 +23,8 @@ export default function ManageCategory() {
   const [loading, setloading] = useState(false);
   const [subCategory, setsubCategory] = useState([]);
   const [category, setCategory] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
 
   const deleteduser = (id) => {
     setloading(true);
@@ -47,45 +53,13 @@ export default function ManageCategory() {
       setsubCategory(data?.data);
     });
   }, [loading]);
+
   useEffect(() => {
     getCategoryapi().then((data) => {
       console.log(data, "cheking category");
-      setCategory(data?.data);
+      setCategory(data?.data?.allCategories);
     });
   }, [loading]);
-
-  const data = [
-    {
-      key: "1",
-      serial_no: "1",
-      creation_date: "26.7.2023",
-      raag_name: "Raag Bahar",
-      taal_name: "Bhimpalasi",
-      category_image: (
-        <Image
-          src={IMAGES.Logo}
-          alt=""
-          style={{ width: "100px", height: "60px", objectFit: "contain" }}
-        />
-      ),
-      option: (
-        <>
-          <Col className={`${styles.optionBtn}`}>
-            {/* <Link href="/manage-raag-sub-raag/edit-category">
-                            <span className={`${styles.editBtn}`}> <SVG.Edit /> </span>
-                        </Link> */}
-            <Link href="#">
-              <Image
-                src={IMAGES.Delete}
-                alt=""
-                style={{ width: "20px", height: "20px", objectFit: "contain" }}
-              />
-            </Link>
-          </Col>
-        </>
-      ),
-    },
-  ];
 
   const columns = [
     {
@@ -100,23 +74,19 @@ export default function ManageCategory() {
       key: "creation_date",
       width: "25%",
     },
-
-    {
-      title: "Sub Taal Name",
-      dataIndex: "raag_name",
-      key: "raag_name",
-      width: "25%",
-      searchable: true,
-      // ...getColumnSearchProps("name"),
-    },
-
     {
       title: "Taal Name",
       dataIndex: "taal_name",
       key: "taal_name",
       width: "25%",
       searchable: true,
-      // ...getColumnSearchProps("name"),
+    },
+    {
+      title: "Sub Taal Name",
+      dataIndex: "raag_name",
+      key: "raag_name",
+      width: "25%",
+      searchable: true,
     },
     {
       title: "Action",
@@ -125,7 +95,49 @@ export default function ManageCategory() {
     },
   ];
 
-  console.log(subCategory);
+  // Calculate pagination
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = category?.slice(indexOfFirstItem, indexOfLastItem);
+
+  // Handle page change
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
+
+  const getTableData = () => {
+    return currentItems && currentItems.length > 0
+      ? currentItems.map((data, id) => {
+          const subCategoryNames = data.subcategories?.length
+            ? data.subcategories.map((sub) => sub.subCategory).join(", ")
+            : "N/A";
+          const categoryName = data?.CategoryName?.toString() || "N/A";
+
+          return {
+            key: indexOfFirstItem + id + 1,
+            serial_no: indexOfFirstItem + id + 1,
+            creation_date: moment(data?.createdAt).format("L"),
+            raag_name: subCategoryNames,
+            taal_name: categoryName,
+            option: (
+              <Col className={`${styles.optionBtn}`}>
+                <Image
+                  src={IMAGES.Delete}
+                  onClick={() => deleteduser(data?._id)}
+                  alt=""
+                  style={{
+                    width: "20px",
+                    height: "20px",
+                    objectFit: "contain",
+                  }}
+                />
+              </Col>
+            ),
+          };
+        })
+      : [];
+  };
+
   return (
     <div>
       <LayoutHoc>
@@ -146,43 +158,16 @@ export default function ManageCategory() {
         </Col>
 
         <Col className="tableBox">
-          <DataTable
-            rowData={
-              subCategory &&
-              subCategory.length > 0 &&
-              subCategory.map((data, id) => {
-                console.log(data); // Log each item to check its structure
-
-                // Ensure subCategory and CategoryName are strings, else convert to a string or handle appropriately
-                const subCategoryName = data?.subCategory?.toString() || "N/A";
-                const categoryName =
-                  data?.category?.CategoryName?.toString() || "N/A";
-
-                return {
-                  key: id + 1,
-                  serial_no: id + 1,
-                  creation_date: moment(data?.createdAt).format("L"),
-                  raag_name: subCategoryName,
-                  taal_name: categoryName,
-                  option: (
-                    <Col className={`${styles.optionBtn}`}>
-                      <Image
-                        src={IMAGES.Delete}
-                        onClick={() => deleteduser(data?._id)}
-                        alt=""
-                        style={{
-                          width: "20px",
-                          height: "20px",
-                          objectFit: "contain",
-                        }}
-                      />
-                    </Col>
-                  ),
-                };
-              })
-            }
-            colData={columns}
-          />
+          <DataTable rowData={getTableData()} colData={columns} />
+          <div style={{ marginTop: '20px', display: 'flex', justifyContent: 'flex-end' }}>
+            <Pagination
+              current={currentPage}
+              total={category?.length || 0}
+              pageSize={itemsPerPage}
+              onChange={handlePageChange}
+              showSizeChanger={false}
+            />
+          </div>
         </Col>
       </LayoutHoc>
     </div>

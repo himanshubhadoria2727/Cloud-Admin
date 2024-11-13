@@ -125,6 +125,7 @@ const DataTable = ({ rowData, colData }) => {
       <Table
         columns={handleDataSource()}
         dataSource={rowData}
+        pagination={false}
         onChange={handleChange}
         scroll={{ x: 1300 }}
       />
