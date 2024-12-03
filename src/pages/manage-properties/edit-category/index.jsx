@@ -1,6 +1,6 @@
 import LayoutHoc from '@/HOC/LayoutHoc'
 import React from 'react'
-import styles from "../category.module.css"
+import styles from "../properties.module.css"
 import { Col } from 'antd'
 import LabelInputComponent from '@/components/TextFields/labelInput'
 import FilledButtonComponent from '@/components/Button'
