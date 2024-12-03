@@ -150,7 +150,7 @@ export default function AddProperty() {
                     name="landlordInsurance"
                     onChange={(e) => setFieldValue("landlordInsurance", e.target.checked)}
                   />
-                  I certify that I have landlord's insurance on this property.
+                  I certify that I have landlords insurance on this property.
                 </label>
               </div>
 

@@ -141,9 +141,9 @@ export default function ManageProperties() {
           />
         </Row>
         <Link href="/manage-properties/add-property">
-        <Button type="primary" className={styles.addButton}>
-          + Add Property
-        </Button>
+          <Button type="primary" className={styles.addButton}>
+            + Add Property
+          </Button>
         </Link>
       </div>
     </LayoutHoc>
