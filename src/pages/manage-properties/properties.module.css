@@ -55,7 +55,7 @@
 }
 
 .counterControls button {
-  background-color: #E5E5E5;
+  background-color: teal;
   color: white;
   border: none;
   border-radius: 50%;
@@ -68,7 +68,7 @@
 }
 
 .counterControls button:hover {
-  background-color: #9d23db;
+  background-color: grey;
 }
 
 .counterControls span {
@@ -104,23 +104,25 @@
 .submitButton,.addButton {
   padding: 10px 20px;
   border-radius: 8px;
-  background-color: #E5E5E5;
+  background-color: teal;
   color: white;
   border: none;
   font-size: 16px;
   cursor: pointer;
   transition: background-color 0.3s ease;
+  display: flex;
+  align-items: center;
 }
 
 .submitButton:hover {
-  background-color: #9d23db;
+  background-color: grey;
 }
 .addButtonContainer {
   text-align: right;
 }
 
 .addButton {
-  background-color: #E5E5E5;
+  background-color: teal;
   border: none;
   color: white;
   padding: 8px 16px;
@@ -221,6 +223,12 @@
 }
 
 .addButton:hover {
-  background-color: #a220e9;
+  background-color: teal;
 }
 
+.dropdownContainer{
+  margin-bottom: 20px;
+}
+.dropdown{
+  color: #2c3e50;
+}

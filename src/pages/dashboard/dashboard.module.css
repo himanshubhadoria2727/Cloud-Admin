@@ -44,9 +44,12 @@
 }
 
 .cardIcon {
-  font-size: 40px;
+  font-size: 23px;
   background-color: #4FD1C5;
   padding: 16px;
+  align-items: center;
+  justify-content: center;
+  height: 3rem;
   border-radius: 8px; /* Square shape */
   color: white;
   flex-shrink: 0; /* Prevent icon resizing */

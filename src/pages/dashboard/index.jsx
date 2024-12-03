@@ -88,7 +88,9 @@ export default function Dashboard() {
             <Col xs={24} sm={12} md={6} key={stat.id}>
               <Card className={styles.statsCard}>
                 <div className={styles.cardContent}>
-                  <div className={styles.cardIcon}>{stat.icon}</div>
+                  <span className={styles.cardIcon}>
+                  {stat.icon}
+                  </span>
                   <div className={styles.cardDetails}>
                     <Title level={4} style={{ fontWeight: 700, marginBottom: 4 }}>
                       {stat.total}
