@@ -6,7 +6,7 @@ import LabelInputComponent from "@/components/TextFields/labelInput";
 import FilledButtonComponent from "@/components/Button";
 import Link from "next/link";
 import { SVG } from "@/assest/svg";
-import SearchCategory from "../add-category/component/search-category";
+import SearchCategory from "../add-property/component/search-category";
 import { addSubcategory, getCategoryapi } from "@/api/Categoryapi";
 import { Formik, Form, Field, ErrorMessage, useFormikContext } from "formik";
 import { toast } from "react-toastify";

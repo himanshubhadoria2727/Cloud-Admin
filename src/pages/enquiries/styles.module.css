@@ -1,6 +1,6 @@
 .title h3 {
     font-family: 'Poppins', sans-serif;
-    color: #0285AC;
+    color: #DC143C;
     font-size: 24px;
     margin-bottom: 0;
     margin-top: 0;
@@ -16,7 +16,7 @@
   .title button {
     border-radius: 5px;
     height: 38px;
-    background: #0285AC;
+    background: #DC143C;
     border: 0;
     font-size: 16px !important;
     color: #fff !important;
@@ -52,7 +52,7 @@
   }
   
   .tableBox .btn.submit {
-    background-color: #0285AC; /* Submit button color */
+    background-color: #DC143C; /* Submit button color */
     color: #fff; /* Text color for submit button */
     border: none; /* Remove border */
     border-radius: 5px; /* Rounded corners */

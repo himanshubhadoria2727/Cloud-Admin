@@ -1,6 +1,6 @@
 .Header {
   box-shadow: 9px 0px 10px #ccc;
-  background-color: #14145D;
+  background-color: #8A00C2;
   position: fixed;
   width: 100%;
   z-index: 9;
@@ -8,7 +8,7 @@
 }
 .logoTitle {
   color: #fff;
-  font-size: 30px;
+  font-size: 25px;
   text-transform: uppercase;
 }
 .dropdownList {
@@ -86,4 +86,58 @@
   font-size: 14px;
   font-weight: 500;
   margin-left: 4px;
+}
+
+/* Container inside the header */
+.headerContainer {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Search bar */
+.searchBar {
+  max-width: 400px;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+/* Right section (notifications, profile) */
+.rightSection {
+  display: flex;
+  align-items: center;
+  gap: 25px; 
+}
+
+/* Notification icon styling */
+.notificationIcon {
+  font-size: 20px;
+  color: white;
+  cursor: pointer;
+}
+
+/* Profile container */
+.profile {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+/* Avatar styling */
+.avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+/* Username styling */
+.username {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-color);
 }

@@ -97,7 +97,7 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   background-color: transparent !important;
 }
 .ant-layout-sider-children {
-  background: linear-gradient(180deg, #14145D 0%, #000 100%)!important;
+  background: linear-gradient(180deg, #8A00C2 0%, #000 100%)!important;
 }
 .searchCountry .ant-select-selector {
   border-radius: 12px!important;
@@ -148,12 +148,12 @@ input[type="time"]::-webkit-calendar-picker-indicator {
  
 /* Handle */
 .ant-table-content::-webkit-scrollbar-thumb {
-  background: #0285AC; 
+  background: #DC143C; 
 }
 
 /* Handle on hover */
 .ant-table-content::-webkit-scrollbar-thumb:hover {
-  background: #0285AC; 
+  background: #DC143C; 
 }
 .ant-layout-sider li span a {
   font-size: 14px!important;
@@ -185,10 +185,10 @@ aside.ant-layout-sider {
   z-index: 99;
 }
 .btn.submit {
-  background: #14145D !important;
+  background: #8A00C2 !important;
   color: #fff!important;
   border-radius: 5px !important;
-  border: 1px solid #14145D !important;
+  border: 1px solid #8A00C2 !important;
   width: 144px;
   height: 48px;
   text-align: center !important;
@@ -241,7 +241,7 @@ aside.ant-layout-sider {
   margin-bottom: 18px;
 }
 .tableBox thead tr th {
-  background: #0285AC17!important;
+  background: #DC143C17!important;
 }
 .tableBox {
   margin-bottom: 20px;
@@ -258,31 +258,31 @@ aside.ant-layout-sider {
   
 }
 .activeClass {
-  background: #0036742b;
-  border: 1px solid #003674;
+  background: #8000802b;
+  border: 1px solid #800080;
 }
 .activeClass span {
-  color: #003674 !important;
+  color: #800080 !important;
 }
 .activeClass svg path {
-  stroke: #003674 !important;
+  stroke: #800080 !important;
 }
 
 .ant-menu-item.active  a {
-  color: #0285AC!important;
+  color: #DC143C!important;
 }
 .ant-menu-item.active svg path {
-  fill: #0285AC !important;
+  fill: #DC143C !important;
 }
 .ant-menu-item span {
   color: #fff !important;
 }
 
 .ant-layout-sider-children {
-  background:#14145D !important;
+  background:#8A00C2 !important;
 }
 .ant-menu {
-  background: #14145D !important;
+  background: #8A00C2 !important;
 }
 .ant-menu-item svg path {
   fill: #fff!important;
@@ -309,7 +309,7 @@ th.ant-table-cell {
   font-size: 16px;
 }
 .btnDelete {
-  background: #0285AC;
+  background: #DC143C;
   color: #fff;
   border-radius: 3px;
   font-weight: 500;

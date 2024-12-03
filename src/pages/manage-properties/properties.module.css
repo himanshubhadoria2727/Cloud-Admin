@@ -1,0 +1,235 @@
+.container {
+  padding: 30px;
+  background-color: #f9fafb;
+  min-height: 100vh;
+}
+
+.title {
+  font-size: 28px;
+  color: #2c3e50;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.formCard {
+  background: #ffffff;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.formTitle {
+  font-size: 20px;
+  font-weight: 600;
+  color: #4a4a4a;
+  margin-bottom: 20px;
+}
+
+.error {
+  color: #ff4d4f;
+  font-size: 12px;
+  margin-top: 5px;
+}
+
+.counterSection {
+  display: flex;
+  justify-content: space-between;
+  margin: 20px 0;
+}
+
+
+.counter {
+  flex: 1;
+  text-align: center;
+}
+.counterGroup{
+  display: flex;
+  
+}
+
+.counterControls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 8px;
+}
+
+.counterControls button {
+  background-color: #8a00c2;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  font-size: 16px;
+  cursor: pointer;
+  margin: 0 5px;
+  transition: background-color 0.3s ease;
+}
+
+.counterControls button:hover {
+  background-color: #9d23db;
+}
+
+.counterControls span {
+  font-size: 16px;
+  font-weight: bold;
+  color: #4a4a4a;
+  width: 30px;
+  text-align: center;
+}
+
+
+.counter label {
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 8px;
+}
+
+.checkboxContainer {
+  margin: 20px 0;
+}
+
+.checkboxLabel {
+  font-size: 14px;
+  color: #4a4a4a;
+  display: flex;
+  align-items: center;
+}
+
+.submitButtonContainer {
+  text-align: right;
+}
+
+.submitButton,.addButton {
+  padding: 10px 20px;
+  border-radius: 8px;
+  background-color: #8a00c2;
+  color: white;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.submitButton:hover {
+  background-color: #9d23db;
+}
+.addButtonContainer {
+  text-align: right;
+}
+
+.addButton {
+  background-color: #8a00c2;
+  border: none;
+  color: white;
+  padding: 8px 16px;
+  font-size: 16px;
+  border-radius: 8px;
+}
+
+.addButton:hover {
+  background-color: #a220e9;
+}
+
+.labelinput{
+  padding-bottom: 20px;
+}
+
+.dropdown_menu {
+  position: absolute;
+  z-index: 1000;
+  background: var(--color-bg-card, white); 
+  color: var(--color-text-primary, #4a4a4a); 
+  padding: 10px 15px;
+  border-radius: 4px;
+  margin-bottom: 20px; 
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); 
+}
+
+.dropdown_menu li {
+  padding: 8px 12px;
+  color: var(--color-text-primary, #4a4a4a);
+}
+
+.dropdown_menu li:hover {
+  background: var(--color-bg-hover, #f5f5f5);
+  color: var(--color-text-hover, #333333); 
+}
+
+.propertyCard {
+  border-radius: 12px;
+  overflow: hidden;
+  transition: box-shadow 0.3s ease, transform 0.3s ease;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  margin: 20px;
+}
+
+.propertyCard:hover {
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+  transform: translateY(-5px);
+}
+
+.propertyImage {
+  border-bottom: 1px solid #f0f0f0;
+  border-radius: 12px 12px 0 0;
+}
+
+.cardContent {
+  padding: 16px;
+}
+
+.propertyTitle {
+  font-size: 18px;
+  font-weight: 600;
+  color: #2c3e50;
+  margin-bottom: 8px;
+}
+
+.propertySeller,
+.propertyDetails,
+.propertyPrice {
+  font-size: 14px;
+  color: #7f8c8d;
+  margin: 4px 0;
+}
+
+.propertyPrice {
+  font-weight: 600;
+  color: #8a00c2;
+}
+
+.propertyTags {
+  margin-top: 12px;
+}
+
+.actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 16px;
+}
+
+.verifySwitch {
+  margin-right: 12px;
+}
+
+.addButton {
+  display: flex;
+  margin: 30px auto 0;
+  background-color: #8a00c2;
+  border: none;
+  color: white;
+  padding: 10px 20px;
+  font-size: 16px;
+  border-radius: 8px;
+  transition: background-color 0.3s ease;
+  justify-content: center;
+  align-items: center;
+
+}
+
+.addButton:hover {
+  background-color: #a220e9;
+}
+

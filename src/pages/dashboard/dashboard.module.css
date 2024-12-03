@@ -1,36 +1,107 @@
-.title h3 {
-  color: #14145D;
-  font-size: 24px;
-  margin-bottom: 10px;
-  margin-top: 0;
-  margin-left: 9px;
-  }
+.dashboardContainer {
+  padding: 20px;
+  background-color: #f8f9fc;
+  min-height: 100vh;
+  font-family: 'Inter', sans-serif;
+}
 
-  .card {
-    background: #fff;
-    box-shadow: 0px 0px 10px #ccc;
-    border-radius: 10px;
-    display: flex;
-    margin: 10px;
-    align-items: center;
-    justify-content: space-between;
-    padding: 14px
-  }
-  .card h4 {
-    font-size: 22px;
-    font-weight: 500;
-    color: #14145D;
-  }
-  .card span {
-    font-size: 16px;
-    background: #14145D;
-    color: #fff;
-    display: flex;
-    width: 64px;
-    text-align: center;
-    height: 63px;
-    align-items: center;
-    justify-content: center;
-    border-radius: 100%;
-    box-shadow: 0px 0px 5px #000;
-  }
+.header {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.datePickerWrapper {
+  margin-top: 16px;
+  text-align: center;
+}
+
+.statsRow {
+  margin-bottom: 32px;
+}
+
+.statsCard {
+  border-radius: 16px;
+  text-align: center;
+  padding: 24px;
+  background: linear-gradient(135deg, #7b2ff7, #d76d77);
+  color: white;
+  transition: transform 0.3s, box-shadow 0.3s;
+  position: relative;
+  overflow: hidden;
+}
+
+.statsCard::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: 50%;
+  width: 120%;
+  height: 120%;
+  background: rgba(255, 255, 255, 0.05);
+  transform: rotate(45deg);
+  transition: opacity 0.3s;
+}
+
+.statsCard:hover::after {
+  opacity: 0.1;
+}
+
+.statsCard:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+}
+
+.cardIcon{
+  font-size: 40px;
+  margin-bottom: 16px;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.contentRow {
+  margin-top: 32px;
+}
+
+.chartCard,
+.messagesCard,
+.transactionsCard {
+  border-radius: 16px;
+  padding: 24px;
+  background: #ffffff;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s;
+}
+
+.chartCard:hover,
+.messagesCard:hover,
+.transactionsCard:hover {
+  transform: translateY(-8px);
+}
+
+.messagesCard .ant-list-item {
+  border-bottom: 1px solid #f0f0f0;
+  padding: 16px 0;
+}
+
+.transactionsCard .ant-table-row {
+  transition: background-color 0.3s;
+}
+
+.transactionsCard .ant-table-row:hover {
+  background-color: rgba(31, 58, 147, 0.05);
+}
+
+.viewMoreBtn {
+  margin-top: 24px;
+  font-size: 16px;
+  font-weight: 500;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #7b2ff7, #d76d77);
+  color: white;
+  border: none;
+  transition: background 0.3s;
+}
+
+.viewMoreBtn:hover {
+  background: linear-gradient(28deg, #d76d77, #7b2ff7);
+  color: white;
+}

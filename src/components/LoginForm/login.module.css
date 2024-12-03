@@ -1,7 +1,7 @@
 
 .rightBody {
   display: flex;
-  background-color: #14145D;
+  background-color: #8A00C2;
   align-items: center;
   height: 100vh;
   justify-content: center;
@@ -18,7 +18,7 @@
   object-fit: contain;
 }
 .loginBox h3 {
-  color: #14145D;
+  color: #8A00C2;
   margin-top: 0;
   font-size: 36px;
 }
@@ -32,7 +32,7 @@
 }
 .loginBox label {
   font-weight: 500;
-  color: #14145D;
+  color: #8A00C2;
   display: block;
   margin: 7px 0;
   font-size: 16px;
@@ -48,7 +48,7 @@
 }
 .submitBtn {
   height: 55px;
-  background-color: #14145D;
+  background-color: #8A00C2;
   border-radius: 12px;
   border: 0;
 
