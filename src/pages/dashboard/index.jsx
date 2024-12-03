@@ -66,84 +66,103 @@ export default function Dashboard() {
 
   return (
     <LayoutHoc>
-  <div className={styles.dashboardContainer}>
-    {/* Header */}
-    <Row className={styles.header}>
-      <Col span={24}>
-        <Title level={3} style={{ color: '#1f3a93', fontWeight: 700 }}>
-          Welcome back, Malay!
-        </Title>
-        <Text type="secondary" style={{ fontSize: '16px', color: '#6c757d' }}>
-          Let’s explore your dashboard and manage properties efficiently.
-        </Text>
-        <div className={styles.datePickerWrapper}>
-          <DateRangePickerComponent />
-        </div>
-      </Col>
-    </Row>
+      <div className={styles.dashboardContainer}>
+        {/* Header */}
+        <Row className={styles.header}>
+          <Col span={24}>
+            <Title level={3} style={{ color: 'black', fontWeight: 700 }}>
+              Welcome back, Malay!
+            </Title>
+            <Text type="secondary" style={{ fontSize: '16px', color: '#6c757d' }}>
+              Let’s explore your dashboard and manage properties efficiently.
+            </Text>
+            <div className={styles.datePickerWrapper}>
+              <DateRangePickerComponent />
+            </div>
+          </Col>
+        </Row>
 
-    {/* Stats */}
-    <Row gutter={[16, 16]} className={styles.statsRow}>
-      {stats.map((stat) => (
-        <Col xs={24} sm={12} md={6} key={stat.id}>
-          <Card className={styles.statsCard}>
-            <div className={styles.cardIcon}>{stat.icon}</div>
-            <Title level={4} style={{ fontWeight: 700,color: 'white' }}>{stat.total}</Title>
-            <Text style={{ fontSize: '16px',color: 'white' }}>{stat.title}</Text>
-          </Card>
-        </Col>
-      ))}
-    </Row>
+        {/* Stats */}
+        <Row gutter={[24, 24]} className={styles.statsRow}>
+          {stats.map((stat) => (
+            <Col xs={24} sm={12} md={6} key={stat.id}>
+              <Card className={styles.statsCard}>
+                <div className={styles.cardContent}>
+                  <div className={styles.cardIcon}>{stat.icon}</div>
+                  <div className={styles.cardDetails}>
+                    <Title level={4} style={{ fontWeight: 700, marginBottom: 4 }}>
+                      {stat.total}
+                    </Title>
+                    <Text style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>
+                      {stat.title}
+                    </Text>
+                  </div>
+                </div>
+                <Text
+                  className={styles.cardChange}
+                  style={{
+                    color: stat.change > 0 ? 'var(--success-color)' : 'var(--error-color)',
+                  }}
+                >
+                  {stat.change > 0 ? `+${stat.change}%` : `${stat.change}%`}
+                </Text>
+              </Card>
+            </Col>
+          ))}
+        </Row>
 
-    {/* Content */}
-    <Row gutter={[24, 24]} className={styles.contentRow}>
-      {/* Graph Section */}
-      <Col xs={24} lg={12}>
-        <Card className={styles.chartCard}>
-          <Title level={4} style={{ fontWeight: 700 }}>Revenue Summary</Title>
-          {/* <Line data={chartData} /> */}
-        </Card>
-      </Col>
 
-      {/* Messages */}
-      <Col xs={24} lg={12}>
-        <Card className={styles.messagesCard}>
-          <Title level={4} style={{ fontWeight: 700 }}>New Messages</Title>
-          <List
-            itemLayout="horizontal"
-            dataSource={recentMessages}
-            renderItem={(item) => (
-              <List.Item>
-                <List.Item.Meta
-                  title={<>{item.name} <Text type="secondary">({item.propertyId})</Text></>}
-                  description={item.message}
-                />
-                <Text>{item.time}</Text>
-              </List.Item>
-            )}
-          />
-        </Card>
-      </Col>
-    </Row>
 
-    {/* Transactions */}
-    <Row gutter={[24, 24]} className={styles.contentRow}>
-      <Col span={24}>
-        <Card className={styles.transactionsCard}>
-          <Title level={4} style={{ fontWeight: 700 }}>Transactions</Title>
-          <Table
-            dataSource={transactions}
-            columns={transactionColumns}
-            pagination={false}
-          />
-          <Button type="primary" block className={styles.viewMoreBtn}>
-            View All
-          </Button>
-        </Card>
-      </Col>
-    </Row>
-  </div>
-</LayoutHoc>
+        {/* Content */}
+        <Row gutter={[24, 24]} className={styles.contentRow}>
+          {/* Graph Section */}
+          <Col xs={24} lg={12}>
+            <Card className={styles.chartCard}>
+              <Title level={4} style={{ fontWeight: 700 }}>Revenue Summary</Title>
+              <img src='/images/image.png' width="100%"></img>
+              {/* <Line data={chartData} /> */}
+            </Card>
+          </Col>
+
+          {/* Messages */}
+          <Col xs={24} lg={12}>
+            <Card className={styles.messagesCard}>
+              <Title level={4} style={{ fontWeight: 700 }}>New Messages</Title>
+              <List
+                itemLayout="horizontal"
+                dataSource={recentMessages}
+                renderItem={(item) => (
+                  <List.Item>
+                    <List.Item.Meta
+                      title={<>{item.name} <Text type="secondary">({item.propertyId})</Text></>}
+                      description={item.message}
+                    />
+                    <Text>{item.time}</Text>
+                  </List.Item>
+                )}
+              />
+            </Card>
+          </Col>
+        </Row>
+
+        {/* Transactions */}
+        <Row gutter={[24, 24]} className={styles.contentRow}>
+          <Col span={24}>
+            <Card className={styles.transactionsCard}>
+              <Title level={4} style={{ fontWeight: 700 }}>Transactions</Title>
+              <Table
+                dataSource={transactions}
+                columns={transactionColumns}
+                pagination={false}
+              />
+              <Button type="primary" block className={styles.viewMoreBtn}>
+                View All
+              </Button>
+            </Card>
+          </Col>
+        </Row>
+      </div>
+    </LayoutHoc>
 
   );
 }

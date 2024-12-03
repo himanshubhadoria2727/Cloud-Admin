@@ -20,46 +20,65 @@
 }
 
 .statsCard {
-  border-radius: 16px;
-  text-align: center;
-  padding: 24px;
-  background: linear-gradient(135deg, #7b2ff7, #d76d77);
-  color: white;
-  transition: transform 0.3s, box-shadow 0.3s;
+  border-radius: 12px; /* Slightly rounded */
+  padding: 20px;
+  background-color: var(--card-bg); /* Global card background */
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.1);
+  color: var(--text-primary); /* Global text color */
   position: relative;
   overflow: hidden;
-}
-
-.statsCard::after {
-  content: '';
-  position: absolute;
-  top: -50%;
-  left: 50%;
-  width: 120%;
-  height: 120%;
-  background: rgba(255, 255, 255, 0.05);
-  transform: rotate(45deg);
-  transition: opacity 0.3s;
-}
-
-.statsCard:hover::after {
-  opacity: 0.1;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  text-align: left;
 }
 
 .statsCard:hover {
   transform: translateY(-8px);
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.15);
 }
 
-.cardIcon{
+.cardContent {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px; /* Added spacing for modern layout */
+}
+
+.cardIcon {
   font-size: 40px;
-  margin-bottom: 16px;
-  color: rgba(255, 255, 255, 0.85);
+  background-color: #4FD1C5;
+  padding: 16px;
+  border-radius: 8px; /* Square shape */
+  color: white;
+  flex-shrink: 0; /* Prevent icon resizing */
 }
 
-.contentRow {
+.cardDetails {
+  flex-grow: 1;
+}
+
+.cardDetails .ant-typography-title {
+  margin-bottom: 4px;
+  color: var(--text-primary); /* Consistent with theme */
+  font-weight: 700;
+}
+
+.cardDetails .ant-typography {
+  color: var(--text-secondary); /* Subtle for secondary text */
+}
+
+.cardChange {
+  position: absolute;
+  bottom: 16px;
+  right: 16px;
+  font-weight: 600;
+  font-size: 14px;
+  color: inherit;
+}
+
+.statsRow {
   margin-top: 32px;
 }
+
 
 .chartCard,
 .messagesCard,
@@ -95,13 +114,18 @@
   font-size: 16px;
   font-weight: 500;
   border-radius: 12px;
-  background: linear-gradient(135deg, #7b2ff7, #d76d77);
+  background: linear-gradient(135deg, #4FD1C5, #56D4C9);
   color: white;
   border: none;
   transition: background 0.3s;
 }
 
 .viewMoreBtn:hover {
-  background: linear-gradient(28deg, #d76d77, #7b2ff7);
+  background: linear-gradient(28deg, #56D4C9, #4FD1C5);
   color: white;
 }
+
+.contentRow {
+  margin-top: 32px;
+}
+

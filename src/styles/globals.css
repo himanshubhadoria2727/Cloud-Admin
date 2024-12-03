@@ -97,7 +97,7 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   background-color: transparent !important;
 }
 .ant-layout-sider-children {
-  background: linear-gradient(180deg, #8A00C2 0%, #000 100%)!important;
+  background: linear-gradient(180deg, #E5E5E5 0%, #000 100%)!important;
 }
 .searchCountry .ant-select-selector {
   border-radius: 12px!important;
@@ -185,10 +185,10 @@ aside.ant-layout-sider {
   z-index: 99;
 }
 .btn.submit {
-  background: #8A00C2 !important;
+  background: #E5E5E5 !important;
   color: #fff!important;
   border-radius: 5px !important;
-  border: 1px solid #8A00C2 !important;
+  border: 1px solid #E5E5E5 !important;
   width: 144px;
   height: 48px;
   text-align: center !important;
@@ -251,7 +251,7 @@ aside.ant-layout-sider {
   box-shadow: 0px 10px 30px 0px rgba(41, 17, 80, 0.05);
 }
 .ant-menu-item.active {
-  background: #DEE1D3!important;
+  background: #4FD1C5!important;
   font-family: 'League Spartan', sans-serif !important;
   box-shadow: 0px 2px 4px 0px #8A92A64D !important;
   border-radius: 4px!important;
@@ -269,23 +269,23 @@ aside.ant-layout-sider {
 }
 
 .ant-menu-item.active  a {
-  color: #DC143C!important;
+  color: black!important;
 }
 .ant-menu-item.active svg path {
-  fill: #DC143C !important;
+  fill: black !important;
 }
 .ant-menu-item span {
-  color: #fff !important;
+  color: black !important;
 }
 
 .ant-layout-sider-children {
-  background:#8A00C2 !important;
+  background:#E5E5E5 !important;
 }
 .ant-menu {
-  background: #8A00C2 !important;
+  background: #E5E5E5 !important;
 }
 .ant-menu-item svg path {
-  fill: #fff!important;
+  fill: #4FD1C5!important;
 }
 
 .ant-steps-item-container>.ant-steps-item-tail::after {

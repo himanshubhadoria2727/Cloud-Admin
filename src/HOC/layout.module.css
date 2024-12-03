@@ -1,15 +1,17 @@
 .Header {
   box-shadow: 9px 0px 10px #ccc;
-  background-color: #8A00C2;
+  background-color: #E5E5E5;
   position: fixed;
   width: 100%;
   z-index: 9;
-  color: #fff;
+  color: black;
 }
 .logoTitle {
-  color: #fff;
-  font-size: 25px;
+  color: black;
+  font-size: 17px;
   text-transform: uppercase;
+  padding-top: 10px;
+  padding-bottom: 20px;
 }
 .dropdownList {
   width: 130px;
@@ -115,7 +117,7 @@
 /* Notification icon styling */
 .notificationIcon {
   font-size: 20px;
-  color: white;
+  color: black;
   cursor: pointer;
 }
 

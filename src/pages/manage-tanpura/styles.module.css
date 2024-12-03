@@ -1,5 +1,5 @@
 .title h3 {
-    color: #8A00C2;
+    color: #E5E5E5;
     font-size: 24px;
     margin-top: 0;
     margin-bottom: 0px;
@@ -28,7 +28,7 @@
 .rowTag button {
   border-radius: 5px;
     height: 38px;
-    background: #8A00C2;
+    background: #E5E5E5;
     border: 0;
     font-size: 16px!important;
     color: #fff!important;
@@ -36,7 +36,7 @@
 .title button {
   border-radius: 5px;
   height: 38px;
-  background: #8A00C2;
+  background: #E5E5E5;
   border: 0;
   font-size: 16px !important;
   color: #fff !important;
