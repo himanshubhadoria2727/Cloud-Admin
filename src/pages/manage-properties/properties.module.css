@@ -137,6 +137,9 @@
 .labelinput{
   padding-bottom: 20px;
 }
+.largeTextarea{
+  padding-bottom: 20px;
+}
 
 .dropdown_menu {
   position: absolute;
@@ -231,4 +234,108 @@
 }
 .dropdown{
   color: #2c3e50;
+}
+
+.amenitiesGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px; /* Adjust spacing between checkboxes */
+  margin-top: 16px; /* Add space above the grid */
+  padding-bottom: 20px;
+}
+
+.amenityItem {
+  display: flex;
+  align-items: center;
+}
+
+.checkboxLabel {
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  cursor: pointer;
+  padding: 8px 12px;
+  border: 1px solid var(--border-color); /* Use your theme variables */
+  border-radius: 8px;
+  transition: 0.2s ease;
+  background-color: var(--card-bg);
+}
+
+.checkboxLabel:hover {
+  background-color: var(--hover-bg); /* Add hover effect for a premium look */
+  border-color: var(--hover-border-color);
+}
+
+.checkboxLabel input {
+  margin-right: 8px;
+}
+.photoUploadSection {
+  margin-bottom: 24px;
+}
+
+.photoUploadGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 16px;
+}
+
+.photoUploadBox {
+  position: relative;
+  border: 2px dashed #d9d9d9;
+  border-radius: 8px;
+  height: 150px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  text-align: center;
+  padding: 8px;
+  background: #f9f9f9;
+}
+
+.photoUploadBox:hover {
+  border-color: #40a9ff;
+}
+
+.photoUploadPlaceholder {
+  color: #a0a0a0;
+  font-size: 14px;
+}
+
+.uploadIcon {
+  font-size: 24px;
+  margin-bottom: 8px;
+}
+
+.preview {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.removeButton {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: rgba(0, 0, 0, 0.6);
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.removeButton:hover {
+  background: rgba(0, 0, 0, 0.8);
 }

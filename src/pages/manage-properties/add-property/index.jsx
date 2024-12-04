@@ -70,12 +70,12 @@ export default function AddProperty() {
             ownership: false,
             renterAgreement: false,
             landlordInsurance: false,
-            amenities: [], // Initialize as an empty array
+            amenities: [],
+            photos: Array(10).fill(null), 
           }}
           validationSchema={validationSchema}
           onSubmit={handleSubmit}
         >
-
           {({ values, setFieldValue }) => (
             <Form className={styles.formCard}>
               <h3 className={styles.formTitle}>Description</h3>
@@ -175,31 +175,98 @@ export default function AddProperty() {
               </div>
 
               {/* Amenities Section */}
-              <h3 className={styles.formTitle}>What Amenities Does Your Home Have?</h3>
-              <div className={styles.amenitiesContainer}>
+              <h3 className={styles.formTitle}>Amenities</h3>
+              <div className={styles.amenitiesGrid}>
                 {amenitiesList.map((amenity, index) => (
-                  <label key={index} className={styles.checkboxLabel}>
-                    <input
-                      type="checkbox"
-                      name="amenities"
-                      value={amenity}
-                      checked={values.amenities.includes(amenity)}
-                      onChange={(e) => {
-                        if (e.target.checked) {
-                          setFieldValue("amenities", [...values.amenities, amenity]);
-                        } else {
-                          setFieldValue(
-                            "amenities",
-                            values.amenities.filter((item) => item !== amenity)
-                          );
-                        }
-                      }}
-                    />
-                    {amenity}
-                  </label>
+                  <div className={styles.amenityItem} key={index}>
+                    <label className={styles.checkboxLabel}>
+                      <input
+                        type="checkbox"
+                        name="amenities"
+                        value={amenity}
+                        checked={values.amenities.includes(amenity)}
+                        onChange={() => {
+                          const newAmenities = values.amenities.includes(amenity)
+                            ? values.amenities.filter((item) => item !== amenity)
+                            : [...values.amenities, amenity];
+                          setFieldValue("amenities", newAmenities);
+                        }}
+                      />
+                      {amenity}
+                    </label>
+                  </div>
                 ))}
               </div>
               <ErrorMessage name="amenities">
+                {(msg) => <div className={styles.error}>{msg}</div>}
+              </ErrorMessage>
+
+              {/* House Rules Section */}
+              <h3 className={styles.formTitle}>House Rules</h3>
+              <LabelInputComponent
+                name="houseRules"
+                title="House Rules"
+                placeholder="Describe your house rules"
+                textarea
+                className={styles.largeTextarea}
+              />
+              <ErrorMessage name="houseRules">
+                {(msg) => <div className={styles.error}>{msg}</div>}
+              </ErrorMessage>
+
+              {/* Address Section */}
+              <h3 className={styles.formTitle}>Location</h3>
+              <LabelInputComponent
+                name="address"
+                title="Address"
+                placeholder="Enter your address..."
+                textarea
+                className={styles.labelinput}
+              />
+
+              <LabelInputComponent
+                name="apartment"
+                title="Apartment, suit, building, flat no. etc (optional)"
+                placeholder="Enter your apartment, suit, building, flat no. etc"
+                textarea
+                className={styles.labelinput}
+              />
+
+              <Row gutter={16}>
+                <Col span={12}>
+                  <LabelInputComponent
+                    name="longitude"
+                    title="Longitude"
+                    placeholder="Enter longitude"
+                    className={styles.labelinput}
+                  />
+                  <ErrorMessage name="longitude">
+                    {(msg) => <div className={styles.error}>{msg}</div>}
+                  </ErrorMessage>
+                </Col>
+                <Col span={12}>
+                  <LabelInputComponent
+                    name="latitude"
+                    title="Latitude"
+                    placeholder="Enter latitude"
+                    className={styles.labelinput}
+                  />
+                  <ErrorMessage name="latitude">
+                    {(msg) => <div className={styles.error}>{msg}</div>}
+                  </ErrorMessage>
+                </Col>
+              </Row>
+
+              {/* House Rules Section */}
+              <h3 className={styles.formTitle}>Pricing</h3>
+              <LabelInputComponent
+                name="pricing"
+                title="Write in your fare market value"
+                placeholder="Let us know the fair market value today"
+                textarea
+                className={styles.largeTextarea}
+              />
+              <ErrorMessage name="pricing">
                 {(msg) => <div className={styles.error}>{msg}</div>}
               </ErrorMessage>
 
@@ -233,6 +300,55 @@ export default function AddProperty() {
                   I certify that I have landlord insurance on this property.
                 </label>
               </div>
+
+              {/* Add Photos Section */}
+              <h3 className={styles.formTitle}>Photos (minimum add 2 photos)</h3>
+              <div className={styles.photoUploadSection}>
+                <div className={styles.photoUploadGrid}>
+                  {Array.from({ length: 10 }).map((_, index) => (
+                    <div className={styles.photoUploadBox} key={index}>
+                      <label>
+                        <input
+                          type="file"
+                          name={`photos[${index}]`}
+                          accept="image/jpeg, image/png, image/gif"
+                          onChange={(event) => {
+                            const file = event.target.files[0];
+                            if (file) {
+                              setFieldValue(`photos.${index}`, file);
+                            }
+                          }}
+                          style={{ display: "none" }}
+                        />
+                        <div className={styles.photoUploadPlaceholder}>
+                          <span className={styles.uploadIcon}>📤</span>
+                          <p>Choose an image</p>
+                          <p>JPG, PNG, GIF, Max 10 MB</p>
+                        </div>
+                      </label>
+                      {values.photos[index] && (
+                        <div className={styles.preview}>
+                          <img
+                            src={URL.createObjectURL(values.photos[index])}
+                            alt={`Preview ${index + 1}`}
+                          />
+                          <button
+                            type="button"
+                            className={styles.removeButton}
+                            onClick={() => setFieldValue(`photos.${index}`, null)}
+                          >
+                            ✖
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+                <ErrorMessage name="photos">
+                  {(msg) => <div className={styles.error}>{msg}</div>}
+                </ErrorMessage>
+              </div>
+
 
               <div className={styles.submitButtonContainer}>
                 <FilledButtonComponent className={styles.submitButton} type="submit">
