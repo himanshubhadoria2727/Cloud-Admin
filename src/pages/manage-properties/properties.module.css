@@ -16,6 +16,9 @@
   padding: 30px;
   border-radius: 12px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
 .formTitle {
@@ -178,21 +181,31 @@
 .propertyTitle {
   font-size: 18px;
   font-weight: 600;
+  margin-top: -10px;
   color: #2c3e50;
+}
+.location {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 15px;
+  margin-top: -15px;
+  font-weight: 600;
+  color: #2c3e50;
+  border-bottom: 2px solid #f0f0f0;
   margin-bottom: 8px;
 }
 
 .propertySeller,
 .propertyDetails,
 .propertyPrice {
-  font-size: 14px;
-  color: #7f8c8d;
+  font-size: 15px;
+  color:rgb(73, 74, 74);
   margin: 4px 0;
 }
 
 .propertyPrice {
   font-weight: 600;
-  color: #E5E5E5;
 }
 
 .propertyTags {

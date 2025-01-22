@@ -7,7 +7,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { IMAGES } from "@/assest/images";
 import FilledButtonComponent from "@/components/Button";
-import { delTabla, getTabla } from "@/api/tabla";
 import Swal from "sweetalert2";
 import { deleteAlertContext } from "@/HOC/alert";
 

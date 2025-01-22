@@ -5,10 +5,10 @@ import LabelInputComponent from "../TextFields/labelInput";
 import FilledButtonComponent from "../Button";
 import Link from "next/link";
 import Image from "next/image";
-import { IMAGES } from "@/assest/images";
+import { IMAGES } from "../../assest/images";
 import { Formik, Form, Field, ErrorMessage, useFormikContext } from "formik";
 import * as yup from "yup";
-import { login } from "@/api/login";
+import { login } from "../../api/login";
 import { toast } from "react-toastify";
 import { useRouter } from "next/router";
 

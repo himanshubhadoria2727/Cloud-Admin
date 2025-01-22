@@ -1,76 +1,62 @@
-import React, { useEffect, useState } from "react";
+"use client";
+
+import React from "react";
 import { Formik, Form, ErrorMessage } from "formik";
 import * as Yup from "yup";
-import LayoutHoc from "@/HOC/LayoutHoc";
+import LayoutHoc from "../../../HOC/LayoutHoc";
 import styles from "../properties.module.css";
 import { Col, Row, Select } from "antd";
-import LabelInputComponent from "@/components/TextFields/labelInput";
+import LabelInputComponent from "../../../components/TextFields/labelInput";
 import { FaBed, FaBath, FaHome, FaBuilding, FaWarehouse } from "react-icons/fa";
 import {
   useGetPropertiesQuery,
-  useCreatePropertyMutation,
+  useEditPropertyMutation,
 } from "../../../redux/slices/apiSlice";
-import { useRouter } from "next/navigation";
+import { useRouter } from "next/router";
 import { toast } from "react-toastify";
 import MyQuillEditor from "../../../components/TextFields/textArea";
 
 const { Option } = Select;
 
 export default function AddProperty() {
+  const [editProperty] = useEditPropertyMutation();
   const router = useRouter();
-  const { id } = router.query || {};
-  const [createProperty] = useCreatePropertyMutation();
+  const { id } = router.query;
 
+  // Check if id is defined before fetching property details
   const {
-    data: property,
+    data: propertyDetails,
     isLoading,
     error,
   } = useGetPropertiesQuery(id ? { id } : null);
 
-  const [initialValues, setInitialValues] = useState({
-    propertyName: "",
-    squareFootage: "",
-    description: "",
-    homeType: "",
-    bedrooms: 0,
-    bathrooms: 0,
-    kitchens: 0,
-    ownership: false,
-    renterAgreement: false,
-    landlordInsurance: false,
-    amenities: [],
-    photos: Array(10).fill(null),
-    pricing: "",
-    latitude: "",
-    longitude: "",
-    location: "",
-    rentDetails: "Details about rent",
-    termsOfStay: "Terms of stay",
-  });
+  if (isLoading) return <div>Loading...</div>;
+  if (error) return <div>Error fetching property details</div>;
 
-  useEffect(() => {
-    if (property) {
-      setInitialValues({
-        propertyName: property.title || "",
-        squareFootage: property.squareFootage || "",
-        description: property.description || "",
-        homeType: property.type || "",
-        bedrooms: property.overview?.bedrooms || 0,
-        bathrooms: property.overview?.bathrooms || 0,
-        kitchens: property.overview?.kitchen || 0,
-        ownership: property.ownership || false,
-        renterAgreement: property.renterAgreement || false,
-        landlordInsurance: property.landlordInsurance || false,
-        amenities: property.amenities || [],
-        photos: property.images || Array(10).fill(null),
-        pricing: property.price || "",
-        latitude: property.latitude || "",
-        city: property.city || "",
-        longitude: property.longitude || "",
-        location: property.location || "",
-      });
-    }
-  }, [property]);
+  // Assuming propertyDetails is an array, take the first item
+  const property = propertyDetails[0];
+
+  const initialValues = {
+    propertyName: property?.title || "",
+    squareFootage: property?.overview?.squareFeet || "",
+    description: property?.description || "",
+    homeType: property?.type || "",
+    bedrooms: property?.overview?.bedrooms || 0,
+    bathrooms: property?.overview?.bathrooms || 0,
+    kitchens: property?.overview?.kitchen || 0,
+    ownership: false, // Assuming this is not part of the fetched data
+    renterAgreement: false, // Assuming this is not part of the fetched data
+    landlordInsurance: false, // Assuming this is not part of the fetched data
+    amenities: property?.amenities ? JSON.parse(property.amenities[0]) : [], // Parse the amenities
+    photos: property?.images || Array(10).fill(null), // Initialize with fetched image URLs or nulls
+    pricing: property?.price || "",
+    latitude: property?.latitude || "",
+    longitude: property?.longitude || "",
+    location: property?.location || "",
+    city: property?.city || "",
+    rentDetails: property?.rentDetails, // Add default value
+    termsOfStay: property?.termsOfStay, // Add default value
+  };
 
   const validationSchema = Yup.object().shape({
     propertyName: Yup.string().required("Property name is required"),
@@ -94,8 +80,6 @@ export default function AddProperty() {
     longitude: Yup.number().required("Longitude is required"),
     location: Yup.string().required("Address is required"),
     city: Yup.string().required("City is required"),
-    rentDetails: Yup.string().required("Rent details are required"),
-    termsOfStay: Yup.string().required("Terms of stay are required"),
   });
 
   const amenitiesList = [
@@ -123,59 +107,58 @@ export default function AddProperty() {
   const handleSubmit = async (values, { setSubmitting, setErrors }) => {
     console.log("submit is pressed");
 
-    // Create a FormData instance
-    const formData = new FormData();
-
-    // Add basic property details
-    formData.append("title", values.propertyName);
-    formData.append("squareFootage", values.squareFootage);
-    formData.append("description", values.description);
-    formData.append("price", values.pricing);
-    formData.append("latitude", values.latitude);
-    formData.append("longitude", values.longitude);
-    formData.append("type", values.homeType);
-    formData.append("location", values.location);
-    formData.append("city", values.city);
-    // Add amenities as JSON string
-    formData.append("amenities", JSON.stringify(values.amenities || []));
-
-    // Create and add overview object as JSON string
-    const overview = {
-      bedrooms: parseInt(values.bedrooms),
-      bathrooms: parseInt(values.bathrooms),
-      squareFeet: parseInt(values.squareFootage),
-      kitchen: values.kitchens,
-      yearOfConstruction: new Date().getFullYear(),
-    };
-    formData.append("overview", JSON.stringify(overview));
-
-    // Add required string fields with default values if not provided
-    formData.append("rentDetails", values.rentDetails || "Details about rent");
-    formData.append("termsOfStay", values.termsOfStay || "Terms of stay");
-
-    // Add images - filter out null values and append each valid image
-    const validPhotos = values.photos.filter((photo) => photo !== null);
-    validPhotos.forEach((photo, index) => {
-      formData.append("images", photo);
-    });
-
     try {
-      const result = await createProperty(formData).unwrap();
-      console.log("Property created successfully:", result);
-      toast.success("Property created successfully");
+      const formData = new FormData();
+
+      // Add basic property details
+      formData.append("title", values.propertyName);
+      formData.append("squareFootage", values.squareFootage);
+      formData.append("description", values.description);
+      formData.append("price", values.pricing);
+      formData.append("latitude", values.latitude);
+      formData.append("longitude", values.longitude);
+      formData.append("type", values.homeType);
+      formData.append("location", values.location);
+      formData.append("city", values.city);
+      // Add amenities as JSON string
+      formData.append("amenities", JSON.stringify(values.amenities || []));
+
+      // Create and add overview object as JSON string
+      const overview = {
+        bedrooms: parseInt(values.bedrooms),
+        bathrooms: parseInt(values.bathrooms),
+        squareFeet: parseInt(values.squareFootage),
+        kitchen: values.kitchens,
+        yearOfConstruction: new Date().getFullYear(),
+      };
+      formData.append("overview", JSON.stringify(overview));
+
+      // Add required string fields with default values if not provided
+      formData.append(
+        "rentDetails",
+        values.rentDetails || "Details about rent"
+      );
+      formData.append("termsOfStay", values.termsOfStay || "Terms of stay");
+
+      // Add images - filter out null values and append each valid image
+      const validPhotos = values.photos.filter((photo) => photo !== null);
+      validPhotos.forEach((photo) => {
+        formData.append("images", photo);
+      });
+
+      const result = await editProperty({ id, data: formData }).unwrap();
+      console.log("Property updated successfully:", result);
+      toast.success("Property updated successfully");
       router.back();
     } catch (error) {
-      console.error("Failed to create property:", error);
-      const errorMessage = error.data?.message || "Failed to create property";
+      console.error("Failed to update property:", error);
+      const errorMessage = error.data?.message || "Failed to update property";
       setErrors({ submit: errorMessage });
       toast.error(errorMessage);
     } finally {
       setSubmitting(false);
     }
   };
-
-  if (isLoading) return <p>Loading...</p>;
-  if (error) return <p>Error loading property: {error.message}</p>;
 
   return (
     <LayoutHoc>
@@ -185,11 +168,10 @@ export default function AddProperty() {
           initialValues={initialValues}
           validationSchema={validationSchema}
           onSubmit={handleSubmit}
-          enableReinitialize
         >
           {({ values, setFieldValue }) => (
             <Form className={styles.formCard}>
-              <h3 className={styles.formTitle}>Basic Details</h3>
+              <h3 className={styles.formTitle}>Description</h3>
               <Row gutter={16}>
                 <Col span={12}>
                   <LabelInputComponent
@@ -214,10 +196,13 @@ export default function AddProperty() {
                   </ErrorMessage>
                 </Col>
               </Row>
-              <MyQuillEditor
-                label="Description"
+
+              <LabelInputComponent
                 name="description"
-                setFieldValue={setFieldValue}
+                title="Description"
+                placeholder="Describe your home"
+                textarea
+                className={styles.labelinput}
               />
               <ErrorMessage name="description">
                 {(msg) => <div className={styles.error}>{msg}</div>}
@@ -332,6 +317,7 @@ export default function AddProperty() {
                 textarea
                 className={styles.labelinput}
               />
+
               <LabelInputComponent
                 name="city"
                 title="City"
@@ -339,6 +325,7 @@ export default function AddProperty() {
                 textarea
                 className={styles.labelinput}
               />
+
               <Row gutter={16}>
                 <Col span={12}>
                   <LabelInputComponent
@@ -364,11 +351,11 @@ export default function AddProperty() {
                 </Col>
               </Row>
 
-              {/* Pricing Section */}
+              {/* House Rules Section */}
               <h3 className={styles.formTitle}>Pricing</h3>
               <LabelInputComponent
                 name="pricing"
-                title="Write in your fair market value"
+                title="Write in your fare market value"
                 placeholder="Let us know the fair market value today"
                 textarea
                 className={styles.largeTextarea}
@@ -471,7 +458,12 @@ export default function AddProperty() {
                       {values.photos[index] && (
                         <div className={styles.preview}>
                           <img
-                            src={URL.createObjectURL(values.photos[index])}
+                            // Add a guard clause
+                            src={
+                              typeof values.photos[index] === "string"
+                                ? values.photos[index]
+                                : URL.createObjectURL(values.photos[index])
+                            }
                             alt={`Preview ${index + 1}`}
                           />
                           <button
