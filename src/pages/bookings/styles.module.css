@@ -1,0 +1,50 @@
+.title {
+  margin-bottom: 20px;
+  padding: 10px;
+  background-color: #f5f5f5;
+  border-radius: 4px;
+}
+
+.title h3 {
+  margin: 0;
+  font-size: 24px;
+  color: #333;
+}
+
+.tableBox {
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.statusTag {
+  border-radius: 4px;
+  padding: 2px 8px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.statusPending {
+  background-color: #faad14;
+  color: white;
+}
+
+.statusConfirmed {
+  background-color: #52c41a;
+  color: white;
+}
+
+.statusCancelled {
+  background-color: #f5222d;
+  color: white;
+}
+
+.actionButton {
+  margin-right: 8px;
+}
+
+.modalSelect {
+  width: 100%;
+  margin-bottom: 16px;
+} 

@@ -1,4 +1,4 @@
-import LayoutHoc from "@/HOC/LayoutHoc";
+import LayoutHoc from "../../HOC/LayoutHoc";
 import {
   Row,
   Col,
@@ -106,7 +106,7 @@ export default function ManageProperties() {
         <Row gutter={[16, 16]}>
           {paginatedProperties.map((property) => (
             <Col xs={24} sm={12} lg={8} key={property.id}>
-              <Card hoverable className={styles.propertyCard}>
+              <div hoverable className={styles.propertyCard}>
                 <ImageSlider images={property.images} />
                 <div className={styles.cardContent}>
                   <h3 className={styles.propertyTitle}>{property.title} </h3>
@@ -158,7 +158,7 @@ export default function ManageProperties() {
                     </Button>
                   </div>
                 </div>
-              </Card>
+              </div>
             </Col>
           ))}
         </Row>

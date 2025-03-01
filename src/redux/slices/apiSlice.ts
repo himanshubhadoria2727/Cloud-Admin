@@ -19,7 +19,7 @@ export const apiSlice = createApi({
 
     const baseQuery = fetchBaseQuery({
       //  baseUrl: 'http://digimonk.net:2783/api',
-      baseUrl: "http://localhost:8000/api",
+      baseUrl: `${process.env.NEXT_PUBLIC_REST_API_ENDPOINT}/api`,
       prepareHeaders: (headers) => {
         if (token) {
           headers.set("Authorization", token);
@@ -49,7 +49,7 @@ export const apiSlice = createApi({
     return result;
   },
 
-  tagTypes: ["User", "Auth", "Property"], // Add tag types for invalidation
+  tagTypes: ["User", "Auth", "Property", "Booking", "Enquiry", "Content", "Category"], // Updated tag types
   endpoints: (builder) => ({
     register: builder.mutation({
       query: (userData) => ({
@@ -87,6 +87,16 @@ export const apiSlice = createApi({
         method: "POST",
         body: equiryDetails,
       }),
+      // Add invalidation tag for Enquiry
+      invalidatesTags: ["Enquiry"],
+    }),
+    createBooking: builder.mutation({
+      query: (bookingData) => ({
+        url: "/booking/create",
+        method: "POST",
+        body: bookingData,
+      }),
+      invalidatesTags: ["Booking"],
     }),
     verifyOtp: builder.mutation({
       query: (otp) => ({
@@ -112,6 +122,7 @@ export const apiSlice = createApi({
     }),
     getContent: builder.query({
       query: () => `/content/allContent`,
+      providesTags: ["Content"],
     }),
     getMySubscriptions: builder.query({
       query: () => `/user/mySubscription`,
@@ -138,7 +149,7 @@ export const apiSlice = createApi({
       invalidatesTags: ["User"],
     }),
 
-    // New property-related endpoints
+    // Property-related endpoints
     createProperty: builder.mutation({
       query: (formdata) => ({
         url: "/property",
@@ -154,6 +165,10 @@ export const apiSlice = createApi({
       }),
       providesTags: ["Property"], // Tag this endpoint for future invalidation
     }),
+    getPropertyById: builder.query({
+      query: (id) => `/property/${id}`,
+      providesTags: (result, error, id) => [{ type: 'Property', id }],
+    }),
     editProperty: builder.mutation({
       query: ({ id, data }) => ({
         url: `/property/${id}`,
@@ -162,12 +177,93 @@ export const apiSlice = createApi({
       }),
       invalidatesTags: ["Property"], // Invalidate Property tag after editing
     }),
+    updateProperty: builder.mutation({
+      query: ({ id, ...data }) => ({
+        url: `/property/${id}`,
+        method: 'PATCH',
+        body: data,
+      }),
+      invalidatesTags: (result, error, { id }) => [
+        { type: 'Property', id },
+        'Property',
+      ],
+    }),
     deleteProperty: builder.mutation({
       query: (id) => ({
         url: `/property/${id}`,
         method: "DELETE",
       }),
       invalidatesTags: ["Property"], // Invalidate Property tag after deleting
+    }),
+
+    // Booking endpoints
+    getBookings: builder.query({
+      query: () => '/booking/all',
+      providesTags: ['Booking'],
+    }),
+    getBookingById: builder.query({
+      query: (id) => `/booking/${id}`,
+      providesTags: (result, error, id) => [{ type: 'Booking', id }],
+    }),
+    updateBookingStatus: builder.mutation({
+      query: ({ id, status }) => ({
+        url: `/booking/${id}/status`,
+        method: 'PUT',
+        body: { status },
+      }),
+      invalidatesTags: (result, error, { id }) => [
+        { type: 'Booking', id },
+        'Booking',
+      ],
+    }),
+    deleteBooking: builder.mutation({
+      query: (id) => ({
+        url: `/booking/${id}`,
+        method: 'DELETE',
+      }),
+      invalidatesTags: ['Booking'],
+    }),
+    
+    // Enquiry endpoints
+    getEnquiries: builder.query({
+      query: () => '/enquiry/getEnquiries',
+      providesTags: ['Enquiry'],
+    }),
+    
+    // Content endpoints
+    updateContent: builder.mutation({
+      query: ({ id, ...data }) => ({
+        url: `/content/${id}`,
+        method: 'PUT',
+        body: data,
+      }),
+      invalidatesTags: ['Content'],
+    }),
+    
+    // Category endpoints
+    getCategories: builder.query({
+      query: () => '/category/getCategory',
+      providesTags: ['Category'],
+    }),
+
+    // Dashboard analytics endpoints
+    getDashboardStats: builder.query({
+      query: (dateParams) => ({
+        url: "/analytics/dashboard-stats",
+        params: dateParams,
+      }),
+    }),
+    getRevenueData: builder.query({
+      query: (dateParams) => ({
+        url: "/analytics/revenue-data",
+        params: dateParams,
+      }),
+    }),
+    getRecentMessages: builder.query({
+      query: () => "/analytics/recent-messages",
+    }),
+    getRecentTransactions: builder.query({
+      query: () => "/analytics/recent-transactions",
     }),
   }),
 });
@@ -178,6 +274,7 @@ export const {
   useGetUserDetailsQuery,
   useSaveUserDetailsMutation,
   useSubmitEnquiryMutation,
+  useCreateBookingMutation,
   useVerifyOtpMutation,
   useGetCategoryQuery,
   useGetPlansQuery,
@@ -188,10 +285,25 @@ export const {
   useGetUserPlanQuery,
   useCreateSubscriptionMutation,
   useDeleteUserMutation,
-  useCreatePropertyMutation, // New hook for creating property
-  useGetPropertiesQuery, // New hook for fetching properties
-  useEditPropertyMutation, // New hook for editing property
-  useDeletePropertyMutation, // New hook for deleting property
+  useCreatePropertyMutation,
+  useGetPropertiesQuery,
+  useGetPropertyByIdQuery,
+  useEditPropertyMutation,
+  useUpdatePropertyMutation,
+  useDeletePropertyMutation,
+  useGetBookingsQuery,
+  useGetBookingByIdQuery,
+  useUpdateBookingStatusMutation,
+  useDeleteBookingMutation,
+  useGetEnquiriesQuery,
+  useUpdateContentMutation,
+  useGetCategoriesQuery,
+  useGetDashboardStatsQuery,
+  useLazyGetDashboardStatsQuery,
+  useGetRevenueDataQuery,
+  useLazyGetRevenueDataQuery,
+  useGetRecentMessagesQuery,
+  useGetRecentTransactionsQuery,
 } = apiSlice;
 
 // Function to handle logout and invalidate user queries

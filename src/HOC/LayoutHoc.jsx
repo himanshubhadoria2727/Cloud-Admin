@@ -84,9 +84,9 @@ const LayoutHoc = ({ children }) => {
           </Menu.Item>
           <Menu.Item
             icon={<FileTextOutlined />}
-            className={router.pathname === "/manage-tabla-music" ? "active" : ""}
+            className={router.pathname === "/bookings" ? "active" : ""}
           >
-            <Link href="/manage-tabla-music">Manage Bookings</Link>
+            <Link href="/bookings">Manage Bookings</Link>
           </Menu.Item>
           <Menu.Item
             icon={<UserOutlined />}

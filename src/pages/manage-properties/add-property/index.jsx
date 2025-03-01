@@ -35,15 +35,23 @@ export default function AddProperty() {
     bedrooms: 0,
     bathrooms: 0,
     kitchens: 0,
-    ownership: false,
-    renterAgreement: false,
-    landlordInsurance: false,
+    roomType: "private",
+    kitchenType: "private",
+    bathroomType: "private",
+    securityDeposit: "",
+    ownership: true,
+    renterAgreement: true,
+    landlordInsurance: true,
     amenities: [],
+    utilities: [],
     photos: Array(10).fill(null),
     pricing: "",
     latitude: "",
     longitude: "",
     location: "",
+    city: "",
+    country: "",
+    locality: "",
     rentDetails: "Details about rent",
     termsOfStay: "Terms of stay",
   });
@@ -58,16 +66,25 @@ export default function AddProperty() {
         bedrooms: property.overview?.bedrooms || 0,
         bathrooms: property.overview?.bathrooms || 0,
         kitchens: property.overview?.kitchen || 0,
-        ownership: property.ownership || false,
-        renterAgreement: property.renterAgreement || false,
-        landlordInsurance: property.landlordInsurance || false,
+        roomType: property.overview?.roomType || "private",
+        kitchenType: property.overview?.kitchenType || "private",
+        bathroomType: property.overview?.bathroomType || "private",
+        securityDeposit: property.securityDeposit || "",
+        ownership: property.ownership !== false,
+        renterAgreement: property.renterAgreement !== false,
+        landlordInsurance: property.landlordInsurance !== false,
         amenities: property.amenities || [],
+        utilities: property.utilities || [],
         photos: property.images || Array(10).fill(null),
         pricing: property.price || "",
         latitude: property.latitude || "",
         city: property.city || "",
+        country: property.country || "",
+        locality: property.locality || "",
         longitude: property.longitude || "",
         location: property.location || "",
+        rentDetails: property.rentDetails || "Details about rent",
+        termsOfStay: property.termsOfStay || "Terms of stay",
       });
     }
   }, [property]);
@@ -82,6 +99,10 @@ export default function AddProperty() {
     bedrooms: Yup.number().min(0, "Bedrooms cannot be negative"),
     bathrooms: Yup.number().min(0, "Bathrooms cannot be negative"),
     kitchens: Yup.number().min(0, "Kitchens cannot be negative"),
+    roomType: Yup.string().required("Room type is required"),
+    kitchenType: Yup.string().required("Kitchen type is required"),
+    bathroomType: Yup.string().required("Bathroom type is required"),
+    securityDeposit: Yup.number().required("Security deposit is required"),
     ownership: Yup.bool().oneOf([true], "You must certify ownership"),
     renterAgreement: Yup.bool().oneOf(
       [true],
@@ -89,11 +110,14 @@ export default function AddProperty() {
     ),
     landlordInsurance: Yup.bool().oneOf([true], "You must certify insurance"),
     amenities: Yup.array().min(1, "Select at least one amenity"),
+    utilities: Yup.array(),
     pricing: Yup.number().required("Pricing is required"),
     latitude: Yup.number().required("Latitude is required"),
     longitude: Yup.number().required("Longitude is required"),
     location: Yup.string().required("Address is required"),
     city: Yup.string().required("City is required"),
+    country: Yup.string().required("Country is required"),
+    locality: Yup.string().required("Locality is required"),
     rentDetails: Yup.string().required("Rent details are required"),
     termsOfStay: Yup.string().required("Terms of stay are required"),
   });
@@ -120,6 +144,21 @@ export default function AddProperty() {
     "Wheelchair Accessible",
   ];
 
+  const utilitiesList = [
+    "Water",
+    "Electricity",
+    "Gas",
+    "Heating",
+    "Air Conditioning",
+    "Internet",
+    "Cable TV",
+    "Trash Collection",
+    "Sewer",
+    "Landscaping/Lawn Care",
+    "Snow Removal",
+    "Pest Control",
+  ];
+
   const handleSubmit = async (values, { setSubmitting, setErrors }) => {
     console.log("submit is pressed");
 
@@ -131,13 +170,23 @@ export default function AddProperty() {
     formData.append("squareFootage", values.squareFootage);
     formData.append("description", values.description);
     formData.append("price", values.pricing);
+    formData.append("securityDeposit", values.securityDeposit);
     formData.append("latitude", values.latitude);
     formData.append("longitude", values.longitude);
     formData.append("type", values.homeType);
     formData.append("location", values.location);
     formData.append("city", values.city);
-    // Add amenities as JSON string
+    formData.append("country", values.country);
+    formData.append("locality", values.locality);
+    
+    // Add checkbox values
+    formData.append("ownership", values.ownership);
+    formData.append("renterAgreement", values.renterAgreement);
+    formData.append("landlordInsurance", values.landlordInsurance);
+    
+    // Add amenities and utilities as JSON strings
     formData.append("amenities", JSON.stringify(values.amenities || []));
+    formData.append("utilities", JSON.stringify(values.utilities || []));
 
     // Create and add overview object as JSON string
     const overview = {
@@ -145,6 +194,9 @@ export default function AddProperty() {
       bathrooms: parseInt(values.bathrooms),
       squareFeet: parseInt(values.squareFootage),
       kitchen: values.kitchens,
+      roomType: values.roomType,
+      kitchenType: values.kitchenType,
+      bathroomType: values.bathroomType,
       yearOfConstruction: new Date().getFullYear(),
     };
     formData.append("overview", JSON.stringify(overview));
@@ -180,7 +232,7 @@ export default function AddProperty() {
   return (
     <LayoutHoc>
       <div className={styles.container}>
-        <h2 className={styles.title}>Edit Property</h2>
+        <h2 className={styles.title}>Add Property</h2>
         <Formik
           initialValues={initialValues}
           validationSchema={validationSchema}
@@ -292,6 +344,62 @@ export default function AddProperty() {
                 ))}
               </div>
 
+              {/* Room Type Section */}
+              <h3 className={styles.formTitle}>Room Type</h3>
+              <Row gutter={16}>
+                <Col span={8}>
+                  <div className={styles.dropdownContainer}>
+                    <label className={styles.label}>Room Type</label>
+                    <Select
+                      placeholder="Select room type"
+                      className={styles.dropdown}
+                      value={values.roomType}
+                      onChange={(value) => setFieldValue("roomType", value)}
+                    >
+                      <Option value="private">Private Room</Option>
+                      <Option value="shared">Shared Room</Option>
+                    </Select>
+                    <ErrorMessage name="roomType">
+                      {(msg) => <div className={styles.error}>{msg}</div>}
+                    </ErrorMessage>
+                  </div>
+                </Col>
+                <Col span={8}>
+                  <div className={styles.dropdownContainer}>
+                    <label className={styles.label}>Kitchen Type</label>
+                    <Select
+                      placeholder="Select kitchen type"
+                      className={styles.dropdown}
+                      value={values.kitchenType}
+                      onChange={(value) => setFieldValue("kitchenType", value)}
+                    >
+                      <Option value="private">Private Kitchen</Option>
+                      <Option value="shared">Shared Kitchen</Option>
+                    </Select>
+                    <ErrorMessage name="kitchenType">
+                      {(msg) => <div className={styles.error}>{msg}</div>}
+                    </ErrorMessage>
+                  </div>
+                </Col>
+                <Col span={8}>
+                  <div className={styles.dropdownContainer}>
+                    <label className={styles.label}>Bathroom Type</label>
+                    <Select
+                      placeholder="Select bathroom type"
+                      className={styles.dropdown}
+                      value={values.bathroomType}
+                      onChange={(value) => setFieldValue("bathroomType", value)}
+                    >
+                      <Option value="private">Private Bathroom</Option>
+                      <Option value="shared">Shared Bathroom</Option>
+                    </Select>
+                    <ErrorMessage name="bathroomType">
+                      {(msg) => <div className={styles.error}>{msg}</div>}
+                    </ErrorMessage>
+                  </div>
+                </Col>
+              </Row>
+
               {/* Amenities Section */}
               <h3 className={styles.formTitle}>Amenities</h3>
               <div className={styles.amenitiesGrid}>
@@ -323,6 +431,37 @@ export default function AddProperty() {
                 {(msg) => <div className={styles.error}>{msg}</div>}
               </ErrorMessage>
 
+              {/* Utilities Section */}
+              <h3 className={styles.formTitle}>Utilities Included</h3>
+              <div className={styles.amenitiesGrid}>
+                {utilitiesList.map((utility, index) => (
+                  <div className={styles.amenityItem} key={index}>
+                    <label className={styles.checkboxLabel}>
+                      <input
+                        type="checkbox"
+                        name="utilities"
+                        value={utility}
+                        checked={values.utilities.includes(utility)}
+                        onChange={() => {
+                          const newUtilities = values.utilities.includes(
+                            utility
+                          )
+                            ? values.utilities.filter(
+                                (item) => item !== utility
+                              )
+                            : [...values.utilities, utility];
+                          setFieldValue("utilities", newUtilities);
+                        }}
+                      />
+                      {utility}
+                    </label>
+                  </div>
+                ))}
+              </div>
+              <ErrorMessage name="utilities">
+                {(msg) => <div className={styles.error}>{msg}</div>}
+              </ErrorMessage>
+
               {/* Address Section */}
               <h3 className={styles.formTitle}>Location</h3>
               <LabelInputComponent
@@ -332,13 +471,69 @@ export default function AddProperty() {
                 textarea
                 className={styles.labelinput}
               />
-              <LabelInputComponent
-                name="city"
-                title="City"
-                placeholder="Enter your city"
-                textarea
-                className={styles.labelinput}
-              />
+              <Row gutter={16}>
+                <Col span={12}>
+                  <LabelInputComponent
+                    name="city"
+                    title="City"
+                    placeholder="Enter your city"
+                    className={styles.labelinput}
+                  />
+                  <ErrorMessage name="city">
+                    {(msg) => <div className={styles.error}>{msg}</div>}
+                  </ErrorMessage>
+                </Col>
+                <Col span={12}>
+                  <div className={styles.dropdownContainer}>
+                    <label className={styles.label}>Country</label>
+                    <Select
+                      placeholder="Select country"
+                      className={styles.dropdown}
+                      value={values.country}
+                      onChange={(value) => setFieldValue("country", value)}
+                    >
+                      <Option value="USA">United States (USD)</Option>
+                      <Option value="India">India (INR)</Option>
+                      <Option value="Canada">Canada (CAD)</Option>
+                      <Option value="UK">United Kingdom (GBP)</Option>
+                      <Option value="EU">European Union (EUR)</Option>
+                      <Option value="Australia">Australia (AUD)</Option>
+                    </Select>
+                    <ErrorMessage name="country">
+                      {(msg) => <div className={styles.error}>{msg}</div>}
+                    </ErrorMessage>
+                  </div>
+                </Col>
+              </Row>
+
+              {/* Locality Field - Appears based on city selection */}
+              {values.city && (
+                <div className={styles.dropdownContainer}>
+                  <label className={styles.label}>Locality</label>
+                  <Select
+                    placeholder="Select locality"
+                    className={styles.dropdown}
+                    value={values.locality}
+                    onChange={(value) => setFieldValue("locality", value)}
+                  >
+                    <Option value="Downtown">Downtown</Option>
+                    <Option value="North">North</Option>
+                    <Option value="East">East</Option>
+                    <Option value="West">West</Option>
+                    <Option value="South">South</Option>
+                    <Option value="Suburbs">Suburbs</Option>
+                    <Option value="Midtown">Midtown</Option>
+                    <Option value="Central">Central</Option>
+                    <Option value="Business District">Business District</Option>
+                    <Option value="Residential Area">Residential Area</Option>
+                    <Option value="Other">Other (Specify in Address)</Option>
+                  </Select>
+                  <ErrorMessage name="locality">
+                    {(msg) => <div className={styles.error}>{msg}</div>}
+                  </ErrorMessage>
+                </div>
+              )}
+
               <Row gutter={16}>
                 <Col span={12}>
                   <LabelInputComponent
@@ -366,16 +561,30 @@ export default function AddProperty() {
 
               {/* Pricing Section */}
               <h3 className={styles.formTitle}>Pricing</h3>
-              <LabelInputComponent
-                name="pricing"
-                title="Write in your fair market value"
-                placeholder="Let us know the fair market value today"
-                textarea
-                className={styles.largeTextarea}
-              />
-              <ErrorMessage name="pricing">
-                {(msg) => <div className={styles.error}>{msg}</div>}
-              </ErrorMessage>
+              <Row gutter={16}>
+                <Col span={12}>
+                  <LabelInputComponent
+                    name="pricing"
+                    title="Monthly Rent"
+                    placeholder="Enter monthly rent amount"
+                    className={styles.labelinput}
+                  />
+                  <ErrorMessage name="pricing">
+                    {(msg) => <div className={styles.error}>{msg}</div>}
+                  </ErrorMessage>
+                </Col>
+                <Col span={12}>
+                  <LabelInputComponent
+                    name="securityDeposit"
+                    title="Security Deposit"
+                    placeholder="Enter security deposit amount"
+                    className={styles.labelinput}
+                  />
+                  <ErrorMessage name="securityDeposit">
+                    {(msg) => <div className={styles.error}>{msg}</div>}
+                  </ErrorMessage>
+                </Col>
+              </Row>
 
               {/* Rent Details Section */}
               <h3 className={styles.formTitle}>Rent Details</h3>
@@ -414,6 +623,10 @@ export default function AddProperty() {
                   I certify that I own this property or am an authorized
                   representative of the owner.
                 </label>
+                <ErrorMessage name="ownership">
+                  {(msg) => <div className={styles.error}>{msg}</div>}
+                </ErrorMessage>
+                
                 <label className={styles.checkboxLabel}>
                   <input
                     type="checkbox"
@@ -426,6 +639,10 @@ export default function AddProperty() {
                   I agree that I will have any renter who contacts me through
                   Rent-to-Own Realty book the rental through Rent-to-Own Realty.
                 </label>
+                <ErrorMessage name="renterAgreement">
+                  {(msg) => <div className={styles.error}>{msg}</div>}
+                </ErrorMessage>
+                
                 <label className={styles.checkboxLabel}>
                   <input
                     type="checkbox"
@@ -437,6 +654,9 @@ export default function AddProperty() {
                   />
                   I certify that I have landlord insurance on this property.
                 </label>
+                <ErrorMessage name="landlordInsurance">
+                  {(msg) => <div className={styles.error}>{msg}</div>}
+                </ErrorMessage>
               </div>
 
               {/* Add Photos Section */}
