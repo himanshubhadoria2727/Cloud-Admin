@@ -6,7 +6,8 @@ import Link from "next/link";
 import { SVG } from "@/assest/svg";
 import { useRouter } from "next/router";
 import dynamic from "next/dynamic";
-import { SearchOutlined, BellOutlined, DashboardOutlined, SettingOutlined, UserOutlined, FileTextOutlined } from "@ant-design/icons";
+import { SearchOutlined, BellOutlined, DashboardOutlined, SettingOutlined, UserOutlined, FileTextOutlined, MenuUnfoldOutlined, MenuFoldOutlined } from "@ant-design/icons";
+import Loader from "@/loader/loader";
 
 const Lottie = dynamic(() => import("lottie-react"), { ssr: false });
 
@@ -57,79 +58,114 @@ const LayoutHoc = ({ children }) => {
   ];
 
   return (
-    <Layout>
+    <Layout className={styles.layoutWrapper}>
       <Sider
         trigger={null}
         collapsible
         collapsed={collapsed}
         className={`${styles.sideBar}`}
+        width={200}
       >
         <Col style={{ textAlign: "center", margin: "16px 0" }}>
-          <h3 className={`${styles.logoTitle}`}>Cloud Accommodation</h3>
+          <img src="/images/cloudlogo.png" alt="Logo" style={{ width: "80px", alignContent:"left" }} />
         </Col>
-        <Menu theme="light" mode="inline">
-          <Menu.Item
-            icon={<DashboardOutlined />}
-            className={router.pathname === "/dashboard" ? "active" : ""}
-          >
-            <Link href="/dashboard">Dashboard</Link>
-          </Menu.Item>
-          <Menu.Item
-            icon={<UserOutlined />}
-            className={
-              router.pathname.startsWith("/manage-properties") ? "active" : ""
-            }
-          >
-            <Link href="/manage-properties">Manage Properties</Link>
-          </Menu.Item>
-          <Menu.Item
-            icon={<FileTextOutlined />}
-            className={router.pathname === "/bookings" ? "active" : ""}
-          >
-            <Link href="/bookings">Manage Bookings</Link>
-          </Menu.Item>
-          <Menu.Item
-            icon={<UserOutlined />}
-            className={router.pathname === "/manage-user" ? "active" : ""}
-          >
-            <Link href="/manage-user">Manage Users</Link>
-          </Menu.Item>
-          <Menu.Item
-            icon={<SettingOutlined />}
-            className={
-              router.pathname.startsWith("/manage-subscription-setting")
-                ? "active"
-                : ""
-            }
-          >
-            <Link href="/manage-subscription-setting">Analytics</Link>
-          </Menu.Item>
-          <Menu.Item
-            icon={<FileTextOutlined />}
-            className={router.pathname === "/enquiries" ? "active" : ""}
-          >
-            <Link href="/enquiries">Enquiries</Link>
-          </Menu.Item>
-          <Menu.Item
-            icon={<SettingOutlined />}
-            className={router.pathname === "/admin-setting" ? "active" : ""}
-          >
-            <Link href="/admin-setting">Admin Settings</Link>
-          </Menu.Item>
-        </Menu>
+        <Menu
+          theme="light"
+          mode="inline"
+          style={{ backgroundColor: "white" }}
+          selectedKeys={[router.pathname]}
+          items={[
+            {
+              key: "/dashboard",
+              icon: <DashboardOutlined />,
+              label: <Link href="/dashboard">Dashboard</Link>,
+              style: {
+                backgroundColor: router.pathname === "/dashboard" ? "#3861fb" : "white",
+                color: router.pathname === "/dashboard" ? "white" : "black",
+              },
+            },
+            {
+              key: "/manage-properties",
+              icon: <UserOutlined />,
+              label: <Link href="/manage-properties">Manage Properties</Link>,
+              style: {
+                backgroundColor:
+                  router.pathname.startsWith("/manage-properties") ? "#3861fb" : "white",
+                color: router.pathname.startsWith("/manage-properties") ? "white" : "black",
+              },
+            },
+            {
+              key: "/bookings",
+              icon: <FileTextOutlined />,
+              label: <Link href="/bookings">Manage Bookings</Link>,
+              style: {
+                backgroundColor: router.pathname === "/bookings" ? "#3861fb" : "white",
+                color: router.pathname === "/bookings" ? "white" : "black",
+              },
+            },
+            {
+              key: "/manage-user",
+              icon: <UserOutlined />,
+              label: <Link href="/manage-user">Manage Users</Link>,
+              style: {
+                backgroundColor: router.pathname === "/manage-user" ? "#3861fb" : "white",
+                color: router.pathname === "/manage-user" ? "white" : "black",
+              },
+            },
+            {
+              key: "/manage-subscription-setting",
+              icon: <SettingOutlined />,
+              label: <Link href="/manage-subscription-setting">Analytics</Link>,
+              style: {
+                backgroundColor:
+                  router.pathname.startsWith("/manage-subscription-setting")
+                    ? "#3861fb"
+                    : "white",
+                color: router.pathname.startsWith("/manage-subscription-setting")
+                  ? "white"
+                  : "black",
+              },
+            },
+            {
+              key: "/enquiries",
+              icon: <FileTextOutlined />,
+              label: <Link href="/enquiries">Enquiries</Link>,
+              style: {
+                backgroundColor: router.pathname === "/enquiries" ? "#3861fb" : "white",
+                color: router.pathname === "/enquiries" ? "white" : "black",
+              },
+            },
+            {
+              key: "/admin-setting",
+              icon: <SettingOutlined />,
+              label: <Link href="/admin-setting">Admin Settings</Link>,
+              style: {
+                backgroundColor: router.pathname === "/admin-setting" ? "#3861fb" : "white",
+                color: router.pathname === "/admin-setting" ? "white" : "black",
+              },
+            },
+          ]}
+        />
       </Sider>
 
       <Layout>
-        <Header className={styles.Header}>
+        <Header className={`${styles.Header} ${collapsed ? styles.HeaderCollapsed : ''}`}>
           <div className={styles.headerContainer}>
-            <Input
-              className={styles.searchBar}
-              placeholder="Search..."
-              prefix={<SearchOutlined />}
-            />
+            <div style={{ display: 'flex', alignItems: 'center' }}>
+              {React.createElement(collapsed ? MenuUnfoldOutlined : MenuFoldOutlined, {
+                className: 'trigger',
+                onClick: () => setCollapsed(!collapsed),
+                style: { fontSize: '20px', color: '#fff', marginRight: '24px', cursor: 'pointer' }
+              })}
+              <Input
+                className={styles.searchBar}
+                placeholder="Search..."
+                prefix={<SearchOutlined />}
+              />
+            </div>
             <div className={styles.rightSection}>
               <Badge count={5} offset={[10, 0]}>
-                <BellOutlined className={styles.notificationIcon} />
+                <BellOutlined className={styles.notificationIcon} style={{ color: '#fff' }} />
               </Badge>
               <Dropdown menu={{ items }}>
                 <div className={styles.profile}>
@@ -145,11 +181,10 @@ const LayoutHoc = ({ children }) => {
           </div>
         </Header>
 
-
-        <Content className={`${styles.mainLayout}`}>
+        <Content className={`${styles.mainLayout} ${collapsed ? styles.mainLayoutCollapsed : ''}`}>
           {loading ? (
-            <div className="loaderFile">
-              <Lottie animationData={animationData} loop autoplay />
+            <div style={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: "calc(100vh - 64px)" }}>
+              <Loader/>
             </div>
           ) : (
             children

@@ -169,7 +169,7 @@ export default function SubscriptionSetting() {
 };
 
   if (loading) {
-    return <h6>loading...</h6>;
+    return <h6></h6>;
   }
 
   return (

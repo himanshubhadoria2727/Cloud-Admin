@@ -30,7 +30,7 @@ export default function EditProperty() {
     error,
   } = useGetPropertiesQuery(id ? { id } : null);
 
-  if (isLoading) return <div>Loading...</div>;
+  if (isLoading) return <div></div>;
   if (error) return <div>Error fetching property details</div>;
 
   // Assuming propertyDetails is an array, take the first item

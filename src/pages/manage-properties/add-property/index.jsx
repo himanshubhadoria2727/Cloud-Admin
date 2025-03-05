@@ -226,7 +226,7 @@ export default function AddProperty() {
     }
   };
 
-  if (isLoading) return <p>Loading...</p>;
+  if (isLoading) return <p></p>;
   if (error) return <p>Error loading property: {error.message}</p>;
 
   return (

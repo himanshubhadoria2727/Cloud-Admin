@@ -101,7 +101,7 @@ export default function ManageContent() {
   }
 
   if (loading) {
-    return <h6>Loading....</h6>
+    return <h6>.</h6>
   }
   return (
     <LayoutHoc>

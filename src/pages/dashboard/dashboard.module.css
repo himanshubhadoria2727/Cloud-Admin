@@ -1,62 +1,81 @@
 .dashboardContainer {
-  padding: 20px;
-  background-color: #f8f9fc;
+  padding: 24px;
+  background-color: #f8f9fa;
   min-height: 100vh;
   font-family: 'Inter', sans-serif;
 }
 
 .header {
-  text-align: center;
-  margin-bottom: 32px;
+  text-align: left;
+  margin-bottom: 40px;
+  padding: 0 12px;
 }
 
 .datePickerWrapper {
-  margin-top: 16px;
-  text-align: center;
+  margin-top: 20px;
+  display: flex;
+  justify-content: flex-end;
 }
 
 .statsRow {
-  margin-bottom: 32px;
+  margin-bottom: 40px;
 }
 
 .statsCard {
-  border-radius: 12px; /* Slightly rounded */
-  padding: 20px;
-  background-color: var(--card-bg); /* Global card background */
-  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.1);
-  color: var(--text-primary); /* Global text color */
+  border-radius: 16px;
+  padding: 24px;
+  background: linear-gradient(145deg, #ffffff, #f8f9fa);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+  color: var(--text-primary);
   position: relative;
   overflow: hidden;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  text-align: left;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  height: 100%;
+  border: 1px solid rgba(0, 0, 0, 0.06);
 }
 
 .statsCard:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.15);
+  transform: translateY(-5px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+  border-color: rgba(0, 0, 0, 0.09);
 }
 
 .cardContent {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 16px; /* Added spacing for modern layout */
+  gap: 20px;
 }
 
 .cardIcon {
-  font-size: 23px;
-  background-color: #4FD1C5;
+  font-size: 24px;
+  background: linear-gradient(135deg, #3861fb 0%, #3861fb 100%);
   padding: 16px;
+  display: flex;
   align-items: center;
   justify-content: center;
-  height: 3rem;
-  border-radius: 8px; /* Square shape */
+  height: 60px;
+  width: 60px;
+  border-radius: 12px;
   color: white;
-  flex-shrink: 0; /* Prevent icon resizing */
+  flex-shrink: 0;
+  transition: transform 0.3s ease;
+}
+
+.statsCard:hover .cardIcon {
+  transform: scale(1.05);
 }
 
 .cardDetails {
   flex-grow: 1;
+}
+
+.cardDetails h4 {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 4px;
+  background: linear-gradient(135deg, #2D3748, #4A5568);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 .cardDetails .ant-typography-title {
@@ -78,57 +97,112 @@
   color: inherit;
 }
 
-.statsRow {
-  margin-top: 32px;
-}
-
-
 .chartCard,
 .messagesCard,
 .transactionsCard {
   border-radius: 16px;
-  padding: 24px;
+  padding: 28px;
   background: #ffffff;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  height: 100%;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .chartCard:hover,
 .messagesCard:hover,
 .transactionsCard:hover {
-  transform: translateY(-8px);
+  transform: translateY(-5px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+  border-color: rgba(0, 0, 0, 0.09);
 }
 
 .messagesCard .ant-list-item {
-  border-bottom: 1px solid #f0f0f0;
-  padding: 16px 0;
+  padding: 16px;
+  margin: 8px 0;
+  border-radius: 8px;
+  border: none;
+  background-color: #f8f9fa;
+  transition: all 0.2s ease;
+}
+
+.messagesCard .ant-list-item:hover {
+  background-color: #f1f3f5;
+  transform: translateX(5px);
+}
+
+.transactionsCard .ant-table-wrapper {
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.transactionsCard .ant-table-cell {
+  padding: 16px !important;
 }
 
 .transactionsCard .ant-table-row {
-  transition: background-color 0.3s;
+  transition: all 0.2s ease;
 }
 
 .transactionsCard .ant-table-row:hover {
-  background-color: rgba(31, 58, 147, 0.05);
+  background-color: #f8f9fa !important;
+  transform: translateX(5px);
 }
 
 .viewMoreBtn {
-  margin-top: 24px;
+  margin-top: 28px;
+  height: 48px;
   font-size: 16px;
-  font-weight: 500;
+  font-weight: 600;
   border-radius: 12px;
-  background: linear-gradient(135deg, #4FD1C5, #56D4C9);
+  background: linear-gradient(135deg, #3861fb 0%, #3861fb 100%);
   color: white;
   border: none;
-  transition: background 0.3s;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .viewMoreBtn:hover {
-  background: linear-gradient(28deg, #56D4C9, #4FD1C5);
-  color: white;
+  background: linear-gradient(135deg, #3861fb 0%, #3861fb 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(79, 209, 197, 0.3);
 }
 
 .contentRow {
-  margin-top: 32px;
+  margin-top: 40px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .dashboardContainer {
+    padding: 16px;
+  }
+  
+  .header {
+    text-align: center;
+    margin-bottom: 32px;
+  }
+  
+  .datePickerWrapper {
+    justify-content: center;
+  }
+  
+  .statsCard,
+  .chartCard,
+  .messagesCard,
+  .transactionsCard {
+    padding: 20px;
+  }
+  
+  .cardIcon {
+    height: 50px;
+    width: 50px;
+    font-size: 20px;
+  }
+  
+  .cardDetails h4 {
+    font-size: 20px;
+  }
 }
 

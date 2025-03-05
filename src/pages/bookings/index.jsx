@@ -167,6 +167,7 @@ const ManageBookings = () => {
 
   return (
     <LayoutHoc>
+     <Col style={{ padding: "40px 20px", backgroundColor: "#fff" }}> 
       <Col className={`${styles.title}`}>
         <h3>Bookings</h3>
       </Col>
@@ -197,6 +198,7 @@ const ManageBookings = () => {
           <Option value="cancelled">Cancelled</Option>
         </Select>
       </Modal>
+    </Col>
     </LayoutHoc>
   );
 };

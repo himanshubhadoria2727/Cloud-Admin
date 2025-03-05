@@ -64,10 +64,10 @@ function LoginForm() {
                   <Col className={`${styles.rightBody}`}>
                     <div className={`${styles.loginBox}`}>
                       <Col className={`${styles.title}`}>
-                        <h2>Tabla</h2>
+                        <h2>Cloud Acc.</h2>
                       </Col>
                       {/* <Image src={IMAGES.Logo} alt="" /> */}
-                      <h3>LOGIN</h3>
+                      <h3 className="text-blue-500">LOGIN</h3>
                       <LabelInputComponent title="Email" placeholder="Email" name="email" />
                       <LabelInputComponent title="Password" placeholder="Password" name="password" />
 

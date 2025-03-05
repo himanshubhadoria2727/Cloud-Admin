@@ -79,7 +79,7 @@ export default function ManageProperties() {
     });
   };
 
-  if (isLoading) return <p>Loading...</p>;
+  if (isLoading) return <p></p>;
   if (error) return <p>Error loading properties: {error.message}</p>;
 
   return (
