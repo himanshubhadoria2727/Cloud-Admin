@@ -63,6 +63,10 @@ export default function EditProperty() {
     locality: property?.locality || "", // Add locality field
     rentDetails: property?.rentDetails, // Add default value
     termsOfStay: property?.termsOfStay, // Add default value
+    yearOfConstruction: property?.overview?.yearOfConstruction || "",
+    minimumStayDuration: property?.minimumStayDuration || "",
+    availableFrom: property?.availableFrom || "",
+    nearbyUniversities: property?.nearbyUniversities || [],
   };
 
   const validationSchema = Yup.object().shape({
@@ -96,6 +100,10 @@ export default function EditProperty() {
     locality: Yup.string().required("Locality is required"), // Add locality validation
     rentDetails: Yup.string().required("Rent details are required"),
     termsOfStay: Yup.string().required("Terms of stay are required"),
+    yearOfConstruction: Yup.number().required("Year of construction is required"),
+    minimumStayDuration: Yup.string().required("Minimum stay duration is required"),
+    availableFrom: Yup.string().required("Available from date is required"),
+    nearbyUniversities: Yup.array(),
   });
 
   const amenitiesList = [
@@ -154,9 +162,13 @@ export default function EditProperty() {
       formData.append("city", values.city);
       formData.append("country", values.country); // Add country to form data
       formData.append("locality", values.locality); // Add locality to form data
+      formData.append("minimumStayDuration", values.minimumStayDuration);
+      formData.append("availableFrom", values.availableFrom);
+      
       // Add amenities and utilities as JSON strings
       formData.append("amenities", JSON.stringify(values.amenities || []));
       formData.append("utilities", JSON.stringify(values.utilities || []));
+      formData.append("nearbyUniversities", JSON.stringify(values.nearbyUniversities || []));
 
       // Create and add overview object as JSON string
       const overview = {
@@ -167,7 +179,7 @@ export default function EditProperty() {
         roomType: values.roomType,
         kitchenType: values.kitchenType,
         bathroomType: values.bathroomType,
-        yearOfConstruction: new Date().getFullYear(),
+        yearOfConstruction: parseInt(values.yearOfConstruction),
       };
       formData.append("overview", JSON.stringify(overview));
 
@@ -578,6 +590,102 @@ export default function EditProperty() {
                 setFieldValue={setFieldValue}
               />
               <ErrorMessage name="termsOfStay">
+                {(msg) => <div className={styles.error}>{msg}</div>}
+              </ErrorMessage>
+
+              {/* Year of Construction */}
+              <h3 className={styles.formTitle}>Year of Construction</h3>
+              <LabelInputComponent
+                name="yearOfConstruction"
+                title="Year of Construction"
+                placeholder="Enter year of construction"
+                className={styles.labelinput}
+              />
+              <ErrorMessage name="yearOfConstruction">
+                {(msg) => <div className={styles.error}>{msg}</div>}
+              </ErrorMessage>
+
+              {/* Minimum Stay Duration */}
+              <div className={styles.dropdownContainer}>
+                <label className={styles.label}>Minimum Stay Duration</label>
+                <Select
+                  placeholder="Select minimum stay duration"
+                  className={styles.dropdown}
+                  value={values.minimumStayDuration}
+                  onChange={(value) => setFieldValue("minimumStayDuration", value)}
+                >
+                  <Option value="Less than 6 months">Less than 6 months</Option>
+                  <Option value="6-12 months">6-12 months</Option>
+                  <Option value="1 year+">1 year+</Option>
+                </Select>
+                <ErrorMessage name="minimumStayDuration">
+                  {(msg) => <div className={styles.error}>{msg}</div>}
+                </ErrorMessage>
+              </div>
+
+              {/* Available From */}
+              <div className={styles.dropdownContainer}>
+                <label className={styles.label}>Available From</label>
+                <Select
+                  placeholder="Select availability month"
+                  className={styles.dropdown}
+                  value={values.availableFrom}
+                  onChange={(value) => setFieldValue("availableFrom", value)}
+                >
+                  {['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'].map((month) => (
+                    <Option key={month} value={month}>{month}</Option>
+                  ))}
+                </Select>
+                <ErrorMessage name="availableFrom">
+                  {(msg) => <div className={styles.error}>{msg}</div>}
+                </ErrorMessage>
+              </div>
+
+              {/* Nearby Universities */}
+              <h3 className={styles.formTitle}>Nearby Universities</h3>
+              <div className={styles.amenitiesGrid}>
+                {[
+                  "University of Toronto",
+                  "York University",
+                  "Ryerson University",
+                  "McGill University",
+                  "University of British Columbia",
+                  "University of Waterloo",
+                  "McMaster University",
+                  "Queen's University",
+                  "University of Alberta",
+                  "University of Calgary",
+                  "Harvard University",
+                  "MIT",
+                  "Stanford University",
+                  "Yale University",
+                  "Princeton University",
+                  "Oxford University",
+                  "Cambridge University",
+                  "IIT Delhi",
+                  "IIT Bombay",
+                  "IIT Madras"
+                ].map((university, index) => (
+                  <div className={styles.amenityItem} key={index}>
+                    <label className={styles.checkboxLabel}>
+                      <input
+                        type="checkbox"
+                        name="nearbyUniversities"
+                        value={university}
+                        checked={values.nearbyUniversities.includes(university)}
+                        onChange={() => {
+                          const newUniversities = values.nearbyUniversities.includes(university)
+                            ? values.nearbyUniversities.filter((item) => item !== university)
+                            : [...values.nearbyUniversities, university];
+                          setFieldValue("nearbyUniversities", newUniversities);
+                        }}
+                      />
+                      {university}
+                    </label>
+                  </div>
+                ))}
+              </div>
+              <ErrorMessage name="nearbyUniversities">
                 {(msg) => <div className={styles.error}>{msg}</div>}
               </ErrorMessage>
 
