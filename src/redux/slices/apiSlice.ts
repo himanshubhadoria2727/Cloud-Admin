@@ -229,6 +229,13 @@ export const apiSlice = createApi({
       query: () => '/enquiry/getEnquiries',
       providesTags: ['Enquiry'],
     }),
+    deleteEnquiry: builder.mutation({
+      query: (id) => ({
+        url: `/enquiry/${id}`,
+        method: 'DELETE',
+      }),
+      invalidatesTags: ['Enquiry'],
+    }),
     
     // Content endpoints
     updateContent: builder.mutation({
@@ -296,6 +303,7 @@ export const {
   useUpdateBookingStatusMutation,
   useDeleteBookingMutation,
   useGetEnquiriesQuery,
+  useDeleteEnquiryMutation,
   useUpdateContentMutation,
   useGetCategoriesQuery,
   useGetDashboardStatsQuery,

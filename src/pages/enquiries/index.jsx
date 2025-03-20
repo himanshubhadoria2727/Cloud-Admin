@@ -1,56 +1,71 @@
 import LayoutHoc from "@/HOC/LayoutHoc";
 import DataTable from "@/components/Datatable";
-import { Col } from "antd";
+import { Col, message, Popconfirm } from "antd";
 import styles from "./styles.module.css";
-import React, { useEffect, useState } from "react";
-
-// Dummy enquiry data
-const dummyEnquiries = [
-  {
-    key: "1",
-    name: "John Doe",
-    email: "john.doe@example.com",
-    message: "I would like to know more about your services.",
-  },
-  {
-    key: "2",
-    name: "Jane Smith",
-    email: "jane.smith@example.com",
-    message: "What are your working hours?",
-  },
-  {
-    key: "3",
-    name: "Michael Brown",
-    email: "michael.brown@example.com",
-    message: "Do you offer discounts for bulk orders?",
-  },
-];
-
-const columns = [
-  {
-    title: "Name",
-    dataIndex: "name",
-    key: "name",
-  },
-  {
-    title: "Email",
-    dataIndex: "email",
-    key: "email",
-  },
-  {
-    title: "Message",
-    dataIndex: "message",
-    key: "message",
-  },
-];
+import React from "react";
+import { useGetEnquiriesQuery, useDeleteEnquiryMutation } from "@/redux/slices/apiSlice";
 
 const ManageEnquiries = () => {
-  const [enquiries, setEnquiries] = useState([]);
+  const { data: response, isLoading, error } = useGetEnquiriesQuery();
+  const [deleteEnquiry] = useDeleteEnquiryMutation();
 
-  useEffect(() => {
-    // Simulate fetching data
-    setEnquiries(dummyEnquiries);
-  }, []);
+  const handleDelete = async (id) => {
+    try {
+      await deleteEnquiry(id).unwrap();
+      message.success('Enquiry deleted successfully');
+    } catch (err) {
+      message.error('Failed to delete enquiry');
+    }
+  };
+
+  const columns = [
+    {
+      title: "Name",
+      dataIndex: "name",
+      key: "name",
+    },
+    {
+      title: "Email",
+      dataIndex: "email",
+      key: "email",
+    },
+    {
+      title: "Message",
+      dataIndex: "message",
+      key: "message",
+      width: '40%',
+    },
+    {
+      title: "Created At",
+      dataIndex: "createdAt",
+      key: "createdAt",
+      render: (date) => new Date(date).toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      })
+    },
+    {
+      title: "Actions",
+      key: "actions",
+      render: (_, record) => (
+        <Popconfirm
+          title="Are you sure you want to delete this enquiry?"
+          onConfirm={() => handleDelete(record._id)}
+          okText="Yes"
+          cancelText="No"
+        >
+          <a href="#">Delete</a>
+        </Popconfirm>
+      ),
+    },
+  ];
+
+  if (error) {
+    return <div>Error loading enquiries</div>;
+  }
 
   return (
     <LayoutHoc>
@@ -58,7 +73,11 @@ const ManageEnquiries = () => {
         <h3>Enquiries</h3>
       </Col>
       <Col className="tableBox">
-        <DataTable rowData={enquiries} colData={columns} />
+        <DataTable 
+          rowData={response?.enquiries || []} 
+          colData={columns} 
+          loading={isLoading}
+        />
       </Col>
     </LayoutHoc>
   );
