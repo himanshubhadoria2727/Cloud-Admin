@@ -4,7 +4,7 @@ const path = require("path");
 const nextConfig = {
   reactStrictMode: true,
   images: {
-    domains: ["localhost", "main--tabla-admin.netlify.app", "digimonk.net"],
+    domains: ["145.223.23.97","localhost", "main--tabla-admin.netlify.app", "digimonk.net"],
   },
   webpack(config) {
     // Add alias for '@' to resolve 'src' directory
