@@ -112,20 +112,20 @@ const LayoutHoc = ({ children }) => {
                 color: router.pathname === "/manage-user" ? "white" : "black",
               },
             },
-            {
-              key: "/manage-subscription-setting",
-              icon: <SettingOutlined />,
-              label: <Link href="/manage-subscription-setting">Analytics</Link>,
-              style: {
-                backgroundColor:
-                  router.pathname.startsWith("/manage-subscription-setting")
-                    ? "#3861fb"
-                    : "white",
-                color: router.pathname.startsWith("/manage-subscription-setting")
-                  ? "white"
-                  : "black",
-              },
-            },
+            // {
+            //   key: "/manage-subscription-setting",
+            //   icon: <SettingOutlined />,
+            //   label: <Link href="/manage-subscription-setting">Analytics</Link>,
+            //   style: {
+            //     backgroundColor:
+            //       router.pathname.startsWith("/manage-subscription-setting")
+            //         ? "#3861fb"
+            //         : "white",
+            //     color: router.pathname.startsWith("/manage-subscription-setting")
+            //       ? "white"
+            //       : "black",
+            //   },
+            // },
             {
               key: "/enquiries",
               icon: <FileTextOutlined />,
