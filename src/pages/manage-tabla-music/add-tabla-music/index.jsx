@@ -12,7 +12,7 @@ import LabelInputComponent from "@/components/TextFields/labelInput";
 import Link from "next/link";
 import { Formik, Form, Field, ErrorMessage, useFormikContext } from "formik";
 import { getCategoryapi, getSubcategory } from "@/api/Categoryapi";
-import { addTabla } from "@/api/tabla";
+// import { addTabla } from "@/api/tabla";
 import { toast } from "react-toastify";
 import { useRouter } from "next/router";
 import * as Yup from "yup";
@@ -274,13 +274,13 @@ export default function AddTabla() {
       });
     }
 
-    // Submit the form data
-    addTabla(formdata).then((data) => {
-      console.log(data?.data?.message, "challllllllllllllllllllll");
-      toast.success(`${data?.data?.message}`);
-      setLoading(false);
-      router.back();
-    });
+    // // Submit the form data
+    // addTabla(formdata).then((data) => {
+    //   console.log(data?.data?.message, "challllllllllllllllllllll");
+    //   toast.success(`${data?.data?.message}`);
+    //   setLoading(false);
+    //   router.back();
+    // });
   };
 
   return (

@@ -33,8 +33,8 @@ function ManageUser() {
   };
 
   useEffect(() => {
-    fetchUsers(currentPage, searchTerm); // Fetch users when the page changes
-  }, [currentPage]); // Remove searchTerm from dependency array
+    fetchUsers(currentPage, searchTerm);
+  }, [currentPage, searchTerm, fetchUsers]);
 
   const handleSearch = (event) => {
     if (event.key === "Enter") {

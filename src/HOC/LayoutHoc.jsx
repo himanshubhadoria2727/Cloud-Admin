@@ -8,6 +8,7 @@ import { useRouter } from "next/router";
 import dynamic from "next/dynamic";
 import { SearchOutlined, BellOutlined, DashboardOutlined, SettingOutlined, UserOutlined, FileTextOutlined, MenuUnfoldOutlined, MenuFoldOutlined } from "@ant-design/icons";
 import Loader from "@/loader/loader";
+import Image from "next/image";
 
 const Lottie = dynamic(() => import("lottie-react"), { ssr: false });
 
@@ -67,7 +68,13 @@ const LayoutHoc = ({ children }) => {
         width={200}
       >
         <Col style={{ textAlign: "center", margin: "16px 0" }}>
-          <img src="/images/cloudlogo.png" alt="Logo" style={{ width: "80px", alignContent:"left" }} />
+          <Image 
+            src="/images/cloudlogo.png" 
+            alt="Logo" 
+            width={80}
+            height={80}
+            style={{ alignContent:"left" }} 
+          />
         </Col>
         <Menu
           theme="light"

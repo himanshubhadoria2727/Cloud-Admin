@@ -13,6 +13,7 @@ import {
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import MyQuillEditor from "../../../components/TextFields/textArea";
+import Image from "next/image";
 
 const { Option } = Select;
 
@@ -806,9 +807,12 @@ export default function AddProperty() {
                       </label>
                       {values.photos[index] && (
                         <div className={styles.preview}>
-                          <img
+                          <Image
                             src={URL.createObjectURL(values.photos[index])}
                             alt={`Preview ${index + 1}`}
+                            width={200}
+                            height={200}
+                            objectFit="cover"
                           />
                           <button
                             type="button"

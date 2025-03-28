@@ -74,7 +74,7 @@ export default function Dashboard() {
   // Initial data fetch
   useEffect(() => {
     fetchDashboardData();
-  }, []);
+  }, [fetchDashboardData]);
 
   // Determine if any data is loading
   useEffect(() => {
@@ -116,7 +116,7 @@ export default function Dashboard() {
               Welcome back, Malay! 👋
             </Title>
             <Text style={{ fontSize: '16px', color: '#4A5568', display: 'block' }}>
-              Here's what's happening with your properties today.
+              Here&apos;s what&apos;s happening with your properties today.
             </Text>
           </Col>
           {/* <Col xs={24} md={8}>

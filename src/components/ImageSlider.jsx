@@ -1,5 +1,6 @@
 import React from "react";
 import { Carousel } from "antd";
+import Image from "next/image";
 import styles from "./ImageSlider.module.css";
 
 const ImageSlider = ({ images }) => {
@@ -12,10 +13,13 @@ const ImageSlider = ({ images }) => {
     <Carousel autoplay>
       {images.map((image, index) => (
         <div key={index} className={styles.imageContainer}>
-          <img 
+          <Image 
             src={transformImageUrl(image)} 
             alt={`Property Image ${index + 1}`} 
-            className={styles.image} 
+            className={styles.image}
+            width={800}
+            height={600}
+            layout="responsive"
           />
         </div>
       ))}

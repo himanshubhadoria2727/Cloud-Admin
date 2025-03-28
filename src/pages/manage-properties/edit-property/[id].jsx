@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Formik, Form, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import LayoutHoc from "../../../HOC/LayoutHoc";
@@ -15,6 +15,7 @@ import {
 import { useRouter } from "next/router";
 import { toast } from "react-toastify";
 import MyQuillEditor from "../../../components/TextFields/textArea";
+import Image from "next/image";
 
 const { Option } = Select;
 
@@ -759,14 +760,16 @@ export default function EditProperty() {
                       </label>
                       {values.photos[index] && (
                         <div className={styles.preview}>
-                          <img
-                            // Add a guard clause
+                          <Image
                             src={
                               typeof values.photos[index] === "string"
                                 ? values.photos[index]
                                 : URL.createObjectURL(values.photos[index])
                             }
                             alt={`Preview ${index + 1}`}
+                            width={200}
+                            height={200}
+                            objectFit="cover"
                           />
                           <button
                             type="button"
