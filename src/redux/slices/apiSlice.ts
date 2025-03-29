@@ -288,6 +288,10 @@ export const apiSlice = createApi({
       },
       providesTags: ['Review'],
     }),
+    getReviewById: builder.query({
+      query: (reviewId) => `/analytics/reviews/${reviewId}`,
+      providesTags: (result, error, reviewId) => [{ type: 'Review', id: reviewId }],
+    }),
     getPropertyReviews: builder.query({
       query: (propertyId) => `/analytics/reviews/property/${propertyId}`,
       providesTags: ['Review'],
@@ -348,6 +352,7 @@ export const {
   useGetRecentMessagesQuery,
   useGetRecentTransactionsQuery,
   useGetAllReviewsQuery,
+  useGetReviewByIdQuery,
   useGetPropertyReviewsQuery,
   useUpdateReviewMutation,
   useDeleteReviewMutation,
