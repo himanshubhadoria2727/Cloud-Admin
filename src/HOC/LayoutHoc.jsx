@@ -43,8 +43,8 @@ const LayoutHoc = ({ children }) => {
     {
       key: "1",
       label: (
-        <Link
-          href="/"
+        <a
+          href="#"
           onClick={(e) => {
             e.preventDefault();
             localStorage.removeItem("auth_token");
@@ -53,7 +53,7 @@ const LayoutHoc = ({ children }) => {
           rel="noopener noreferrer"
         >
           Log Out
-        </Link>
+        </a>
       ),
     },
   ];
@@ -85,7 +85,8 @@ const LayoutHoc = ({ children }) => {
             {
               key: "/dashboard",
               icon: <DashboardOutlined />,
-              label: <Link href="/dashboard">Dashboard</Link>,
+              label: "Dashboard",
+              onClick: () => router.push("/dashboard"),
               style: {
                 backgroundColor: router.pathname === "/dashboard" ? "#3861fb" : "white",
                 color: router.pathname === "/dashboard" ? "white" : "black",
@@ -94,7 +95,8 @@ const LayoutHoc = ({ children }) => {
             {
               key: "/manage-properties",
               icon: <UserOutlined />,
-              label: <Link href="/manage-properties">Manage Properties</Link>,
+              label: "Manage Properties",
+              onClick: () => router.push("/manage-properties"),
               style: {
                 backgroundColor:
                   router.pathname.startsWith("/manage-properties") ? "#3861fb" : "white",
@@ -104,7 +106,8 @@ const LayoutHoc = ({ children }) => {
             {
               key: "/bookings",
               icon: <FileTextOutlined />,
-              label: <Link href="/bookings">Manage Bookings</Link>,
+              label: "Manage Bookings",
+              onClick: () => router.push("/bookings"),
               style: {
                 backgroundColor: router.pathname === "/bookings" ? "#3861fb" : "white",
                 color: router.pathname === "/bookings" ? "white" : "black",
@@ -113,7 +116,8 @@ const LayoutHoc = ({ children }) => {
             {
               key: "/manage-user",
               icon: <UserOutlined />,
-              label: <Link href="/manage-user">Manage Users</Link>,
+              label: "Manage Users",
+              onClick: () => router.push("/manage-user"),
               style: {
                 backgroundColor: router.pathname === "/manage-user" ? "#3861fb" : "white",
                 color: router.pathname === "/manage-user" ? "white" : "black",
@@ -136,7 +140,8 @@ const LayoutHoc = ({ children }) => {
             {
               key: "/enquiries",
               icon: <FileTextOutlined />,
-              label: <Link href="/enquiries">Enquiries</Link>,
+              label: "Enquiries",
+              onClick: () => router.push("/enquiries"),
               style: {
                 backgroundColor: router.pathname === "/enquiries" ? "#3861fb" : "white",
                 color: router.pathname === "/enquiries" ? "white" : "black",
@@ -145,7 +150,8 @@ const LayoutHoc = ({ children }) => {
             {
               key: "/admin-setting",
               icon: <SettingOutlined />,
-              label: <Link href="/admin-setting">Admin Settings</Link>,
+              label: "Admin Settings",
+              onClick: () => router.push("/admin-setting"),
               style: {
                 backgroundColor: router.pathname === "/admin-setting" ? "#3861fb" : "white",
                 color: router.pathname === "/admin-setting" ? "white" : "black",

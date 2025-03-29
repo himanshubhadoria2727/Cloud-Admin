@@ -10,7 +10,7 @@ import {
   useGetPropertiesQuery,
   useCreatePropertyMutation,
 } from "../../../redux/slices/apiSlice";
-import { useRouter } from "next/navigation";
+import { useRouter } from "next/router";
 import { toast } from "react-toastify";
 import MyQuillEditor from "../../../components/TextFields/textArea";
 import Image from "next/image";

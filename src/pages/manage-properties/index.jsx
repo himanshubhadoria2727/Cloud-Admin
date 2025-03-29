@@ -140,11 +140,7 @@ export default function ManageProperties() {
                     <Button
                       type="link"
                       icon={<i className="fas fa-pen"></i>}
-                      onClick={() =>
-                        router.push(
-                          `/manage-properties/edit-property/${property._id}`
-                        )
-                      }
+                      onClick={() => router.push(`/manage-properties/edit-property/${property._id}`)}
                     >
                       Edit
                     </Button>
@@ -171,11 +167,13 @@ export default function ManageProperties() {
             onChange={(page) => setCurrentPage(page)}
           />
         </Row>
-        <Link href="/manage-properties/add-property">
-          <Button type="primary" className={styles.addButton}>
-            + Add Property
-          </Button>
-        </Link>
+        <Button 
+          type="primary" 
+          className={styles.addButton}
+          onClick={() => router.push("/manage-properties/add-property")}
+        >
+          + Add Property
+        </Button>
       </div>
     </LayoutHoc>
   );

@@ -9,7 +9,7 @@ import {
 } from '@ant-design/icons';
 import DateRangePickerComponent from "@/components/TextFields/datepicker";
 import styles from './dashboard.module.css';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { 
   useLazyGetDashboardStatsQuery, 
   useLazyGetRevenueDataQuery, 
@@ -17,6 +17,7 @@ import {
   useGetRecentTransactionsQuery 
 } from '@/redux/slices/apiSlice';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 
 const { Title, Text } = Typography;
 
@@ -24,17 +25,17 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(false);
   const [stats, setStats] = useState([]);
   const [dateRange, setDateRange] = useState([null, null]);
-
+  const [revenueData, setRevenueData] = useState({ labels: [], data: [] });
+  const router = useRouter();
+  
   // RTK Query hooks
   const [getDashboardStats, { isLoading: isStatsLoading }] = useLazyGetDashboardStatsQuery();
   const [getRevenueData, { isLoading: isRevenueLoading }] = useLazyGetRevenueDataQuery();
   const { data: recentMessages = [], isLoading: isMessagesLoading } = useGetRecentMessagesQuery();
   const { data: transactions = [], isLoading: isTransactionsLoading } = useGetRecentTransactionsQuery();
-  
-  const [revenueData, setRevenueData] = useState({ labels: [], data: [] });
 
   // Fetch dashboard data
-  const fetchDashboardData = async (startDate, endDate) => {
+  const fetchDashboardData = useCallback(async (startDate, endDate) => {
     try {
       // Prepare date query params if dates are selected
       const dateParams = {};
@@ -61,7 +62,7 @@ export default function Dashboard() {
       console.error('Error fetching dashboard data:', error);
       message.error('Failed to load dashboard data');
     }
-  };
+  }, [getDashboardStats, getRevenueData]);
 
   // Handle date range change
   const handleDateRangeChange = (dates) => {
@@ -74,7 +75,7 @@ export default function Dashboard() {
   // Initial data fetch
   useEffect(() => {
     fetchDashboardData();
-  }, [fetchDashboardData]);
+  }, []); // Empty dependency array since fetchDashboardData is memoized
 
   // Determine if any data is loading
   useEffect(() => {
@@ -131,8 +132,12 @@ export default function Dashboard() {
           <Row gutter={[24, 24]} className={styles.statsRow}>
             {stats.map((stat) => (
               <Col xs={24} sm={12} md={6} key={stat.id}>
-                <Link href={stat.id === 1 ? "/manage-properties" : "#"}>
-                  <Card className={styles.statsCard} bordered={false}>
+                <div 
+                  className={styles.statsCard} 
+                  onClick={() => stat.id === 1 ? router.push("/manage-properties") : null}
+                  style={{ cursor: stat.id === 1 ? 'pointer' : 'default' }}
+                >
+                  {/* <Card bordered={false}> */}
                     <div className={styles.cardContent}>
                       <span className={styles.cardIcon}>
                         {stat.icon}
@@ -144,8 +149,8 @@ export default function Dashboard() {
                         <Text>{stat.title}</Text>
                       </div>
                     </div>
-                  </Card>
-                </Link>
+                  {/* </Card> */}
+                </div>
               </Col>
             ))}
           </Row>
@@ -280,7 +285,12 @@ export default function Dashboard() {
                   pagination={false}
                   locale={{ emptyText: 'No recent transactions' }}
                 />
-                <Button type="primary" block className={styles.viewMoreBtn}>
+                <Button 
+                  type="primary" 
+                  block 
+                  className={styles.viewMoreBtn}
+                  onClick={() => router.push("/manage-transcation")}
+                >
                   View All Transactions
                 </Button>
               </Card>
@@ -291,3 +301,4 @@ export default function Dashboard() {
     </LayoutHoc>
   );
 }
+

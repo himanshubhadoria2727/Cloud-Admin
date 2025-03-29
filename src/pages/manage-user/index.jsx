@@ -17,6 +17,7 @@ function ManageUser() {
   const [totalUsers, setTotalUsers] = useState(0);
   const [pageSize] = useState(5);
   const [searchTerm, setSearchTerm] = useState(""); // State for search term
+  const [firstLoad, setFirstLoad] = useState(true);
 
   const fetchUsers = async (page = 1, search = "") => {
     setLoading(true);
@@ -33,8 +34,11 @@ function ManageUser() {
   };
 
   useEffect(() => {
-    fetchUsers(currentPage, searchTerm);
-  }, [currentPage, searchTerm, fetchUsers]);
+    if (firstLoad) {
+      fetchUsers(currentPage, searchTerm);
+      setFirstLoad(false);
+    }
+  }, [currentPage, searchTerm, fetchUsers, firstLoad]);
 
   const handleSearch = (event) => {
     if (event.key === "Enter") {
@@ -176,3 +180,4 @@ function ManageUser() {
 }
 
 export default ManageUser;
+
