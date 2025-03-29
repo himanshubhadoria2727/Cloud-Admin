@@ -49,7 +49,7 @@ export const apiSlice = createApi({
     return result;
   },
 
-  tagTypes: ["User", "Auth", "Property", "Booking", "Enquiry", "Content", "Category"], // Updated tag types
+  tagTypes: ["User", "Auth", "Property", "Booking", "Enquiry", "Content", "Category", "Review"], // Updated tag types
   endpoints: (builder) => ({
     register: builder.mutation({
       query: (userData) => ({
