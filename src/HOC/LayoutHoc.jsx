@@ -6,7 +6,7 @@ import Link from "next/link";
 import { SVG } from "@/assest/svg";
 import { useRouter } from "next/router";
 import dynamic from "next/dynamic";
-import { SearchOutlined, BellOutlined, DashboardOutlined, SettingOutlined, UserOutlined, FileTextOutlined, MenuUnfoldOutlined, MenuFoldOutlined } from "@ant-design/icons";
+import { SearchOutlined, BellOutlined, DashboardOutlined, SettingOutlined, UserOutlined, FileTextOutlined, MenuUnfoldOutlined, MenuFoldOutlined, StarOutlined } from "@ant-design/icons";
 import Loader from "@/loader/loader";
 import Image from "next/image";
 
@@ -95,7 +95,7 @@ const LayoutHoc = ({ children }) => {
             {
               key: "/manage-properties",
               icon: <UserOutlined />,
-              label: "Manage Properties",
+              label: " Properties",
               onClick: () => router.push("/manage-properties"),
               style: {
                 backgroundColor:
@@ -106,7 +106,7 @@ const LayoutHoc = ({ children }) => {
             {
               key: "/bookings",
               icon: <FileTextOutlined />,
-              label: "Manage Bookings",
+              label: " Bookings",
               onClick: () => router.push("/bookings"),
               style: {
                 backgroundColor: router.pathname === "/bookings" ? "#3861fb" : "white",
@@ -114,9 +114,19 @@ const LayoutHoc = ({ children }) => {
               },
             },
             {
+              key: "/reviews",
+              icon: <StarOutlined />,
+              label: "Reviews",
+              onClick: () => router.push("/reviews"),
+              style: {
+                backgroundColor: router.pathname === "/reviews" ? "#3861fb" : "white",
+                color: router.pathname === "/reviews" ? "white" : "black",
+              },
+            },
+            {
               key: "/manage-user",
               icon: <UserOutlined />,
-              label: "Manage Users",
+              label: " Users",
               onClick: () => router.push("/manage-user"),
               style: {
                 backgroundColor: router.pathname === "/manage-user" ? "#3861fb" : "white",

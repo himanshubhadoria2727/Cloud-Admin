@@ -134,8 +134,11 @@ export default function Dashboard() {
               <Col xs={24} sm={12} md={6} key={stat.id}>
                 <div 
                   className={styles.statsCard} 
-                  onClick={() => stat.id === 1 ? router.push("/manage-properties") : null}
-                  style={{ cursor: stat.id === 1 ? 'pointer' : 'default' }}
+                  onClick={() => {
+                    if (stat.id === 1) router.push("/manage-properties");
+                    if (stat.id === 3) router.push("/reviews");
+                  }}
+                  style={{ cursor: [1, 3].includes(stat.id) ? 'pointer' : 'default' }}
                 >
                   {/* <Card bordered={false}> */}
                     <div className={styles.cardContent}>

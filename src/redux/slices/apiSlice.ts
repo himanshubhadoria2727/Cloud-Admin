@@ -272,6 +272,41 @@ export const apiSlice = createApi({
     getRecentTransactions: builder.query({
       query: () => "/analytics/recent-transactions",
     }),
+
+    // Reviews endpoints
+    getAllReviews: builder.query({
+      query: (params) => {
+        // Filter out undefined/null values from parameters
+        const validParams = Object.fromEntries(
+          Object.entries(params || {}).filter(([_, v]) => v !== undefined && v !== null)
+        );
+        
+        return {
+          url: "/analytics/reviews",
+          params: validParams,
+        };
+      },
+      providesTags: ['Review'],
+    }),
+    getPropertyReviews: builder.query({
+      query: (propertyId) => `/analytics/reviews/property/${propertyId}`,
+      providesTags: ['Review'],
+    }),
+    updateReview: builder.mutation({
+      query: ({ reviewId, ...data }) => ({
+        url: `/analytics/reviews/${reviewId}`,
+        method: "PUT",
+        body: data,
+      }),
+      invalidatesTags: ['Review'],
+    }),
+    deleteReview: builder.mutation({
+      query: (reviewId) => ({
+        url: `/analytics/reviews/${reviewId}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ['Review'],
+    }),
   }),
 });
 
@@ -312,6 +347,10 @@ export const {
   useLazyGetRevenueDataQuery,
   useGetRecentMessagesQuery,
   useGetRecentTransactionsQuery,
+  useGetAllReviewsQuery,
+  useGetPropertyReviewsQuery,
+  useUpdateReviewMutation,
+  useDeleteReviewMutation,
 } = apiSlice;
 
 // Function to handle logout and invalidate user queries

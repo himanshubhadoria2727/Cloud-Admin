@@ -1,0 +1,126 @@
+.reviewsContainer {
+  width: 100%;
+  padding: 0;
+}
+
+.reviewsCard {
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.title {
+  margin: 0 !important;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #2D3748;
+}
+
+.filtersSection {
+  margin-bottom: 24px;
+  padding: 20px;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+}
+
+.searchInput, .selectFilter {
+  width: 100%;
+}
+
+.searchInput input {
+  height: 40px;
+}
+
+.filterActions {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.reviewsTable {
+  margin-top: 16px;
+}
+
+.reviewsTable :global(.ant-table-thead > tr > th) {
+  background-color: #f8f9fa;
+  color: #2D3748;
+  font-weight: 600;
+}
+
+.reviewsTable :global(.ant-table-row:hover) {
+  background-color: #f8f9fa;
+}
+
+.reviewText {
+  max-width: 350px;
+  white-space: normal;
+  word-wrap: break-word;
+  line-height: 1.5;
+}
+
+/* Review Detail Page Styles */
+.reviewDetailContainer {
+  width: 100%;
+  padding: 0;
+  min-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.breadcrumb {
+  margin-bottom: 16px;
+}
+
+.reviewDetailCard {
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.reviewContent {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.reviewInfo {
+  width: 100%;
+}
+
+.reviewDetails {
+  padding: 16px 0;
+}
+
+.ratingDisplay {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.reviewComment {
+  background-color: #f8f9fa;
+  padding: 16px;
+  border-radius: 8px;
+  font-size: 16px;
+  line-height: 1.6;
+  white-space: pre-wrap;
+}
+
+@media (max-width: 768px) {
+  .filterActions {
+    justify-content: flex-start;
+  }
+  
+  .reviewText {
+    max-width: 250px;
+  }
+} 
