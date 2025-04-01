@@ -49,7 +49,7 @@ export const apiSlice = createApi({
     return result;
   },
 
-  tagTypes: ["User", "Auth", "Property", "Booking", "Enquiry", "Content", "Category", "Review"], // Updated tag types
+  tagTypes: ["User", "Auth", "Property", "Booking", "Enquiry", "Content", "Category", "Review", "Universities"], // Updated tag types
   endpoints: (builder) => ({
     register: builder.mutation({
       query: (userData) => ({
@@ -311,6 +311,16 @@ export const apiSlice = createApi({
       }),
       invalidatesTags: ['Review'],
     }),
+
+    // Add a new endpoint for fetching universities by location
+    getUniversitiesByLocation: builder.query({
+      query: ({ city, country }) => ({
+        url: `/property/universities`,
+        params: { city, country },
+        method: 'GET',
+      }),
+      providesTags: ['Universities'],
+    }),
   }),
 });
 
@@ -356,6 +366,7 @@ export const {
   useGetPropertyReviewsQuery,
   useUpdateReviewMutation,
   useDeleteReviewMutation,
+  useGetUniversitiesByLocationQuery,
 } = apiSlice;
 
 // Function to handle logout and invalidate user queries

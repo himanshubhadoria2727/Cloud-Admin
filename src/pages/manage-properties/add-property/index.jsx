@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { Formik, Form, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import LayoutHoc from "@/HOC/LayoutHoc";
@@ -9,6 +9,7 @@ import { FaBed, FaBath, FaHome, FaBuilding, FaWarehouse } from "react-icons/fa";
 import {
   useGetPropertiesQuery,
   useCreatePropertyMutation,
+  useGetUniversitiesByLocationQuery,
 } from "../../../redux/slices/apiSlice";
 import { useRouter } from "next/router";
 import { toast } from "react-toastify";
@@ -21,12 +22,71 @@ export default function AddProperty() {
   const router = useRouter();
   const { id } = router.query || {};
   const [createProperty] = useCreatePropertyMutation();
+  const [universities, setUniversities] = useState([]);
+  const [selectedCity, setSelectedCity] = useState('');
+  const [selectedCountry, setSelectedCountry] = useState('');
 
   const {
     data: property,
     isLoading,
     error,
   } = useGetPropertiesQuery(id ? { id } : null);
+
+  // Add debouncing for city and country changes
+  const [debouncedCity, setDebouncedCity] = useState('');
+  const [debouncedCountry, setDebouncedCountry] = useState('');
+  
+  // Handle city changes with debounce
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (selectedCity) {
+        setDebouncedCity(selectedCity);
+      }
+    }, 500); // 500ms debounce
+    
+    return () => clearTimeout(timer);
+  }, [selectedCity]);
+  
+  // Handle country changes with debounce
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (selectedCountry) {
+        setDebouncedCountry(selectedCountry);
+      }
+    }, 500); // 500ms debounce
+    
+    return () => clearTimeout(timer);
+  }, [selectedCountry]);
+  
+  // Fetch universities when debounced city or country changes
+  const {
+    data: universitiesData,
+    isLoading: isLoadingUniversities,
+    isFetching: isFetchingUniversities,
+  } = useGetUniversitiesByLocationQuery(
+    { city: debouncedCity, country: debouncedCountry },
+    { skip: !debouncedCity || !debouncedCountry }
+  );
+  
+  // Update universities when data is fetched
+  useEffect(() => {
+    if (universitiesData && Array.isArray(universitiesData)) {
+      setUniversities(universitiesData.map(uni => uni.name));
+    }
+  }, [universitiesData]);
+  
+  // Helper to handle city input change
+  const handleCityChange = useCallback((e, setFieldValue) => {
+    const cityValue = e.target.value;
+    setFieldValue("city", cityValue);
+    setSelectedCity(cityValue);
+  }, []);
+  
+  // Helper to handle country selection
+  const handleCountryChange = useCallback((value, setFieldValue) => {
+    setFieldValue("country", value);
+    setSelectedCountry(value);
+  }, []);
 
   const [initialValues, setInitialValues] = useState({
     propertyName: "",
@@ -494,6 +554,7 @@ export default function AddProperty() {
                     title="City"
                     placeholder="Enter your city"
                     className={styles.labelinput}
+                    onChange={(e) => handleCityChange(e, setFieldValue)}
                   />
                   <ErrorMessage name="city">
                     {(msg) => <div className={styles.error}>{msg}</div>}
@@ -506,7 +567,7 @@ export default function AddProperty() {
                       placeholder="Select country"
                       className={styles.dropdown}
                       value={values.country}
-                      onChange={(value) => setFieldValue("country", value)}
+                      onChange={(value) => handleCountryChange(value, setFieldValue)}
                     >
                       <Option value="USA">United States (USD)</Option>
                       <Option value="India">India (INR)</Option>
@@ -628,9 +689,47 @@ export default function AddProperty() {
                   value={values.minimumStayDuration}
                   onChange={(value) => setFieldValue("minimumStayDuration", value)}
                 >
-                  <Option value="Less than 6 months">Less than 6 months</Option>
-                  <Option value="6-12 months">6-12 months</Option>
-                  <Option value="1 year+">1 year+</Option>
+                  <Select.Option value="Month-to-Month">Month-to-Month</Select.Option>
+                  
+                  {/* Quarter 1 Ranges */}
+                  <Select.Option value="Jan to Mar">Jan to Mar (Q1)</Select.Option>
+                  <Select.Option value="Jan to Jun">Jan to Jun (Q1-Q2)</Select.Option>
+                  <Select.Option value="Jan to Sep">Jan to Sep (Q1-Q3)</Select.Option>
+                  <Select.Option value="Jan to Dec">Jan to Dec (Full Year)</Select.Option>
+                  <Select.Option value="Feb to Apr">Feb to Apr</Select.Option>
+                  <Select.Option value="Feb to Jul">Feb to Jul</Select.Option>
+                  <Select.Option value="Feb to Dec">Feb to Dec</Select.Option>
+                  <Select.Option value="Mar to May">Mar to May</Select.Option>
+                  <Select.Option value="Mar to Aug">Mar to Aug</Select.Option>
+                  <Select.Option value="Mar to Dec">Mar to Dec</Select.Option>
+                  
+                  {/* Quarter 2 Ranges */}
+                  <Select.Option value="Apr to Jun">Apr to Jun (Q2)</Select.Option>
+                  <Select.Option value="Apr to Sep">Apr to Sep (Q2-Q3)</Select.Option>
+                  <Select.Option value="Apr to Dec">Apr to Dec (Q2-Q4)</Select.Option>
+                  <Select.Option value="May to Jul">May to Jul</Select.Option>
+                  <Select.Option value="May to Oct">May to Oct</Select.Option>
+                  <Select.Option value="May to Dec">May to Dec</Select.Option>
+                  <Select.Option value="Jun to Aug">Jun to Aug</Select.Option>
+                  <Select.Option value="Jun to Nov">Jun to Nov</Select.Option>
+                  <Select.Option value="Jun to Dec">Jun to Dec</Select.Option>
+                  
+                  {/* Quarter 3 Ranges */}
+                  <Select.Option value="Jul to Sep">Jul to Sep (Q3)</Select.Option>
+                  <Select.Option value="Jul to Dec">Jul to Dec (Q3-Q4)</Select.Option>
+                  <Select.Option value="Aug to Oct">Aug to Oct</Select.Option>
+                  <Select.Option value="Aug to Dec">Aug to Dec</Select.Option>
+                  <Select.Option value="Sep to Nov">Sep to Nov</Select.Option>
+                  <Select.Option value="Sep to Dec">Sep to Dec</Select.Option>
+                  
+                  {/* Quarter 4 Ranges */}
+                  <Select.Option value="Oct to Dec">Oct to Dec (Q4)</Select.Option>
+                  <Select.Option value="Nov to Dec">Nov to Dec</Select.Option>
+                  
+                  {/* General Durations */}
+                  <Select.Option value="Less than 6 months">Less than 6 months</Select.Option>
+                  <Select.Option value="6-12 months">6-12 months</Select.Option>
+                  <Select.Option value="1 year+">1 year+</Select.Option>
                 </Select>
                 <ErrorMessage name="minimumStayDuration">
                   {(msg) => <div className={styles.error}>{msg}</div>}
@@ -658,46 +757,35 @@ export default function AddProperty() {
               {/* Nearby Universities */}
               <h3 className={styles.formTitle}>Nearby Universities</h3>
               <div className={styles.amenitiesGrid}>
-                {[
-                  "University of Toronto",
-                  "York University",
-                  "Ryerson University",
-                  "McGill University",
-                  "University of British Columbia",
-                  "University of Waterloo",
-                  "McMaster University",
-                  "Queen's University",
-                  "University of Alberta",
-                  "University of Calgary",
-                  "Harvard University",
-                  "MIT",
-                  "Stanford University",
-                  "Yale University",
-                  "Princeton University",
-                  "Oxford University",
-                  "Cambridge University",
-                  "IIT Delhi",
-                  "IIT Bombay",
-                  "IIT Madras"
-                ].map((university, index) => (
-                  <div className={styles.amenityItem} key={index}>
-                    <label className={styles.checkboxLabel}>
-                      <input
-                        type="checkbox"
-                        name="nearbyUniversities"
-                        value={university}
-                        checked={values.nearbyUniversities.includes(university)}
-                        onChange={() => {
-                          const newUniversities = values.nearbyUniversities.includes(university)
-                            ? values.nearbyUniversities.filter((item) => item !== university)
-                            : [...values.nearbyUniversities, university];
-                          setFieldValue("nearbyUniversities", newUniversities);
-                        }}
-                      />
-                      {university}
-                    </label>
+                {isLoadingUniversities || isFetchingUniversities ? (
+                  <div>Loading universities...</div>
+                ) : universities.length > 0 ? (
+                  universities.map((university, index) => (
+                    <div className={styles.amenityItem} key={index}>
+                      <label className={styles.checkboxLabel}>
+                        <input
+                          type="checkbox"
+                          name="nearbyUniversities"
+                          value={university}
+                          checked={values.nearbyUniversities.includes(university)}
+                          onChange={() => {
+                            const newUniversities = values.nearbyUniversities.includes(university)
+                              ? values.nearbyUniversities.filter((item) => item !== university)
+                              : [...values.nearbyUniversities, university];
+                            setFieldValue("nearbyUniversities", newUniversities);
+                          }}
+                        />
+                        {university}
+                      </label>
+                    </div>
+                  ))
+                ) : (
+                  <div>
+                    {debouncedCity && debouncedCountry 
+                      ? "No universities found for the selected location." 
+                      : "Enter a city and select a country to see universities."}
                   </div>
-                ))}
+                )}
               </div>
               <ErrorMessage name="nearbyUniversities">
                 {(msg) => <div className={styles.error}>{msg}</div>}
