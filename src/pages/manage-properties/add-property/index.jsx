@@ -262,7 +262,13 @@ export default function AddProperty() {
     // Add amenities and utilities as JSON strings
     formData.append("amenities", JSON.stringify(values.amenities || []));
     formData.append("utilities", JSON.stringify(values.utilities || []));
-    formData.append("nearbyUniversities", JSON.stringify(values.nearbyUniversities || []));
+    
+    // Update how nearbyUniversities is added to formData
+    if (Array.isArray(values.nearbyUniversities)) {
+      formData.append("nearbyUniversities", JSON.stringify(values.nearbyUniversities));
+    } else {
+      formData.append("nearbyUniversities", "[]");
+    }
 
     // Create and add overview object as JSON string
     const overview = {

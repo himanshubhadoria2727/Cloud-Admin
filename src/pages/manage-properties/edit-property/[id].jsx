@@ -135,7 +135,11 @@ export default function EditProperty() {
     yearOfConstruction: property?.overview?.yearOfConstruction || "",
     minimumStayDuration: property?.minimumStayDuration || "",
     availableFrom: property?.availableFrom || "",
-    nearbyUniversities: property?.nearbyUniversities || [],
+    nearbyUniversities: Array.isArray(property?.nearbyUniversities) 
+      ? property.nearbyUniversities 
+      : (property?.nearbyUniversities 
+          ? JSON.parse(property.nearbyUniversities) 
+          : []),
   };
 
   const validationSchema = Yup.object().shape({
