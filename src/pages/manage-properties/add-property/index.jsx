@@ -181,8 +181,8 @@ export default function AddProperty() {
     amenities: Yup.array().min(1, "Select at least one amenity"),
     utilities: Yup.array(),
     pricing: Yup.number().required("Pricing is required"),
-    latitude: Yup.number().required("Latitude is required"),
-    longitude: Yup.number().required("Longitude is required"),
+    // latitude: Yup.number().required("Latitude is required"),
+    // longitude: Yup.number().required("Longitude is required"),
     location: Yup.string().required("Address is required"),
     city: Yup.string().required("City is required"),
     country: Yup.string().required("Country is required"),
@@ -617,7 +617,7 @@ export default function AddProperty() {
                 </div>
               )}
 
-              <Row gutter={16}>
+              {/* <Row gutter={16}>
                 <Col span={12}>
                   <LabelInputComponent
                     name="longitude"
@@ -640,7 +640,7 @@ export default function AddProperty() {
                     {(msg) => <div className={styles.error}>{msg}</div>}
                   </ErrorMessage>
                 </Col>
-              </Row>
+              </Row> */}
 
               {/* Pricing Section */}
               <h3 className={styles.formTitle}>Pricing</h3>

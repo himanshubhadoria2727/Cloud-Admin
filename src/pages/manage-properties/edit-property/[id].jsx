@@ -165,8 +165,8 @@ export default function EditProperty() {
     amenities: Yup.array().min(1, "Select at least one amenity"),
     utilities: Yup.array(), // Add utilities validation
     pricing: Yup.number().required("Pricing is required"),
-    latitude: Yup.number().required("Latitude is required"),
-    longitude: Yup.number().required("Longitude is required"),
+    // latitude: Yup.number().required("Latitude is required"),
+    // longitude: Yup.number().required("Longitude is required"),
     location: Yup.string().required("Address is required"),
     city: Yup.string().required("City is required"),
     country: Yup.string().required("Country is required"), // Add country validation
@@ -592,7 +592,7 @@ export default function EditProperty() {
                 </div>
               )}
 
-              <Row gutter={16}>
+              {/* <Row gutter={16}>
                 <Col span={12}>
                   <LabelInputComponent
                     name="longitude"
@@ -615,7 +615,7 @@ export default function EditProperty() {
                     {(msg) => <div className={styles.error}>{msg}</div>}
                   </ErrorMessage>
                 </Col>
-              </Row>
+              </Row> */}
 
               {/* House Rules Section */}
               <h3 className={styles.formTitle}>Pricing</h3>
