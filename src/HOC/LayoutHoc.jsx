@@ -64,7 +64,7 @@ const LayoutHoc = ({ children }) => {
         trigger={null}
         collapsible
         collapsed={collapsed}
-        className={`${styles.sideBar}`}
+        className={`${styles.sideBar} z-100`}
         width={200}
       >
         <Col style={{ textAlign: "center", margin: "16px 0" }}>
