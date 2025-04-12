@@ -15,15 +15,19 @@ const getAuthToken = async () => {
 export const apiSlice = createApi({
   reducerPath: "api",
   baseQuery: async (args, api, extraOptions) => {
-    const token = await getAuthToken();
+    const token = localStorage.getItem("auth_token");
+    console.log("Current auth token:", token); // Debugging
 
     const baseQuery = fetchBaseQuery({
-      //  baseUrl: 'http://digimonk.net:2783/api',
       baseUrl: `${process.env.NEXT_PUBLIC_REST_API_ENDPOINT}/api`,
       prepareHeaders: (headers) => {
         if (token) {
-          headers.set("Authorization", token);
+          // Ensure token is properly formatted
+          const formattedToken = token.startsWith('Bearer ') ? token : `Bearer ${token}`;
+          headers.set("Authorization", formattedToken);
+          console.log("Setting Authorization header:", formattedToken); // Debugging
         }
+        headers.set('Accept', 'application/json');
         return headers;
       },
     });
@@ -45,6 +49,14 @@ export const apiSlice = createApi({
 
     // Make the API request
     const result = await baseQuery(args, api, extraOptions);
+    
+    // Log response for debugging
+    console.log("API Response:", {
+      url: typeof args === 'string' ? args : args.url,
+      status: result.status,
+      data: result.data,
+      error: result.error
+    });
 
     return result;
   },

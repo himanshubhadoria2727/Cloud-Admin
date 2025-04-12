@@ -47,7 +47,7 @@ function LoginForm() {
               return
             }
 
-            localStorage.setItem("auth_token", res?.data?.token);
+            localStorage.setItem("auth_token", res?.data?.signature);
             toast.success('Logged in Succesfully.')
             router.push('/dashboard')
 
