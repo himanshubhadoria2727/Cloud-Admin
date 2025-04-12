@@ -53,7 +53,7 @@ export const apiSlice = createApi({
     // Log response for debugging
     console.log("API Response:", {
       url: typeof args === 'string' ? args : args.url,
-      status: result.status,
+      status: result.error?.status || result.meta?.response?.status,
       data: result.data,
       error: result.error
     });
