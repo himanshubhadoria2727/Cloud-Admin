@@ -34,6 +34,9 @@ const ManageBookings = () => {
     moveInMonth: booking.moveInMonth,
     rentalDays: booking.rentalDays,
     price: booking.price,
+    securityDeposit: booking.securityDeposit,
+    lastMonthPayment: booking.lastMonthPayment,
+    total: (booking.price + booking.securityDeposit + booking.lastMonthPayment),
     status: booking.status,
     createdAt: new Date(booking.createdAt).toLocaleDateString(),
   })) || [];
@@ -131,6 +134,21 @@ const ManageBookings = () => {
       key: "price",
     },
     {
+      title: "Security Deposit",
+      dataIndex: "securityDeposit",
+      key: "securityDeposit",
+    },
+    {
+      title: "Last Month",
+      dataIndex: "lastMonthPayment",
+      key: "lastMonthPayment",
+    },
+    {
+      title: "Total",
+      dataIndex: "total",
+      key: "total",
+    },
+    {
       title: "Status",
       dataIndex: "status",
       key: "status",
@@ -204,3 +222,4 @@ const ManageBookings = () => {
 };
 
 export default ManageBookings; 
+
