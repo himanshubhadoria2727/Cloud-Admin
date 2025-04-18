@@ -25,8 +25,8 @@ export default function EditProperty() {
   const router = useRouter();
   const { id } = router.query;
   const [universities, setUniversities] = useState([]);
-  const [selectedCity, setSelectedCity] = useState('');
-  const [selectedCountry, setSelectedCountry] = useState('');
+  const [selectedCity, setSelectedCity] = useState("");
+  const [selectedCountry, setSelectedCountry] = useState("");
 
   // Check if id is defined before fetching property details
   const {
@@ -41,15 +41,15 @@ export default function EditProperty() {
   // Set initial city and country when property is loaded
   useEffect(() => {
     if (property) {
-      setSelectedCity(property.city || '');
-      setSelectedCountry(property.country || '');
+      setSelectedCity(property.city || "");
+      setSelectedCountry(property.country || "");
     }
   }, [property]);
 
   // Add debouncing for city and country changes
-  const [debouncedCity, setDebouncedCity] = useState('');
-  const [debouncedCountry, setDebouncedCountry] = useState('');
-  
+  const [debouncedCity, setDebouncedCity] = useState("");
+  const [debouncedCountry, setDebouncedCountry] = useState("");
+
   // Handle city changes with debounce
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -57,10 +57,10 @@ export default function EditProperty() {
         setDebouncedCity(selectedCity);
       }
     }, 500); // 500ms debounce
-    
+
     return () => clearTimeout(timer);
   }, [selectedCity]);
-  
+
   // Handle country changes with debounce
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -68,10 +68,10 @@ export default function EditProperty() {
         setDebouncedCountry(selectedCountry);
       }
     }, 500); // 500ms debounce
-    
+
     return () => clearTimeout(timer);
   }, [selectedCountry]);
-  
+
   // Fetch universities when debounced city or country changes
   const {
     data: universitiesData,
@@ -85,7 +85,7 @@ export default function EditProperty() {
   // Update universities when data is fetched
   useEffect(() => {
     if (universitiesData && Array.isArray(universitiesData)) {
-      setUniversities(universitiesData.map(uni => uni.name));
+      setUniversities(universitiesData.map((uni) => uni.name));
     }
   }, [universitiesData]);
 
@@ -95,12 +95,41 @@ export default function EditProperty() {
     setFieldValue("city", cityValue);
     setSelectedCity(cityValue);
   }, []);
-  
+
   // Helper to handle country selection
   const handleCountryChange = useCallback((value, setFieldValue) => {
     setFieldValue("country", value);
     setSelectedCountry(value);
   }, []);
+
+  // Handle bedroom count changes
+  const handleBedroomCountChange = (
+    newCount,
+    currentCount,
+    setFieldValue,
+    currentValues
+  ) => {
+    const currentBedrooms = currentValues?.bedroomDetails || [];
+    if (newCount > currentCount) {
+      // Add new bedroom
+      setFieldValue("bedroomDetails", [
+        ...currentBedrooms,
+        {
+          name: "",
+          rent: "",
+          sizeSqFt: "",
+          furnished: false,
+          privateWashroom: false,
+          sharedWashroom: false,
+          sharedKitchen: false,
+        },
+      ]);
+    } else if (newCount < currentCount) {
+      // Remove last bedroom
+      setFieldValue("bedroomDetails", currentBedrooms.slice(0, newCount));
+    }
+    setFieldValue("bedrooms", newCount);
+  };
 
   if (isLoading) return <div></div>;
   if (error) return <div>Error fetching property details</div>;
@@ -117,29 +146,37 @@ export default function EditProperty() {
     kitchenType: property?.overview?.kitchenType || "private",
     bathroomType: property?.overview?.bathroomType || "private",
     securityDeposit: property?.securityDeposit || "",
-    ownership: property.ownership !== false,
-    renterAgreement: property.renterAgreement !== false,
-    landlordInsurance: property.landlordInsurance!== false, // Assuming this is not part of the fetched data
-    amenities: property?.amenities ? JSON.parse(property.amenities[0]) : [], // Parse the amenities
-    utilities: property?.utilities || [], // Add utilities field
-    photos: property?.images || Array(10).fill(null), // Initialize with fetched image URLs or nulls
+    bookingOptions: {
+      allowSecurityDeposit:
+        property?.bookingOptions?.allowSecurityDeposit || false,
+      allowFirstRent: property?.bookingOptions?.allowFirstRent || false,
+      allowFirstAndLastRent:
+        property?.bookingOptions?.allowFirstAndLastRent || false,
+    },
+    instantBooking: property?.instantBooking || false,
+    bookByEnquiry: property?.bookByEnquiry || false,
+    ownership: property?.ownership !== false,
+    renterAgreement: property?.renterAgreement !== false,
+    landlordInsurance: property?.landlordInsurance !== false,
+    amenities: property?.amenities || [],
+    utilities: property?.utilities || [],
+    photos: property?.images || Array(10).fill(null),
     pricing: property?.price || "",
     latitude: property?.latitude || "",
     longitude: property?.longitude || "",
     location: property?.location || "",
     city: property?.city || "",
-    country: property?.country || "", // Add country field
-    locality: property?.locality || "", // Add locality field
-    rentDetails: property?.rentDetails, // Add default value
-    termsOfStay: property?.termsOfStay, // Add default value
+    country: property?.country || "",
+    locality: property?.locality || "",
+    rentDetails: property?.rentDetails || "Details about rent",
+    termsOfStay: property?.termsOfStay || "Terms of stay",
+    cancellationPolicy: property?.cancellationPolicy || "Cancellation policy",
     yearOfConstruction: property?.overview?.yearOfConstruction || "",
     minimumStayDuration: property?.minimumStayDuration || "",
     availableFrom: property?.availableFrom || "",
-    nearbyUniversities: Array.isArray(property?.nearbyUniversities) 
-      ? property.nearbyUniversities 
-      : (property?.nearbyUniversities 
-          ? JSON.parse(property.nearbyUniversities) 
-          : []),
+    nearbyUniversities: property?.nearbyUniversities || [],
+    bedroomDetails: property?.overview?.bedroomDetails || [],
+    onSiteVerification: property?.onSiteVerification || false,
   };
 
   const validationSchema = Yup.object().shape({
@@ -155,7 +192,13 @@ export default function EditProperty() {
     roomType: Yup.string().required("Room type is required"),
     kitchenType: Yup.string().required("Kitchen type is required"),
     bathroomType: Yup.string().required("Bathroom type is required"),
-    securityDeposit: Yup.number().required("Security deposit is required"),
+    pricing: Yup.number().required("Pricing is required"),
+    bookingOptions: Yup.object().shape({
+      allowSecurityDeposit: Yup.boolean(),
+      allowFirstRent: Yup.boolean(),
+      allowFirstAndLastRent: Yup.boolean(),
+    }),
+    instantBooking: Yup.boolean(),
     ownership: Yup.bool().oneOf([true], "You must certify ownership"),
     renterAgreement: Yup.bool().oneOf(
       [true],
@@ -173,8 +216,13 @@ export default function EditProperty() {
     locality: Yup.string().required("Locality is required"), // Add locality validation
     rentDetails: Yup.string().required("Rent details are required"),
     termsOfStay: Yup.string().required("Terms of stay are required"),
-    yearOfConstruction: Yup.number().required("Year of construction is required"),
-    minimumStayDuration: Yup.string().required("Minimum stay duration is required"),
+    cancellationPolicy: Yup.string().required("Cancellation policy is required"),
+    yearOfConstruction: Yup.number().required(
+      "Year of construction is required"
+    ),
+    minimumStayDuration: Yup.string().required(
+      "Minimum stay duration is required"
+    ),
     availableFrom: Yup.string().required("Available from date is required"),
     nearbyUniversities: Yup.array(),
   });
@@ -217,64 +265,86 @@ export default function EditProperty() {
   ];
 
   const handleSubmit = async (values, { setSubmitting, setErrors }) => {
-    console.log("submit is pressed");
-
     try {
-      const formData = new FormData();
-
-      // Add basic property details
-      formData.append("title", values.propertyName);
-      formData.append("squareFootage", values.squareFootage);
-      formData.append("description", values.description);
-      formData.append("price", values.pricing);
-      formData.append("securityDeposit", values.securityDeposit);
-      formData.append("latitude", values.latitude);
-      formData.append("longitude", values.longitude);
-      formData.append("type", values.homeType);
-      formData.append("location", values.location);
-      formData.append("city", values.city);
-      formData.append("country", values.country); // Add country to form data
-      formData.append("locality", values.locality); // Add locality to form data
-      formData.append("minimumStayDuration", values.minimumStayDuration);
-      formData.append("availableFrom", values.availableFrom);
-      
-      // Add amenities and utilities as JSON strings
-      formData.append("amenities", JSON.stringify(values.amenities || []));
-      formData.append("utilities", JSON.stringify(values.utilities || []));
-      formData.append("nearbyUniversities", JSON.stringify(values.nearbyUniversities || []));
-
-      // Create and add overview object as JSON string
-      const overview = {
-        bedrooms: parseInt(values.bedrooms),
-        bathrooms: parseInt(values.bathrooms),
-        squareFeet: parseInt(values.squareFootage),
-        kitchen: values.kitchens,
-        roomType: values.roomType,
-        kitchenType: values.kitchenType,
-        bathroomType: values.bathroomType,
-        yearOfConstruction: parseInt(values.yearOfConstruction),
+      // Create the property object with all fields
+      const propertyData = {
+        title: values.propertyName,
+        squareFootage: values.squareFootage,
+        description: values.description,
+        price: values.pricing,
+        securityDeposit: values.securityDeposit,
+        latitude: values.latitude,
+        longitude: values.longitude,
+        type: values.homeType,
+        location: values.location,
+        city: values.city,
+        country: values.country,
+        locality: values.locality,
+        minimumStayDuration: values.minimumStayDuration,
+        availableFrom: values.availableFrom,
+        ownership: values.ownership,
+        renterAgreement: values.renterAgreement,
+        landlordInsurance: values.landlordInsurance,
+        amenities: values.amenities || [],
+        utilities: values.utilities || [],
+        nearbyUniversities: values.nearbyUniversities || [],
+        rentDetails: values.rentDetails || "Details about rent",
+        termsOfStay: values.termsOfStay || "Terms of stay",
+        cancellationPolicy: values.cancellationPolicy || "Cancellation policy",
+        onSiteVerification: values.onSiteVerification,
+        instantBooking: values.instantBooking,
+        bookByEnquiry: values.bookByEnquiry,
+        bookingOptions: values.bookingOptions,
+        overview: {
+          bedrooms: parseInt(values.bedrooms),
+          bathrooms: parseInt(values.bathrooms),
+          squareFeet: parseInt(values.squareFootage),
+          kitchen: values.kitchens,
+          roomType: values.roomType,
+          kitchenType: values.kitchenType,
+          bathroomType: values.bathroomType,
+          yearOfConstruction: parseInt(values.yearOfConstruction),
+          bedroomDetails: values.bedroomDetails || []
+        }
       };
-      formData.append("overview", JSON.stringify(overview));
 
-      // Add required string fields with default values if not provided
-      formData.append(
-        "rentDetails",
-        values.rentDetails || "Details about rent"
-      );
-      formData.append("termsOfStay", values.termsOfStay || "Terms of stay");
-
-      // Add images - filter out null values and append each valid image
-      const validPhotos = values.photos.filter((photo) => photo !== null);
-      validPhotos.forEach((photo) => {
-        formData.append("images", photo);
+      // Handle images - first check which existing images to keep
+      let existingImages = [];
+      values.photos.forEach(photo => {
+        if (typeof photo === 'string') {
+          existingImages.push(photo);
+        }
       });
 
-      // Add checkbox values
-      formData.append("ownership", values.ownership);
-      formData.append("renterAgreement", values.renterAgreement);
-      formData.append("landlordInsurance", values.landlordInsurance);
+      // Create FormData only for new images
+      const imageFormData = new FormData();
+      const newPhotos = values.photos.filter(photo => photo instanceof File);
+      newPhotos.forEach(photo => {
+        imageFormData.append("images", photo);
+      });
 
-      const result = await editProperty({ id, data: formData }).unwrap();
+      // If there are new photos, upload them first
+      if (newPhotos.length > 0) {
+        const imageUploadResponse = await fetch('/api/upload-images', {
+          method: 'POST',
+          body: imageFormData
+        });
+        
+        if (!imageUploadResponse.ok) {
+          throw new Error('Failed to upload images');
+        }
+
+        const { imageUrls } = await imageUploadResponse.json();
+        
+        // Combine existing and new image URLs
+        propertyData.images = [...existingImages, ...imageUrls];
+      } else {
+        // If no new photos, just use existing ones
+        propertyData.images = existingImages;
+      }
+
+      // Update property with complete data
+      const result = await editProperty({ id, data: propertyData }).unwrap();
       console.log("Property updated successfully:", result);
       toast.success("Property updated successfully");
       router.back();
@@ -388,16 +458,38 @@ export default function EditProperty() {
                     <div className={styles.counterControls}>
                       <button
                         type="button"
-                        onClick={() =>
-                          setFieldValue(field, Math.max(0, values[field] - 1))
-                        }
+                        onClick={() => {
+                          const newValue = Math.max(0, values[field] - 1);
+                          if (field === "bedrooms") {
+                            handleBedroomCountChange(
+                              newValue,
+                              values[field],
+                              setFieldValue,
+                              values
+                            );
+                          } else {
+                            setFieldValue(field, newValue);
+                          }
+                        }}
                       >
                         -
                       </button>
                       <span>{values[field]}</span>
                       <button
                         type="button"
-                        onClick={() => setFieldValue(field, values[field] + 1)}
+                        onClick={() => {
+                          const newValue = values[field] + 1;
+                          if (field === "bedrooms") {
+                            handleBedroomCountChange(
+                              newValue,
+                              values[field],
+                              setFieldValue,
+                              values
+                            );
+                          } else {
+                            setFieldValue(field, newValue);
+                          }
+                        }}
                       >
                         +
                       </button>
@@ -406,6 +498,166 @@ export default function EditProperty() {
                 ))}
               </div>
 
+              {/* Bedroom Details Section */}
+              {values.bedrooms > 0 && (
+                <div className={styles.bedroomDetailsSection}>
+                  <h3 className={styles.formTitle}>Bedroom Details</h3>
+                  {values.bedroomDetails.map((bedroom, index) => (
+                    <div key={index} className={styles.bedroomCard}>
+                      <h4>Bedroom {index + 1}</h4>
+                      <Row gutter={16}>
+                        <Col span={8}>
+                          <LabelInputComponent
+                            name={`bedroomDetails.${index}.name`}
+                            title="Name"
+                            placeholder="Enter bedroom name"
+                            className={styles.labelinput}
+                            value={values.bedroomDetails[index]?.name || ""}
+                            onChange={(e) => {
+                              const newDetails = [
+                                ...(values.bedroomDetails || []),
+                              ];
+                              if (!newDetails[index]) newDetails[index] = {};
+                              newDetails[index].name = e.target.value;
+                              setFieldValue("bedroomDetails", newDetails);
+                            }}
+                          />
+                        </Col>
+                        <Col span={8}>
+                          <LabelInputComponent
+                            name={`bedroomDetails.${index}.rent`}
+                            title="Rent"
+                            placeholder="Enter rent amount"
+                            className={styles.labelinput}
+                            value={values.bedroomDetails[index]?.rent || ""}
+                            onChange={(e) => {
+                              const newDetails = [
+                                ...(values.bedroomDetails || []),
+                              ];
+                              if (!newDetails[index]) newDetails[index] = {};
+                              newDetails[index].rent = e.target.value;
+                              setFieldValue("bedroomDetails", newDetails);
+                            }}
+                          />
+                        </Col>
+                        <Col span={8}>
+                          <LabelInputComponent
+                            name={`bedroomDetails.${index}.sizeSqFt`}
+                            title="Size (sq ft)"
+                            placeholder="Enter size in sq ft"
+                            className={styles.labelinput}
+                            value={values.bedroomDetails[index]?.sizeSqFt || ""}
+                            onChange={(e) => {
+                              const newDetails = [
+                                ...(values.bedroomDetails || []),
+                              ];
+                              if (!newDetails[index]) newDetails[index] = {};
+                              newDetails[index].sizeSqFt = e.target.value;
+                              setFieldValue("bedroomDetails", newDetails);
+                            }}
+                          />
+                        </Col>
+                      </Row>
+                      <Row gutter={16} className={styles.checkboxRow}>
+                        <Col span={6}>
+                          <label className={styles.checkboxLabel}>
+                            <input
+                              type="checkbox"
+                              checked={
+                                values.bedroomDetails[index]?.furnished || false
+                              }
+                              onChange={(e) => {
+                                const newDetails = [
+                                  ...(values.bedroomDetails || []),
+                                ];
+                                if (!newDetails[index]) newDetails[index] = {};
+                                newDetails[index].furnished = e.target.checked;
+                                setFieldValue("bedroomDetails", newDetails);
+                              }}
+                            />
+                            Furnished
+                          </label>
+                        </Col>
+                        <Col span={6}>
+                          <label className={styles.checkboxLabel}>
+                            <input
+                              type="checkbox"
+                              checked={
+                                values.bedroomDetails[index]?.privateWashroom ||
+                                false
+                              }
+                              onChange={(e) => {
+                                const newDetails = [
+                                  ...(values.bedroomDetails || []),
+                                ];
+                                if (!newDetails[index]) newDetails[index] = {};
+                                newDetails[index].privateWashroom =
+                                  e.target.checked;
+                                setFieldValue("bedroomDetails", newDetails);
+                              }}
+                            />
+                            Private Washroom
+                          </label>
+                        </Col>
+                        <Col span={6}>
+                          <label className={styles.checkboxLabel}>
+                            <input
+                              type="checkbox"
+                              checked={
+                                values.bedroomDetails[index]?.sharedWashroom ||
+                                false
+                              }
+                              onChange={(e) => {
+                                const newDetails = [
+                                  ...(values.bedroomDetails || []),
+                                ];
+                                if (!newDetails[index]) newDetails[index] = {};
+                                newDetails[index].sharedWashroom =
+                                  e.target.checked;
+                                setFieldValue("bedroomDetails", newDetails);
+                              }}
+                            />
+                            Shared Washroom
+                          </label>
+                        </Col>
+                        <Col span={6}>
+                          <label className={styles.checkboxLabel}>
+                            <input
+                              type="checkbox"
+                              checked={
+                                values.bedroomDetails[index]?.sharedKitchen ||
+                                false
+                              }
+                              onChange={(e) => {
+                                const newDetails = [
+                                  ...(values.bedroomDetails || []),
+                                ];
+                                if (!newDetails[index]) newDetails[index] = {};
+                                newDetails[index].sharedKitchen =
+                                  e.target.checked;
+                                setFieldValue("bedroomDetails", newDetails);
+                              }}
+                            />
+                            Shared Kitchen
+                          </label>
+                        </Col>
+                      </Row>
+                    </div>
+                  ))}
+                </div>
+              )}
+              <div className={styles.verificationCheckbox}>
+                              <label className={styles.checkboxLabel}>
+                                <input
+                                  type="checkbox"
+                                  name="onSiteVerification"
+                                  checked={values.onSiteVerification}
+                                  onChange={(e) => setFieldValue('onSiteVerification', e.target.checked)}
+                                />
+                                On-site Verification
+                              </label>
+                            </div>
+              
               {/* Room Type Section */}
               <h3 className={styles.formTitle}>Room Type</h3>
               <Row gutter={16}>
@@ -550,7 +802,9 @@ export default function EditProperty() {
                   placeholder="Select country"
                   className={styles.dropdown}
                   value={values.country}
-                  onChange={(value) => handleCountryChange(value, setFieldValue)}
+                  onChange={(value) =>
+                    handleCountryChange(value, setFieldValue)
+                  }
                 >
                   <Option value="USA">United States (USD)</Option>
                   <Option value="India">India (INR)</Option>
@@ -644,6 +898,109 @@ export default function EditProperty() {
                 </Col>
               </Row>
 
+              {/* Add booking options section */}
+              <h3 className={styles.formTitle}>Booking Options</h3>
+              <div className={styles.bookingOptionsContainer}>
+                <h4 className={styles.sectionTitle}>Payment Options</h4>
+                <div className={styles.radioGroup}>
+                  <label className={styles.radioLabel}>
+                    <input
+                      type="radio"
+                      name="paymentType"
+                      checked={values.bookingOptions?.allowSecurityDeposit}
+                      onChange={() => {
+                        setFieldValue("bookingOptions", {
+                          ...values.bookingOptions,
+                          allowSecurityDeposit: true,
+                          allowFirstRent: false,
+                          allowFirstAndLastRent: false
+                        });
+                      }}
+                    />
+                    Allow booking by security deposit
+                  </label>
+                </div>
+
+                <div className={styles.radioGroup}>
+                  <label className={styles.radioLabel}>
+                    <input
+                      type="radio"
+                      name="paymentType"
+                      checked={values.bookingOptions?.allowFirstRent}
+                      onChange={() => {
+                        setFieldValue("bookingOptions", {
+                          ...values.bookingOptions,
+                          allowSecurityDeposit: false,
+                          allowFirstRent: true,
+                          allowFirstAndLastRent: false
+                        });
+                      }}
+                    />
+                    Allow booking by First Rent
+                  </label>
+                </div>
+
+                <div className={styles.radioGroup}>
+                  <label className={styles.radioLabel}>
+                    <input
+                      type="radio"
+                      name="paymentType"
+                      checked={values.bookingOptions?.allowFirstAndLastRent}
+                      onChange={() => {
+                        setFieldValue("bookingOptions", {
+                          ...values.bookingOptions,
+                          allowSecurityDeposit: false,
+                          allowFirstRent: false,
+                          allowFirstAndLastRent: true
+                        });
+                      }}
+                    />
+                    Allow booking by First and Last rent
+                  </label>
+                </div>
+
+                <div className={styles.bookingTypeSection}>
+                  <h4 className={styles.sectionTitle}>Booking Type</h4>
+                  <div className={styles.bookingTypeOptions}>
+                    <label className={styles.radioLabel}>
+                      <input
+                        type="radio"
+                        name="bookingType"
+                        checked={values.instantBooking}
+                        onChange={() => {
+                          setFieldValue("instantBooking", true);
+                          setFieldValue("bookByEnquiry", false);
+                        }}
+                      />
+                      Instant Booking
+                    </label>
+
+                    <label className={styles.radioLabel}>
+                      <input
+                        type="radio"
+                        name="bookingType"
+                        checked={values.bookByEnquiry}
+                        onChange={() => {
+                          setFieldValue("bookByEnquiry", true);
+                          setFieldValue("instantBooking", false);
+                        }}
+                      />
+                      Book by Enquiry
+                    </label>
+                  </div>
+                </div>
+              </div>
+              {/* Cancellation Policy Section */}
+              <h3 className={styles.formTitle}>Cancellation Policy</h3>
+              <MyQuillEditor
+                label="Cancellation Policy"
+                name="cancellationPolicy"
+                placeholder="Enter cancellation policy details"
+                setFieldValue={setFieldValue}
+              />
+              <ErrorMessage name="cancellationPolicy">
+                {(msg) => <div className={styles.error}>{msg}</div>}
+              </ErrorMessage>
               {/* Rent Details Section */}
               <h3 className={styles.formTitle}>Rent Details</h3>
               <MyQuillEditor
@@ -686,47 +1043,73 @@ export default function EditProperty() {
                   placeholder="Select minimum stay duration"
                   className={styles.dropdown}
                   value={values.minimumStayDuration}
-                  onChange={(value) => setFieldValue("minimumStayDuration", value)}
+                  onChange={(value) =>
+                    setFieldValue("minimumStayDuration", value)
+                  }
                 >
-                  <Select.Option value="Month-to-Month">Month-to-Month</Select.Option>
-                  
+                  <Select.Option value="Month-to-Month">
+                    Month-to-Month
+                  </Select.Option>
+
                   {/* Quarter 1 Ranges */}
-                  <Select.Option value="Jan to Mar">Jan to Mar (Q1)</Select.Option>
-                  <Select.Option value="Jan to Jun">Jan to Jun (Q1-Q2)</Select.Option>
-                  <Select.Option value="Jan to Sep">Jan to Sep (Q1-Q3)</Select.Option>
-                  <Select.Option value="Jan to Dec">Jan to Dec (Full Year)</Select.Option>
+                  <Select.Option value="Jan to Mar">
+                    Jan to Mar (Q1)
+                  </Select.Option>
+                  <Select.Option value="Jan to Jun">
+                    Jan to Jun (Q1-Q2)
+                  </Select.Option>
+                  <Select.Option value="Jan to Sep">
+                    Jan to Sep (Q1-Q3)
+                  </Select.Option>
+                  <Select.Option value="Jan to Dec">
+                    Jan to Dec (Full Year)
+                  </Select.Option>
                   <Select.Option value="Feb to Apr">Feb to Apr</Select.Option>
                   <Select.Option value="Feb to Jul">Feb to Jul</Select.Option>
                   <Select.Option value="Feb to Dec">Feb to Dec</Select.Option>
                   <Select.Option value="Mar to May">Mar to May</Select.Option>
                   <Select.Option value="Mar to Aug">Mar to Aug</Select.Option>
                   <Select.Option value="Mar to Dec">Mar to Dec</Select.Option>
-                  
+
                   {/* Quarter 2 Ranges */}
-                  <Select.Option value="Apr to Jun">Apr to Jun (Q2)</Select.Option>
-                  <Select.Option value="Apr to Sep">Apr to Sep (Q2-Q3)</Select.Option>
-                  <Select.Option value="Apr to Dec">Apr to Dec (Q2-Q4)</Select.Option>
+                  <Select.Option value="Apr to Jun">
+                    Apr to Jun (Q2)
+                  </Select.Option>
+                  <Select.Option value="Apr to Sep">
+                    Apr to Sep (Q2-Q3)
+                  </Select.Option>
+                  <Select.Option value="Apr to Dec">
+                    Apr to Dec (Q2-Q4)
+                  </Select.Option>
                   <Select.Option value="May to Jul">May to Jul</Select.Option>
                   <Select.Option value="May to Oct">May to Oct</Select.Option>
                   <Select.Option value="May to Dec">May to Dec</Select.Option>
                   <Select.Option value="Jun to Aug">Jun to Aug</Select.Option>
                   <Select.Option value="Jun to Nov">Jun to Nov</Select.Option>
                   <Select.Option value="Jun to Dec">Jun to Dec</Select.Option>
-                  
+
                   {/* Quarter 3 Ranges */}
-                  <Select.Option value="Jul to Sep">Jul to Sep (Q3)</Select.Option>
-                  <Select.Option value="Jul to Dec">Jul to Dec (Q3-Q4)</Select.Option>
+                  <Select.Option value="Jul to Sep">
+                    Jul to Sep (Q3)
+                  </Select.Option>
+                  <Select.Option value="Jul to Dec">
+                    Jul to Dec (Q3-Q4)
+                  </Select.Option>
                   <Select.Option value="Aug to Oct">Aug to Oct</Select.Option>
                   <Select.Option value="Aug to Dec">Aug to Dec</Select.Option>
                   <Select.Option value="Sep to Nov">Sep to Nov</Select.Option>
                   <Select.Option value="Sep to Dec">Sep to Dec</Select.Option>
-                  
+
                   {/* Quarter 4 Ranges */}
-                  <Select.Option value="Oct to Dec">Oct to Dec (Q4)</Select.Option>
+                  <Select.Option value="Oct to Dec">
+                    Oct to Dec (Q4)
+                  </Select.Option>
                   <Select.Option value="Nov to Dec">Nov to Dec</Select.Option>
-                  
+
                   {/* General Durations */}
-                  <Select.Option value="Less than 6 months">Less than 6 months</Select.Option>
+                  <Select.Option value="Less than 6 months">
+                    Less than 6 months
+                  </Select.Option>
                   <Select.Option value="6-12 months">6-12 months</Select.Option>
                   <Select.Option value="1 year+">1 year+</Select.Option>
                 </Select>
@@ -744,8 +1127,23 @@ export default function EditProperty() {
                   value={values.availableFrom}
                   onChange={(value) => setFieldValue("availableFrom", value)}
                 >
-                  {['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'].map((month) => (
-                    <Option key={month} value={month}>{month}</Option>
+                  {[
+                    "Jan",
+                    "Feb",
+                    "Mar",
+                    "Apr",
+                    "May",
+                    "Jun",
+                    "Jul",
+                    "Aug",
+                    "Sep",
+                    "Oct",
+                    "Nov",
+                    "Dec",
+                  ].map((month) => (
+                    <Option key={month} value={month}>
+                      {month}
+                    </Option>
                   ))}
                 </Select>
                 <ErrorMessage name="availableFrom">
@@ -766,12 +1164,20 @@ export default function EditProperty() {
                           type="checkbox"
                           name="nearbyUniversities"
                           value={university}
-                          checked={values.nearbyUniversities.includes(university)}
+                          checked={values.nearbyUniversities.includes(
+                            university
+                          )}
                           onChange={() => {
-                            const newUniversities = values.nearbyUniversities.includes(university)
-                              ? values.nearbyUniversities.filter((item) => item !== university)
-                              : [...values.nearbyUniversities, university];
-                            setFieldValue("nearbyUniversities", newUniversities);
+                            const newUniversities =
+                              values.nearbyUniversities.includes(university)
+                                ? values.nearbyUniversities.filter(
+                                    (item) => item !== university
+                                  )
+                                : [...values.nearbyUniversities, university];
+                            setFieldValue(
+                              "nearbyUniversities",
+                              newUniversities
+                            );
                           }}
                         />
                         {university}
@@ -780,8 +1186,8 @@ export default function EditProperty() {
                   ))
                 ) : (
                   <div>
-                    {debouncedCity && debouncedCountry 
-                      ? "No universities found for the selected location." 
+                    {debouncedCity && debouncedCountry
+                      ? "No universities found for the selected location."
                       : "Enter a city and select a country to see universities."}
                   </div>
                 )}
@@ -888,6 +1294,19 @@ export default function EditProperty() {
                 <ErrorMessage name="photos">
                   {(msg) => <div className={styles.error}>{msg}</div>}
                 </ErrorMessage>
+              </div>
+
+              {/* On-site Verification Checkbox */}
+              <div className={styles.checkboxContainer}>
+                <label className={styles.checkboxLabel}>
+                  <input
+                    type="checkbox"
+                    name="onSiteVerification"
+                    checked={values.onSiteVerification}
+                    onChange={(e) => setFieldValue('onSiteVerification', e.target.checked)}
+                  />
+                  On-site Verification Required
+                </label>
               </div>
 
               <div className={styles.submitButtonContainer}>

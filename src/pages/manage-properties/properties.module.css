@@ -353,3 +353,102 @@
 .removeButton:hover {
   background: rgba(0, 0, 0, 0.8);
 }
+
+.bedroomDetailsSection {
+  margin: 20px 0;
+}
+
+.bedroomCard {
+  background: #f5f5f5;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.bedroomCard h4 {
+  margin-bottom: 15px;
+  color: #333;
+  font-size: 18px;
+}
+
+.checkboxRow {
+  margin-top: 15px;
+}
+
+.bookingOptionsContainer {
+    background-color: #f5f5f5;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+.radioGroup {
+    margin-bottom: 15px;
+    padding: 8px;
+    border-radius: 6px;
+    transition: background-color 0.2s;
+}
+
+.radioGroup:hover {
+    background-color: #f0f0f0;
+}
+
+.radioLabel {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    color: #333;
+    cursor: pointer;
+    user-select: none;
+}
+
+.radioLabel input[type="radio"] {
+    width: 18px;
+    height: 18px;
+    margin-right: 8px;
+    accent-color: teal;
+}
+
+.securityDepositInput {
+    margin-top: 10px;
+    margin-left: 24px;
+}
+
+.instantBookingOption {
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 1px solid #ddd;
+}
+
+.verificationCheckbox {
+    margin: 20px 0;
+    padding: 15px;
+    background-color: #f8f8f8;
+    border-radius: 8px;
+    border: 1px solid #e8e8e8;
+}
+
+.bookingTypeOptions {
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 1px solid #ddd;
+    display: flex;
+    gap: 30px;
+}
+
+.sectionTitle {
+    font-size: 16px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 15px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #eee;
+}
+
+.bookingTypeSection {
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 2px solid #ddd;
+}

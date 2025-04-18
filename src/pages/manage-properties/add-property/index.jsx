@@ -115,10 +115,20 @@ export default function AddProperty() {
     locality: "",
     rentDetails: "Details about rent",
     termsOfStay: "Terms of stay",
+    cancellationPolicy: "Cancellation policy",
     yearOfConstruction: "",
     minimumStayDuration: "",
     availableFrom: "",
     nearbyUniversities: [],
+    bedroomDetails: [], // Add this new field for bedroom details
+    onSiteVerification: false,
+    bookingOptions: {
+        allowSecurityDeposit: false,
+        allowFirstRent: false,
+        allowFirstAndLastRent: false
+    },
+    instantBooking: false,
+    bookByEnquiry: false
   });
 
   useEffect(() => {
@@ -150,10 +160,20 @@ export default function AddProperty() {
         location: property.location || "",
         rentDetails: property.rentDetails || "Details about rent",
         termsOfStay: property.termsOfStay || "Terms of stay",
+        cancellationPolicy: property.cancellationPolicy || "Cancellation policy",
         yearOfConstruction: property.yearOfConstruction || "",
         minimumStayDuration: property.minimumStayDuration || "",
         availableFrom: property.availableFrom || "",
         nearbyUniversities: property.nearbyUniversities || [],
+        bedroomDetails: property.bedroomDetails || [], // Add this new field for bedroom details
+        onSiteVerification: property.onSiteVerification || false,
+        bookingOptions: {
+            allowSecurityDeposit: property.bookingOptions?.allowSecurityDeposit || false,
+            allowFirstRent: property.bookingOptions?.allowFirstRent || false,
+            allowFirstAndLastRent: property.bookingOptions?.allowFirstAndLastRent || false
+        },
+        instantBooking: property.instantBooking || false,
+        bookByEnquiry: property.bookByEnquiry || false
       });
     }
   }, [property]);
@@ -189,10 +209,19 @@ export default function AddProperty() {
     locality: Yup.string().required("Locality is required"),
     rentDetails: Yup.string().required("Rent details are required"),
     termsOfStay: Yup.string().required("Terms of stay are required"),
+    cancellationPolicy: Yup.string().required("Cancellation policy is required"),
     yearOfConstruction: Yup.number().required("Year of construction is required"),
     minimumStayDuration: Yup.string().required("Minimum stay duration is required"),
     availableFrom: Yup.string().required("Available from date is required"),
     nearbyUniversities: Yup.array(),
+    onSiteVerification: Yup.boolean(),
+    bookingOptions: Yup.object().shape({
+        allowSecurityDeposit: Yup.boolean(),
+        allowFirstRent: Yup.boolean(),
+        allowFirstAndLastRent: Yup.boolean()
+    }),
+    instantBooking: Yup.boolean(),
+    bookByEnquiry: Yup.boolean()
   });
 
   const amenitiesList = [
@@ -233,68 +262,73 @@ export default function AddProperty() {
   ];
 
   const handleSubmit = async (values, { setSubmitting, setErrors }) => {
-    console.log("submit is pressed");
-
-    // Create a FormData instance
-    const formData = new FormData();
-
-    // Add basic property details
-    formData.append("title", values.propertyName);
-    formData.append("squareFootage", values.squareFootage);
-    formData.append("description", values.description);
-    formData.append("price", values.pricing);
-    formData.append("securityDeposit", values.securityDeposit);
-    formData.append("latitude", values.latitude);
-    formData.append("longitude", values.longitude);
-    formData.append("type", values.homeType);
-    formData.append("location", values.location);
-    formData.append("city", values.city);
-    formData.append("country", values.country);
-    formData.append("locality", values.locality);
-    formData.append("minimumStayDuration", values.minimumStayDuration);
-    formData.append("availableFrom", values.availableFrom);
-    
-    // Add checkbox values
-    formData.append("ownership", values.ownership);
-    formData.append("renterAgreement", values.renterAgreement);
-    formData.append("landlordInsurance", values.landlordInsurance);
-    
-    // Add amenities and utilities as JSON strings
-    formData.append("amenities", JSON.stringify(values.amenities || []));
-    formData.append("utilities", JSON.stringify(values.utilities || []));
-    
-    // Update how nearbyUniversities is added to formData
-    if (Array.isArray(values.nearbyUniversities)) {
-      formData.append("nearbyUniversities", JSON.stringify(values.nearbyUniversities));
-    } else {
-      formData.append("nearbyUniversities", "[]");
-    }
-
-    // Create and add overview object as JSON string
-    const overview = {
-      bedrooms: parseInt(values.bedrooms),
-      bathrooms: parseInt(values.bathrooms),
-      squareFeet: parseInt(values.squareFootage),
-      kitchen: values.kitchens,
-      roomType: values.roomType,
-      kitchenType: values.kitchenType,
-      bathroomType: values.bathroomType,
-      yearOfConstruction: parseInt(values.yearOfConstruction),
-    };
-    formData.append("overview", JSON.stringify(overview));
-
-    // Add required string fields with default values if not provided
-    formData.append("rentDetails", values.rentDetails || "Details about rent");
-    formData.append("termsOfStay", values.termsOfStay || "Terms of stay");
-
-    // Add images - filter out null values and append each valid image
-    const validPhotos = values.photos.filter((photo) => photo !== null);
-    validPhotos.forEach((photo, index) => {
-      formData.append("images", photo);
-    });
-
     try {
-      const result = await createProperty(formData).unwrap();
+      // Create the property object with all fields
+      const propertyData = {
+        title: values.propertyName,
+        squareFootage: values.squareFootage,
+        description: values.description,
+        price: values.pricing,
+        securityDeposit: values.securityDeposit,
+        latitude: values.latitude,
+        longitude: values.longitude,
+        type: values.homeType,
+        location: values.location,
+        city: values.city,
+        country: values.country,
+        locality: values.locality,
+        minimumStayDuration: values.minimumStayDuration,
+        availableFrom: values.availableFrom,
+        ownership: values.ownership,
+        renterAgreement: values.renterAgreement,
+        landlordInsurance: values.landlordInsurance,
+        amenities: values.amenities || [],
+        utilities: values.utilities || [],
+        nearbyUniversities: values.nearbyUniversities || [],
+        rentDetails: values.rentDetails || "Details about rent",
+        termsOfStay: values.termsOfStay || "Terms of stay",
+        cancellationPolicy: values.cancellationPolicy || "Cancellation policy",
+        onSiteVerification: values.onSiteVerification,
+        instantBooking: values.instantBooking,
+        bookByEnquiry: values.bookByEnquiry,
+        bookingOptions: values.bookingOptions,
+        overview: {
+          bedrooms: parseInt(values.bedrooms),
+          bathrooms: parseInt(values.bathrooms),
+          squareFeet: parseInt(values.squareFootage),
+          kitchen: values.kitchens,
+          roomType: values.roomType,
+          kitchenType: values.kitchenType,
+          bathroomType: values.bathroomType,
+          yearOfConstruction: parseInt(values.yearOfConstruction),
+          bedroomDetails: values.bedroomDetails || []
+        }
+      };
+
+      // Create FormData only for images
+      const imageFormData = new FormData();
+      const validPhotos = values.photos.filter((photo) => photo !== null);
+      validPhotos.forEach((photo) => {
+        imageFormData.append("images", photo);
+      });
+
+      // First upload images and get their URLs
+      const imageUploadResponse = await fetch('/api/upload-images', {
+        method: 'POST',
+        body: imageFormData
+      });
+      
+      if (!imageUploadResponse.ok) {
+        throw new Error('Failed to upload images');
+      }
+
+      const { imageUrls } = await imageUploadResponse.json();
+      
+      // Add image URLs to the property data
+      propertyData.images = imageUrls;
+
+      // Create property with complete data
+      const result = await createProperty(propertyData).unwrap();
       console.log("Property created successfully:", result);
       toast.success("Property created successfully");
       router.back();
@@ -306,6 +340,29 @@ export default function AddProperty() {
     } finally {
       setSubmitting(false);
     }
+  };
+
+  const handleBedroomCountChange = (newCount, currentCount, setFieldValue, currentValues) => {
+    const currentBedrooms = currentValues?.bedroomDetails || [];
+    if (newCount > currentCount) {
+      // Add new bedroom
+      setFieldValue('bedroomDetails', [
+        ...currentBedrooms,
+        {
+          name: '',
+          rent: '',
+          sizeSqFt: '',
+          furnished: false,
+          privateWashroom: false,
+          sharedWashroom: false,
+          sharedKitchen: false
+        }
+      ]);
+    } else if (newCount < currentCount) {
+      // Remove last bedroom
+      setFieldValue('bedroomDetails', currentBedrooms.slice(0, newCount));
+    }
+    setFieldValue('bedrooms', newCount);
   };
 
   if (isLoading) return <p></p>;
@@ -408,22 +465,167 @@ export default function AddProperty() {
                     <div className={styles.counterControls}>
                       <button
                         type="button"
-                        onClick={() =>
-                          setFieldValue(field, Math.max(0, values[field] - 1))
-                        }
+                        onClick={() => {
+                          const newValue = Math.max(0, values[field] - 1);
+                          if (field === 'bedrooms') {
+                            handleBedroomCountChange(newValue, values[field], setFieldValue, values);
+                          } else {
+                            setFieldValue(field, newValue);
+                          }
+                        }}
                       >
                         -
                       </button>
                       <span>{values[field]}</span>
                       <button
                         type="button"
-                        onClick={() => setFieldValue(field, values[field] + 1)}
+                        onClick={() => {
+                          const newValue = values[field] + 1;
+                          if (field === 'bedrooms') {
+                            handleBedroomCountChange(newValue, values[field], setFieldValue, values);
+                          } else {
+                            setFieldValue(field, newValue);
+                          }
+                        }}
                       >
                         +
                       </button>
                     </div>
                   </div>
                 ))}
+              </div>
+
+              {/* Bedroom Details Section */}
+              {values.bedrooms > 0 && (
+                <div className={styles.bedroomDetailsSection}>
+                  <h3 className={styles.formTitle}>Bedroom Details</h3>
+                  {Array.from({ length: values.bedrooms }).map((_, index) => (
+                    <div key={index} className={styles.bedroomCard}>
+                      <h4>Bedroom {index + 1}</h4>
+                      <Row gutter={16}>
+                        <Col span={8}>
+                          <LabelInputComponent
+                            name={`bedroomDetails.${index}.name`}
+                            title="Name"
+                            placeholder="Enter bedroom name"
+                            className={styles.labelinput}
+                            value={values.bedroomDetails[index]?.name || ''}
+                            onChange={(e) => {
+                              const newDetails = [...(values.bedroomDetails || [])];
+                              if (!newDetails[index]) newDetails[index] = {};
+                              newDetails[index].name = e.target.value;
+                              setFieldValue('bedroomDetails', newDetails);
+                            }}
+                          />
+                        </Col>
+                        <Col span={8}>
+                          <LabelInputComponent
+                            name={`bedroomDetails.${index}.rent`}
+                            title="Rent"
+                            placeholder="Enter rent amount"
+                            className={styles.labelinput}
+                            value={values.bedroomDetails[index]?.rent || ''}
+                            onChange={(e) => {
+                              const newDetails = [...(values.bedroomDetails || [])];
+                              if (!newDetails[index]) newDetails[index] = {};
+                              newDetails[index].rent = e.target.value;
+                              setFieldValue('bedroomDetails', newDetails);
+                            }}
+                          />
+                        </Col>
+                        <Col span={8}>
+                          <LabelInputComponent
+                            name={`bedroomDetails.${index}.sizeSqFt`}
+                            title="Size (sq ft)"
+                            placeholder="Enter size in sq ft"
+                            className={styles.labelinput}
+                            value={values.bedroomDetails[index]?.sizeSqFt || ''}
+                            onChange={(e) => {
+                              const newDetails = [...(values.bedroomDetails || [])];
+                              if (!newDetails[index]) newDetails[index] = {};
+                              newDetails[index].sizeSqFt = e.target.value;
+                              setFieldValue('bedroomDetails', newDetails);
+                            }}
+                          />
+                        </Col>
+                      </Row>
+                      <Row gutter={16} className={styles.checkboxRow}>
+                        <Col span={6}>
+                          <label className={styles.checkboxLabel}>
+                            <input
+                              type="checkbox"
+                              checked={values.bedroomDetails[index]?.furnished || false}
+                              onChange={(e) => {
+                                const newDetails = [...(values.bedroomDetails || [])];
+                                if (!newDetails[index]) newDetails[index] = {};
+                                newDetails[index].furnished = e.target.checked;
+                                setFieldValue('bedroomDetails', newDetails);
+                              }}
+                            />
+                            Furnished
+                          </label>
+                        </Col>
+                        <Col span={6}>
+                          <label className={styles.checkboxLabel}>
+                            <input
+                              type="checkbox"
+                              checked={values.bedroomDetails[index]?.privateWashroom || false}
+                              onChange={(e) => {
+                                const newDetails = [...(values.bedroomDetails || [])];
+                                if (!newDetails[index]) newDetails[index] = {};
+                                newDetails[index].privateWashroom = e.target.checked;
+                                setFieldValue('bedroomDetails', newDetails);
+                              }}
+                            />
+                            Private Washroom
+                          </label>
+                        </Col>
+                        <Col span={6}>
+                          <label className={styles.checkboxLabel}>
+                            <input
+                              type="checkbox"
+                              checked={values.bedroomDetails[index]?.sharedWashroom || false}
+                              onChange={(e) => {
+                                const newDetails = [...(values.bedroomDetails || [])];
+                                if (!newDetails[index]) newDetails[index] = {};
+                                newDetails[index].sharedWashroom = e.target.checked;
+                                setFieldValue('bedroomDetails', newDetails);
+                              }}
+                            />
+                            Shared Washroom
+                          </label>
+                        </Col>
+                        <Col span={6}>
+                          <label className={styles.checkboxLabel}>
+                            <input
+                              type="checkbox"
+                              checked={values.bedroomDetails[index]?.sharedKitchen || false}
+                              onChange={(e) => {
+                                const newDetails = [...(values.bedroomDetails || [])];
+                                if (!newDetails[index]) newDetails[index] = {};
+                                newDetails[index].sharedKitchen = e.target.checked;
+                                setFieldValue('bedroomDetails', newDetails);
+                              }}
+                            />
+                            Shared Kitchen
+                          </label>
+                        </Col>
+                      </Row>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              <div className={styles.verificationCheckbox}>
+                <label className={styles.checkboxLabel}>
+                  <input
+                    type="checkbox"
+                    name="onSiteVerification"
+                    checked={values.onSiteVerification}
+                    onChange={(e) => setFieldValue('onSiteVerification', e.target.checked)}
+                  />
+                  On-site Verification
+                </label>
               </div>
 
               {/* Room Type Section */}
@@ -669,7 +871,97 @@ export default function AddProperty() {
                 </Col>
               </Row>
 
-              
+              {/* Booking Options Section */}
+              <div className={styles.bookingOptionsContainer}>
+                <h4 className={styles.sectionTitle}>Payment Options</h4>
+                <div className={styles.radioGroup}>
+                    <label className={styles.radioLabel}>
+                        <input
+                            type="radio"
+                            name="paymentType"
+                            checked={values.bookingOptions.allowSecurityDeposit}
+                            onChange={() => {
+                                setFieldValue('bookingOptions', {
+                                    ...values.bookingOptions,
+                                    allowSecurityDeposit: true,
+                                    allowFirstRent: false,
+                                    allowFirstAndLastRent: false
+                                });
+                            }}
+                        />
+                        Allow booking by security deposit
+                    </label>
+                </div>
+
+                <div className={styles.radioGroup}>
+                    <label className={styles.radioLabel}>
+                        <input
+                            type="radio"
+                            name="paymentType"
+                            checked={values.bookingOptions.allowFirstRent}
+                            onChange={() => {
+                                setFieldValue('bookingOptions', {
+                                    ...values.bookingOptions,
+                                    allowSecurityDeposit: false,
+                                    allowFirstRent: true,
+                                    allowFirstAndLastRent: false
+                                });
+                            }}
+                        />
+                        Allow booking by First Rent
+                    </label>
+                </div>
+
+                <div className={styles.radioGroup}>
+                    <label className={styles.radioLabel}>
+                        <input
+                            type="radio"
+                            name="paymentType"
+                            checked={values.bookingOptions.allowFirstAndLastRent}
+                            onChange={() => {
+                                setFieldValue('bookingOptions', {
+                                    ...values.bookingOptions,
+                                    allowSecurityDeposit: false,
+                                    allowFirstRent: false,
+                                    allowFirstAndLastRent: true
+                                });
+                            }}
+                        />
+                        Allow booking by First and Last rent
+                    </label>
+                </div>
+
+                <div className={styles.bookingTypeSection}>
+                    <h4 className={styles.sectionTitle}>Booking Type</h4>
+                    <div className={styles.bookingTypeOptions}>
+                        <label className={styles.radioLabel}>
+                            <input
+                                type="radio"
+                                name="bookingType"
+                                checked={values.instantBooking}
+                                onChange={() => {
+                                    setFieldValue('instantBooking', true);
+                                    setFieldValue('bookByEnquiry', false);
+                                }}
+                            />
+                            Instant Booking
+                        </label>
+
+                        <label className={styles.radioLabel}>
+                            <input
+                                type="radio"
+                                name="bookingType"
+                                checked={values.bookByEnquiry}
+                                onChange={() => {
+                                    setFieldValue('bookByEnquiry', true);
+                                    setFieldValue('instantBooking', false);
+                                }}
+                            />
+                            Book by Enquiry
+                        </label>
+                    </div>
+                </div>
+              </div>
 
               {/* Year of Construction */}
               <Row gutter={16}>
@@ -806,6 +1098,18 @@ export default function AddProperty() {
                 setFieldValue={setFieldValue}
               />
               <ErrorMessage name="rentDetails">
+                {(msg) => <div className={styles.error}>{msg}</div>}
+              </ErrorMessage>
+
+              {/* Cancellation Policy Section */}
+              <h3 className={styles.formTitle}>Cancellation Policy</h3>
+              <MyQuillEditor
+                label="Cancellation Policy"
+                name="cancellationPolicy"
+                placeholder="Enter cancellation policy details"
+                setFieldValue={setFieldValue}
+              />
+              <ErrorMessage name="cancellationPolicy">
                 {(msg) => <div className={styles.error}>{msg}</div>}
               </ErrorMessage>
 
