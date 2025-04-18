@@ -316,32 +316,32 @@ export default function EditProperty() {
         }
       });
 
-      // Create FormData only for new images
-      const imageFormData = new FormData();
-      const newPhotos = values.photos.filter(photo => photo instanceof File);
-      newPhotos.forEach(photo => {
-        imageFormData.append("images", photo);
-      });
+      // // Create FormData only for new images
+      // const imageFormData = new FormData();
+      // const newPhotos = values.photos.filter(photo => photo instanceof File);
+      // newPhotos.forEach(photo => {
+      //   imageFormData.append("images", photo);
+      // });
 
-      // If there are new photos, upload them first
-      if (newPhotos.length > 0) {
-        const imageUploadResponse = await fetch('/api/upload-images', {
-          method: 'POST',
-          body: imageFormData
-        });
+      // // If there are new photos, upload them first
+      // if (newPhotos.length > 0) {
+      //   const imageUploadResponse = await fetch('/api/upload-images', {
+      //     method: 'POST',
+      //     body: imageFormData
+      //   });
         
-        if (!imageUploadResponse.ok) {
-          throw new Error('Failed to upload images');
-        }
+      //   if (!imageUploadResponse.ok) {
+      //     throw new Error('Failed to upload images');
+      //   }
 
-        const { imageUrls } = await imageUploadResponse.json();
+      //   const { imageUrls } = await imageUploadResponse.json();
         
-        // Combine existing and new image URLs
-        propertyData.images = [...existingImages, ...imageUrls];
-      } else {
-        // If no new photos, just use existing ones
-        propertyData.images = existingImages;
-      }
+      //   // Combine existing and new image URLs
+      //   propertyData.images = [...existingImages, ...imageUrls];
+      // } else {
+      //   // If no new photos, just use existing ones
+      //   propertyData.images = existingImages;
+      // }
 
       // Update property with complete data
       const result = await editProperty({ id, data: propertyData }).unwrap();
