@@ -122,6 +122,8 @@ export default function EditProperty() {
           privateWashroom: false,
           sharedWashroom: false,
           sharedKitchen: false,
+          images: [],
+          imageFiles: []
         },
       ]);
     } else if (newCount < currentCount) {
@@ -175,7 +177,12 @@ export default function EditProperty() {
     minimumStayDuration: property?.minimumStayDuration || "",
     availableFrom: property?.availableFrom || "",
     nearbyUniversities: property?.nearbyUniversities || [],
-    bedroomDetails: property?.overview?.bedroomDetails || [],
+    bedroomDetails: property?.overview?.bedroomDetails ? 
+      property.overview.bedroomDetails.map(bedroom => ({
+        ...bedroom,
+        images: bedroom.images || [],
+        imageFiles: [] // Initialize empty array for actual file objects
+      })) : [],
     onSiteVerification: property?.onSiteVerification || false,
   };
 
@@ -208,15 +215,15 @@ export default function EditProperty() {
     amenities: Yup.array().min(1, "Select at least one amenity"),
     utilities: Yup.array(), // Add utilities validation
     pricing: Yup.number().required("Pricing is required"),
-    // latitude: Yup.number().required("Latitude is required"),
-    // longitude: Yup.number().required("Longitude is required"),
     location: Yup.string().required("Address is required"),
     city: Yup.string().required("City is required"),
     country: Yup.string().required("Country is required"), // Add country validation
     locality: Yup.string().required("Locality is required"), // Add locality validation
     rentDetails: Yup.string().required("Rent details are required"),
     termsOfStay: Yup.string().required("Terms of stay are required"),
-    cancellationPolicy: Yup.string().required("Cancellation policy is required"),
+    cancellationPolicy: Yup.string().required(
+      "Cancellation policy is required"
+    ),
     yearOfConstruction: Yup.number().required(
       "Year of construction is required"
     ),
@@ -264,93 +271,143 @@ export default function EditProperty() {
     "Pest Control",
   ];
 
+  const validateFileSize = (file) => {
+    const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+    
+    if (file.size > MAX_FILE_SIZE) {
+      toast.error(`File "${file.name}" exceeds the 10MB limit. Please resize it before uploading.`);
+      return false;
+    }
+    return true;
+  };
+
   const handleSubmit = async (values, { setSubmitting, setErrors }) => {
     try {
-      // Create the property object with all fields
-      const propertyData = {
-        title: values.propertyName,
-        squareFootage: values.squareFootage,
-        description: values.description,
-        price: values.pricing,
-        securityDeposit: values.securityDeposit,
-        latitude: values.latitude,
-        longitude: values.longitude,
-        type: values.homeType,
-        location: values.location,
-        city: values.city,
-        country: values.country,
-        locality: values.locality,
-        minimumStayDuration: values.minimumStayDuration,
-        availableFrom: values.availableFrom,
-        ownership: values.ownership,
-        renterAgreement: values.renterAgreement,
-        landlordInsurance: values.landlordInsurance,
-        amenities: values.amenities || [],
-        utilities: values.utilities || [],
-        nearbyUniversities: values.nearbyUniversities || [],
-        rentDetails: values.rentDetails || "Details about rent",
-        termsOfStay: values.termsOfStay || "Terms of stay",
-        cancellationPolicy: values.cancellationPolicy || "Cancellation policy",
-        onSiteVerification: values.onSiteVerification,
-        instantBooking: values.instantBooking,
-        bookByEnquiry: values.bookByEnquiry,
-        bookingOptions: values.bookingOptions,
-        overview: {
-          bedrooms: parseInt(values.bedrooms),
-          bathrooms: parseInt(values.bathrooms),
-          squareFeet: parseInt(values.squareFootage),
-          kitchen: values.kitchens,
-          roomType: values.roomType,
-          kitchenType: values.kitchenType,
-          bathroomType: values.bathroomType,
-          yearOfConstruction: parseInt(values.yearOfConstruction),
-          bedroomDetails: values.bedroomDetails || []
-        }
+      const formData = new FormData();
+      
+      // Basic property details
+      formData.append('title', values.propertyName);
+      formData.append('description', values.description.replace(/<[^>]*>/g, '')); // Remove HTML tags
+      formData.append('price', values.pricing);
+      formData.append('securityDeposit', values.securityDeposit);
+      formData.append('type', values.homeType);
+      
+      // Location details
+      formData.append('location', values.location);
+      formData.append('city', values.city);
+      formData.append('country', values.country);
+      formData.append('locality', values.locality);
+      formData.append('latitude', values.latitude || '0'); // Default to 0 if empty
+      formData.append('longitude', values.longitude || '0'); // Default to 0 if empty
+      
+      // Arrays and objects
+      formData.append('amenities', JSON.stringify(values.amenities || []));
+      formData.append('utilities', JSON.stringify(values.utilities || []));
+      formData.append('nearbyUniversities', JSON.stringify(values.nearbyUniversities || []));
+      
+      // Process bedroom details (remove the image data URLs which are just for previews)
+      const bedroomDetailsWithoutImages = values.bedroomDetails.map(bedroom => {
+        // Remove the images field (which contains data URLs) and imageFiles field
+        // The imageFiles will be handled separately
+        const { images, imageFiles, ...bedroomWithoutImages } = bedroom;
+        
+        // If the bedroom has existing URL images (not data URLs), attach them to the bedroom
+        const existingUrls = Array.isArray(images) 
+          ? images.filter(url => typeof url === 'string' && !url.startsWith('data:'))
+          : [];
+          
+        return {
+          ...bedroomWithoutImages,
+          images: existingUrls // Keep existing non-data URL images
+        };
+      });
+      
+      // Add processed bedroom details to overview
+      const overview = {
+        bedrooms: parseInt(values.bedrooms),
+        bathrooms: parseInt(values.bathrooms),
+        squareFeet: parseInt(values.squareFootage),
+        kitchen: values.kitchens,
+        roomType: values.roomType,
+        kitchenType: values.kitchenType,
+        bathroomType: values.bathroomType,
+        yearOfConstruction: parseInt(values.yearOfConstruction),
+        bedroomDetails: bedroomDetailsWithoutImages
       };
-
-      // Handle images - first check which existing images to keep
-      let existingImages = [];
-      values.photos.forEach(photo => {
-        if (typeof photo === 'string') {
-          existingImages.push(photo);
+      formData.append('overview', JSON.stringify(overview));
+      
+      // Text fields - remove HTML tags
+      formData.append('rentDetails', values.rentDetails.replace(/<[^>]*>/g, ''));
+      formData.append('termsOfStay', values.termsOfStay.replace(/<[^>]*>/g, ''));
+      formData.append('cancellationPolicy', values.cancellationPolicy.replace(/<[^>]*>/g, ''));
+      
+      // Booking options
+      formData.append('bookingOptions', JSON.stringify(values.bookingOptions || {}));
+      formData.append('instantBooking', values.instantBooking);
+      formData.append('bookByEnquiry', values.bookByEnquiry);
+      
+      // Verification flags
+      formData.append('onSiteVerification', values.onSiteVerification);
+      formData.append('ownership', values.ownership);
+      formData.append('renterAgreement', values.renterAgreement);
+      formData.append('landlordInsurance', values.landlordInsurance);
+      
+      // Availability
+      formData.append('minimumStayDuration', values.minimumStayDuration);
+      formData.append('availableFrom', values.availableFrom);
+      
+      // Handle main property images
+      const existingPhotos = values.photos.filter(photo => typeof photo === 'string');
+      const newPhotos = values.photos.filter(photo => photo instanceof File);
+      
+      // Append existing images
+      existingPhotos.forEach(photoUrl => {
+        formData.append('existingImages', photoUrl);
+      });
+      
+      // Append new images
+      newPhotos.forEach(photo => {
+        formData.append('images', photo);
+      });
+      
+      // Handle bedroom images - use a simpler approach without complex indexing
+      values.bedroomDetails.forEach((bedroom, roomIndex) => {
+        // Only process bedrooms that have imageFiles
+        if (bedroom.imageFiles && bedroom.imageFiles.some(file => file instanceof File)) {
+          // Add all files for this bedroom with the roomIndex in the fieldname
+          bedroom.imageFiles.forEach(file => {
+            if (file instanceof File) {
+              // Use a consistent and simple field name
+              formData.append('images', file);
+              // Also append metadata to identify which bedroom this image belongs to
+              formData.append(`bedroom_image_index_${formData.getAll('images').length - 1}`, roomIndex);
+            }
+          });
         }
       });
 
-      // // Create FormData only for new images
-      // const imageFormData = new FormData();
-      // const newPhotos = values.photos.filter(photo => photo instanceof File);
-      // newPhotos.forEach(photo => {
-      //   imageFormData.append("images", photo);
-      // });
+      // Log the FormData contents for debugging
+      console.log('FormData entries:');
+      for (let [key, value] of formData.entries()) {
+        if (value instanceof File) {
+          console.log(key, ':', value.name, '(', value.size, 'bytes )');
+        } else {
+          console.log(key, ':', typeof value === 'string' && value.length > 100 ? value.substring(0, 100) + '...' : value);
+        }
+      }
 
-      // // If there are new photos, upload them first
-      // if (newPhotos.length > 0) {
-      //   const imageUploadResponse = await fetch('/api/upload-images', {
-      //     method: 'POST',
-      //     body: imageFormData
-      //   });
-        
-      //   if (!imageUploadResponse.ok) {
-      //     throw new Error('Failed to upload images');
-      //   }
+      // Make sure we have at least one main property image
+      if (existingPhotos.length === 0 && newPhotos.length === 0) {
+        throw new Error("Please add at least one image for the property");
+      }
 
-      //   const { imageUrls } = await imageUploadResponse.json();
-        
-      //   // Combine existing and new image URLs
-      //   propertyData.images = [...existingImages, ...imageUrls];
-      // } else {
-      //   // If no new photos, just use existing ones
-      //   propertyData.images = existingImages;
-      // }
-
-      // Update property with complete data
-      const result = await editProperty({ id, data: propertyData }).unwrap();
+      const result = await editProperty({ id, data: formData }).unwrap();
       console.log("Property updated successfully:", result);
       toast.success("Property updated successfully");
       router.back();
     } catch (error) {
       console.error("Failed to update property:", error);
-      const errorMessage = error.data?.message || "Failed to update property";
+      const errorMessage = error.data?.message || error.message || "Failed to update property";
       setErrors({ submit: errorMessage });
       toast.error(errorMessage);
     } finally {
@@ -642,22 +699,106 @@ export default function EditProperty() {
                           </label>
                         </Col>
                       </Row>
+                      
+                      {/* Bedroom Images Section */}
+                      <div className={styles.bedroomImagesSection}>
+                        <h5 className={styles.subSectionTitle}>Bedroom Images</h5>
+                        <div className={styles.bedroomPhotoGrid}>
+                          {Array.from({ length: 3 }).map((_, photoIndex) => (
+                            <div className={styles.bedroomPhotoBox} key={photoIndex}>
+                              <label>
+                                <input
+                                  type="file"
+                                  accept="image/jpeg, image/png, image/gif"
+                                  onChange={(event) => {
+                                    const file = event.target.files[0];
+                                    if (file) {
+                                      // Validate file size
+                                      if (!validateFileSize(file)) {
+                                        return;
+                                      }
+                                      
+                                      const newDetails = [...(values.bedroomDetails || [])];
+                                      if (!newDetails[index]) newDetails[index] = {};
+                                      if (!newDetails[index].images) newDetails[index].images = [];
+                                      
+                                      // Store the actual file in a temporary field for submission
+                                      if (!newDetails[index].imageFiles) {
+                                        newDetails[index].imageFiles = [];
+                                      }
+                                      newDetails[index].imageFiles[photoIndex] = file;
+                                      
+                                      // Convert to URL for preview only
+                                      const reader = new FileReader();
+                                      reader.onload = (e) => {
+                                        const images = [...(newDetails[index].images || [])];
+                                        images[photoIndex] = e.target.result;
+                                        newDetails[index].images = images;
+                                        setFieldValue("bedroomDetails", newDetails);
+                                      };
+                                      reader.readAsDataURL(file);
+                                    }
+                                  }}
+                                  style={{ display: "none" }}
+                                />
+                                {values.bedroomDetails[index]?.images?.[photoIndex] ? (
+                                  <div className={styles.bedroomPreview}>
+                                    <Image
+                                      src={values.bedroomDetails[index].images[photoIndex]}
+                                      alt={`Bedroom ${index + 1} Image ${photoIndex + 1}`}
+                                      width={100}
+                                      height={100}
+                                      objectFit="cover"
+                                    />
+                                    <button
+                                      type="button"
+                                      className={styles.removeButton}
+                                      onClick={() => {
+                                        const newDetails = [...(values.bedroomDetails || [])];
+                                        const images = [...(newDetails[index].images || [])];
+                                        images[photoIndex] = null;
+                                        
+                                        // Also clear the file
+                                        if (newDetails[index].imageFiles) {
+                                          newDetails[index].imageFiles[photoIndex] = null;
+                                        }
+                                        
+                                        newDetails[index].images = images;
+                                        setFieldValue("bedroomDetails", newDetails);
+                                      }}
+                                    >
+                                      ✖
+                                    </button>
+                                  </div>
+                                ) : (
+                                  <div className={styles.bedroomPhotoPlaceholder}>
+                                    <span className={styles.uploadIcon}>📤</span>
+                                    <p>Add Image</p>
+                                  </div>
+                                )}
+                              </label>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
                     </div>
                   ))}
                 </div>
               )}
               <div className={styles.verificationCheckbox}>
-                              <label className={styles.checkboxLabel}>
-                                <input
-                                  type="checkbox"
-                                  name="onSiteVerification"
-                                  checked={values.onSiteVerification}
-                                  onChange={(e) => setFieldValue('onSiteVerification', e.target.checked)}
-                                />
-                                On-site Verification
-                              </label>
-                            </div>
-              
+                <label className={styles.checkboxLabel}>
+                  <input
+                    type="checkbox"
+                    name="onSiteVerification"
+                    checked={values.onSiteVerification}
+                    onChange={(e) =>
+                      setFieldValue("onSiteVerification", e.target.checked)
+                    }
+                  />
+                  On-site Verification
+                </label>
+              </div>
+
               {/* Room Type Section */}
               <h3 className={styles.formTitle}>Room Type</h3>
               <Row gutter={16}>
@@ -913,7 +1054,7 @@ export default function EditProperty() {
                           ...values.bookingOptions,
                           allowSecurityDeposit: true,
                           allowFirstRent: false,
-                          allowFirstAndLastRent: false
+                          allowFirstAndLastRent: false,
                         });
                       }}
                     />
@@ -932,7 +1073,7 @@ export default function EditProperty() {
                           ...values.bookingOptions,
                           allowSecurityDeposit: false,
                           allowFirstRent: true,
-                          allowFirstAndLastRent: false
+                          allowFirstAndLastRent: false,
                         });
                       }}
                     />
@@ -951,7 +1092,7 @@ export default function EditProperty() {
                           ...values.bookingOptions,
                           allowSecurityDeposit: false,
                           allowFirstRent: false,
-                          allowFirstAndLastRent: true
+                          allowFirstAndLastRent: true,
                         });
                       }}
                     />
@@ -1251,6 +1392,10 @@ export default function EditProperty() {
                           onChange={(event) => {
                             const file = event.target.files[0];
                             if (file) {
+                              // Validate file size
+                              if (!validateFileSize(file)) {
+                                return;
+                              }
                               setFieldValue(`photos.${index}`, file);
                             } else {
                               setFieldValue(`photos.${index}`, null);
@@ -1303,7 +1448,9 @@ export default function EditProperty() {
                     type="checkbox"
                     name="onSiteVerification"
                     checked={values.onSiteVerification}
-                    onChange={(e) => setFieldValue('onSiteVerification', e.target.checked)}
+                    onChange={(e) =>
+                      setFieldValue("onSiteVerification", e.target.checked)
+                    }
                   />
                   On-site Verification Required
                 </label>

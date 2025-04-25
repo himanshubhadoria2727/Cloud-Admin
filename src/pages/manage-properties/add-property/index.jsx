@@ -23,8 +23,8 @@ export default function AddProperty() {
   const { id } = router.query || {};
   const [createProperty] = useCreatePropertyMutation();
   const [universities, setUniversities] = useState([]);
-  const [selectedCity, setSelectedCity] = useState('');
-  const [selectedCountry, setSelectedCountry] = useState('');
+  const [selectedCity, setSelectedCity] = useState("");
+  const [selectedCountry, setSelectedCountry] = useState("");
 
   const {
     data: property,
@@ -33,9 +33,9 @@ export default function AddProperty() {
   } = useGetPropertiesQuery(id ? { id } : null);
 
   // Add debouncing for city and country changes
-  const [debouncedCity, setDebouncedCity] = useState('');
-  const [debouncedCountry, setDebouncedCountry] = useState('');
-  
+  const [debouncedCity, setDebouncedCity] = useState("");
+  const [debouncedCountry, setDebouncedCountry] = useState("");
+
   // Handle city changes with debounce
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -43,10 +43,10 @@ export default function AddProperty() {
         setDebouncedCity(selectedCity);
       }
     }, 500); // 500ms debounce
-    
+
     return () => clearTimeout(timer);
   }, [selectedCity]);
-  
+
   // Handle country changes with debounce
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -54,10 +54,10 @@ export default function AddProperty() {
         setDebouncedCountry(selectedCountry);
       }
     }, 500); // 500ms debounce
-    
+
     return () => clearTimeout(timer);
   }, [selectedCountry]);
-  
+
   // Fetch universities when debounced city or country changes
   const {
     data: universitiesData,
@@ -67,21 +67,21 @@ export default function AddProperty() {
     { city: debouncedCity, country: debouncedCountry },
     { skip: !debouncedCity || !debouncedCountry }
   );
-  
+
   // Update universities when data is fetched
   useEffect(() => {
     if (universitiesData && Array.isArray(universitiesData)) {
-      setUniversities(universitiesData.map(uni => uni.name));
+      setUniversities(universitiesData.map((uni) => uni.name));
     }
   }, [universitiesData]);
-  
+
   // Helper to handle city input change
   const handleCityChange = useCallback((e, setFieldValue) => {
     const cityValue = e.target.value;
     setFieldValue("city", cityValue);
     setSelectedCity(cityValue);
   }, []);
-  
+
   // Helper to handle country selection
   const handleCountryChange = useCallback((value, setFieldValue) => {
     setFieldValue("country", value);
@@ -123,12 +123,12 @@ export default function AddProperty() {
     bedroomDetails: [], // Add this new field for bedroom details
     onSiteVerification: false,
     bookingOptions: {
-        allowSecurityDeposit: false,
-        allowFirstRent: false,
-        allowFirstAndLastRent: false
+      allowSecurityDeposit: false,
+      allowFirstRent: false,
+      allowFirstAndLastRent: false,
     },
     instantBooking: false,
-    bookByEnquiry: false
+    bookByEnquiry: false,
   });
 
   useEffect(() => {
@@ -160,7 +160,8 @@ export default function AddProperty() {
         location: property.location || "",
         rentDetails: property.rentDetails || "Details about rent",
         termsOfStay: property.termsOfStay || "Terms of stay",
-        cancellationPolicy: property.cancellationPolicy || "Cancellation policy",
+        cancellationPolicy:
+          property.cancellationPolicy || "Cancellation policy",
         yearOfConstruction: property.yearOfConstruction || "",
         minimumStayDuration: property.minimumStayDuration || "",
         availableFrom: property.availableFrom || "",
@@ -168,12 +169,14 @@ export default function AddProperty() {
         bedroomDetails: property.bedroomDetails || [], // Add this new field for bedroom details
         onSiteVerification: property.onSiteVerification || false,
         bookingOptions: {
-            allowSecurityDeposit: property.bookingOptions?.allowSecurityDeposit || false,
-            allowFirstRent: property.bookingOptions?.allowFirstRent || false,
-            allowFirstAndLastRent: property.bookingOptions?.allowFirstAndLastRent || false
+          allowSecurityDeposit:
+            property.bookingOptions?.allowSecurityDeposit || false,
+          allowFirstRent: property.bookingOptions?.allowFirstRent || false,
+          allowFirstAndLastRent:
+            property.bookingOptions?.allowFirstAndLastRent || false,
         },
         instantBooking: property.instantBooking || false,
-        bookByEnquiry: property.bookByEnquiry || false
+        bookByEnquiry: property.bookByEnquiry || false,
       });
     }
   }, [property]);
@@ -209,19 +212,25 @@ export default function AddProperty() {
     locality: Yup.string().required("Locality is required"),
     rentDetails: Yup.string().required("Rent details are required"),
     termsOfStay: Yup.string().required("Terms of stay are required"),
-    cancellationPolicy: Yup.string().required("Cancellation policy is required"),
-    yearOfConstruction: Yup.number().required("Year of construction is required"),
-    minimumStayDuration: Yup.string().required("Minimum stay duration is required"),
+    cancellationPolicy: Yup.string().required(
+      "Cancellation policy is required"
+    ),
+    yearOfConstruction: Yup.number().required(
+      "Year of construction is required"
+    ),
+    minimumStayDuration: Yup.string().required(
+      "Minimum stay duration is required"
+    ),
     availableFrom: Yup.string().required("Available from date is required"),
     nearbyUniversities: Yup.array(),
     onSiteVerification: Yup.boolean(),
     bookingOptions: Yup.object().shape({
-        allowSecurityDeposit: Yup.boolean(),
-        allowFirstRent: Yup.boolean(),
-        allowFirstAndLastRent: Yup.boolean()
+      allowSecurityDeposit: Yup.boolean(),
+      allowFirstRent: Yup.boolean(),
+      allowFirstAndLastRent: Yup.boolean(),
     }),
     instantBooking: Yup.boolean(),
-    bookByEnquiry: Yup.boolean()
+    bookByEnquiry: Yup.boolean(),
   });
 
   const amenitiesList = [
@@ -263,35 +272,29 @@ export default function AddProperty() {
 
   const handleSubmit = async (values, { setSubmitting, setErrors }) => {
     try {
-      // Create the property object with all fields
-      const propertyData = {
+      // Create JSON payload
+      const jsonPayload = {
+        // Basic property details
         title: values.propertyName,
-        squareFootage: values.squareFootage,
         description: values.description,
         price: values.pricing,
         securityDeposit: values.securityDeposit,
-        latitude: values.latitude,
-        longitude: values.longitude,
         type: values.homeType,
+        
+        // Location details
         location: values.location,
         city: values.city,
         country: values.country,
         locality: values.locality,
-        minimumStayDuration: values.minimumStayDuration,
-        availableFrom: values.availableFrom,
-        ownership: values.ownership,
-        renterAgreement: values.renterAgreement,
-        landlordInsurance: values.landlordInsurance,
+        latitude: values.latitude || "",
+        longitude: values.longitude || "",
+        
+        // Arrays
         amenities: values.amenities || [],
         utilities: values.utilities || [],
         nearbyUniversities: values.nearbyUniversities || [],
-        rentDetails: values.rentDetails || "Details about rent",
-        termsOfStay: values.termsOfStay || "Terms of stay",
-        cancellationPolicy: values.cancellationPolicy || "Cancellation policy",
-        onSiteVerification: values.onSiteVerification,
-        instantBooking: values.instantBooking,
-        bookByEnquiry: values.bookByEnquiry,
-        bookingOptions: values.bookingOptions,
+        
+        // Overview object
         overview: {
           bedrooms: parseInt(values.bedrooms),
           bathrooms: parseInt(values.bathrooms),
@@ -301,40 +304,55 @@ export default function AddProperty() {
           kitchenType: values.kitchenType,
           bathroomType: values.bathroomType,
           yearOfConstruction: parseInt(values.yearOfConstruction),
-          bedroomDetails: values.bedroomDetails || []
-        }
+          bedroomDetails: values.bedroomDetails || [],
+        },
+        
+        // Text fields
+        rentDetails: values.rentDetails || "Details about rent",
+        termsOfStay: values.termsOfStay || "Terms of stay",
+        cancellationPolicy: values.cancellationPolicy || "Cancellation policy",
+        
+        // Booking options
+        bookingOptions: values.bookingOptions || {},
+        instantBooking: values.instantBooking,
+        bookByEnquiry: values.bookByEnquiry,
+        
+        // Verification flags
+        onSiteVerification: values.onSiteVerification,
+        ownership: values.ownership,
+        renterAgreement: values.renterAgreement,
+        landlordInsurance: values.landlordInsurance,
+        
+        // Availability
+        minimumStayDuration: values.minimumStayDuration,
+        availableFrom: values.availableFrom,
       };
 
-      // Create FormData only for images
-      const imageFormData = new FormData();
+      console.log("JSON Payload:", JSON.stringify(jsonPayload, null, 2));
+      
+      // Handle images with FormData
+      // Images need special handling because they can't be serialized to JSON
+      const formData = new FormData();
+      
+      // Add the JSON payload as a serialized string in a field called 'data'
+      formData.append("data", JSON.stringify(jsonPayload));
+      
+      // Add images separately
       const validPhotos = values.photos.filter((photo) => photo !== null);
-      validPhotos.forEach((photo) => {
-        imageFormData.append("images", photo);
+      validPhotos.forEach((photo, index) => {
+        formData.append("images", photo);
       });
 
-      // First upload images and get their URLs
-      const imageUploadResponse = await fetch('/api/upload-images', {
-        method: 'POST',
-        body: imageFormData
-      });
+      // Send the combined data (JSON + images) to the server
+      const result = await createProperty(formData).unwrap();
       
-      if (!imageUploadResponse.ok) {
-        throw new Error('Failed to upload images');
-      }
-
-      const { imageUrls } = await imageUploadResponse.json();
-      
-      // Add image URLs to the property data
-      propertyData.images = imageUrls;
-
-      // Create property with complete data
-      const result = await createProperty(propertyData).unwrap();
       console.log("Property created successfully:", result);
       toast.success("Property created successfully");
       router.back();
     } catch (error) {
       console.error("Failed to create property:", error);
-      const errorMessage = error.data?.message || "Failed to create property";
+      const errorMessage =
+        error.data?.message || error.message || "Failed to create property";
       setErrors({ submit: errorMessage });
       toast.error(errorMessage);
     } finally {
@@ -342,27 +360,32 @@ export default function AddProperty() {
     }
   };
 
-  const handleBedroomCountChange = (newCount, currentCount, setFieldValue, currentValues) => {
+  const handleBedroomCountChange = (
+    newCount,
+    currentCount,
+    setFieldValue,
+    currentValues
+  ) => {
     const currentBedrooms = currentValues?.bedroomDetails || [];
     if (newCount > currentCount) {
       // Add new bedroom
-      setFieldValue('bedroomDetails', [
+      setFieldValue("bedroomDetails", [
         ...currentBedrooms,
         {
-          name: '',
-          rent: '',
-          sizeSqFt: '',
+          name: "",
+          rent: "",
+          sizeSqFt: "",
           furnished: false,
           privateWashroom: false,
           sharedWashroom: false,
-          sharedKitchen: false
-        }
+          sharedKitchen: false,
+        },
       ]);
     } else if (newCount < currentCount) {
       // Remove last bedroom
-      setFieldValue('bedroomDetails', currentBedrooms.slice(0, newCount));
+      setFieldValue("bedroomDetails", currentBedrooms.slice(0, newCount));
     }
-    setFieldValue('bedrooms', newCount);
+    setFieldValue("bedrooms", newCount);
   };
 
   if (isLoading) return <p></p>;
@@ -378,866 +401,978 @@ export default function AddProperty() {
           onSubmit={handleSubmit}
           enableReinitialize
         >
-          {({ values, setFieldValue }) => (
-            <Form className={styles.formCard}>
-              <h3 className={styles.formTitle}>Basic Details</h3>
-              <Row gutter={16}>
-                <Col span={12}>
-                  <LabelInputComponent
-                    name="propertyName"
-                    title="Property Name"
-                    placeholder="Enter property name"
-                    className={styles.labelinput}
-                  />
-                  <ErrorMessage name="propertyName">
-                    {(msg) => <div className={styles.error}>{msg}</div>}
-                  </ErrorMessage>
-                </Col>
-                <Col span={12}>
-                  <LabelInputComponent
-                    name="squareFootage"
-                    title="Square Footage"
-                    placeholder="Enter square footage"
-                    className={styles.labelinput}
-                  />
-                  <ErrorMessage name="squareFootage">
-                    {(msg) => <div className={styles.error}>{msg}</div>}
-                  </ErrorMessage>
-                </Col>
-              </Row>
-              <MyQuillEditor
-                label="Description"
-                name="description"
-                setFieldValue={setFieldValue}
-              />
-              <ErrorMessage name="description">
-                {(msg) => <div className={styles.error}>{msg}</div>}
-              </ErrorMessage>
+          {({ values, setFieldValue }) => {
+            const handleImageChange = (e) => {
+              const files = Array.from(e.target.files);
+              const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+              const MAX_TOTAL_SIZE = 50 * 1024 * 1024; // 50MB
 
-              {/* Home Type Dropdown */}
-              <div className={styles.dropdownContainer}>
-                <label className={styles.label}>Home Type</label>
-                <Select
-                  placeholder="Select home type"
-                  className={styles.dropdown}
-                  value={values.homeType}
-                  onChange={(value) => setFieldValue("homeType", value)}
-                >
-                  <Option value="apartment">
-                    <FaBuilding style={{ marginRight: "8px" }} />
-                    Apartment
-                  </Option>
-                  <Option value="house">
-                    <FaHome style={{ marginRight: "8px" }} />
-                    House
-                  </Option>
-                  <Option value="villa">
-                    <FaHome style={{ marginRight: "8px" }} />
-                    Villa
-                  </Option>
-                  <Option value="studio">
-                    <FaWarehouse style={{ marginRight: "8px" }} />
-                    Studio
-                  </Option>
-                </Select>
-                <ErrorMessage name="homeType">
+              // Check individual file sizes
+              const oversizedFiles = files.filter(file => file.size > MAX_FILE_SIZE);
+              if (oversizedFiles.length > 0) {
+                  toast.error(`Some images exceed the 10MB limit. Please resize them before uploading.`);
+                  return;
+              }
+
+              // Check total size
+              const totalSize = files.reduce((acc, file) => acc + file.size, 0);
+              if (totalSize > MAX_TOTAL_SIZE) {
+                  toast.error(`Total size of images exceeds 50MB. Please reduce the number of images or their size.`);
+                  return;
+              }
+
+              setFieldValue("photos", [...values.photos, ...files]);
+            };
+            
+            return (
+              <Form className={styles.formCard}>
+                <h3 className={styles.formTitle}>Basic Details</h3>
+                <Row gutter={16}>
+                  <Col span={12}>
+                    <LabelInputComponent
+                      name="propertyName"
+                      title="Property Name"
+                      placeholder="Enter property name"
+                      className={styles.labelinput}
+                    />
+                    <ErrorMessage name="propertyName">
+                      {(msg) => <div className={styles.error}>{msg}</div>}
+                    </ErrorMessage>
+                  </Col>
+                  <Col span={12}>
+                    <LabelInputComponent
+                      name="squareFootage"
+                      title="Square Footage"
+                      placeholder="Enter square footage"
+                      className={styles.labelinput}
+                    />
+                    <ErrorMessage name="squareFootage">
+                      {(msg) => <div className={styles.error}>{msg}</div>}
+                    </ErrorMessage>
+                  </Col>
+                </Row>
+                <MyQuillEditor
+                  label="Description"
+                  name="description"
+                  setFieldValue={setFieldValue}
+                />
+                <ErrorMessage name="description">
                   {(msg) => <div className={styles.error}>{msg}</div>}
                 </ErrorMessage>
-              </div>
 
-              {/* Counter for Bedrooms, Bathrooms, and Kitchens */}
-              <div className={styles.counterGroup}>
-                {["bedrooms", "bathrooms", "kitchens"].map((field) => (
-                  <div className={styles.counter} key={field}>
-                    <label>
-                      {field === "bedrooms" && (
-                        <>
-                          <FaBed style={{ marginRight: "8px" }} /> Bedrooms
-                        </>
-                      )}
-                      {field === "bathrooms" && (
-                        <>
-                          <FaBath style={{ marginRight: "8px" }} /> Bathrooms
-                        </>
-                      )}
-                      {field === "kitchens" && <>Kitchens</>}
-                    </label>
-                    <div className={styles.counterControls}>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          const newValue = Math.max(0, values[field] - 1);
-                          if (field === 'bedrooms') {
-                            handleBedroomCountChange(newValue, values[field], setFieldValue, values);
-                          } else {
-                            setFieldValue(field, newValue);
-                          }
-                        }}
-                      >
-                        -
-                      </button>
-                      <span>{values[field]}</span>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          const newValue = values[field] + 1;
-                          if (field === 'bedrooms') {
-                            handleBedroomCountChange(newValue, values[field], setFieldValue, values);
-                          } else {
-                            setFieldValue(field, newValue);
-                          }
-                        }}
-                      >
-                        +
-                      </button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              {/* Bedroom Details Section */}
-              {values.bedrooms > 0 && (
-                <div className={styles.bedroomDetailsSection}>
-                  <h3 className={styles.formTitle}>Bedroom Details</h3>
-                  {Array.from({ length: values.bedrooms }).map((_, index) => (
-                    <div key={index} className={styles.bedroomCard}>
-                      <h4>Bedroom {index + 1}</h4>
-                      <Row gutter={16}>
-                        <Col span={8}>
-                          <LabelInputComponent
-                            name={`bedroomDetails.${index}.name`}
-                            title="Name"
-                            placeholder="Enter bedroom name"
-                            className={styles.labelinput}
-                            value={values.bedroomDetails[index]?.name || ''}
-                            onChange={(e) => {
-                              const newDetails = [...(values.bedroomDetails || [])];
-                              if (!newDetails[index]) newDetails[index] = {};
-                              newDetails[index].name = e.target.value;
-                              setFieldValue('bedroomDetails', newDetails);
-                            }}
-                          />
-                        </Col>
-                        <Col span={8}>
-                          <LabelInputComponent
-                            name={`bedroomDetails.${index}.rent`}
-                            title="Rent"
-                            placeholder="Enter rent amount"
-                            className={styles.labelinput}
-                            value={values.bedroomDetails[index]?.rent || ''}
-                            onChange={(e) => {
-                              const newDetails = [...(values.bedroomDetails || [])];
-                              if (!newDetails[index]) newDetails[index] = {};
-                              newDetails[index].rent = e.target.value;
-                              setFieldValue('bedroomDetails', newDetails);
-                            }}
-                          />
-                        </Col>
-                        <Col span={8}>
-                          <LabelInputComponent
-                            name={`bedroomDetails.${index}.sizeSqFt`}
-                            title="Size (sq ft)"
-                            placeholder="Enter size in sq ft"
-                            className={styles.labelinput}
-                            value={values.bedroomDetails[index]?.sizeSqFt || ''}
-                            onChange={(e) => {
-                              const newDetails = [...(values.bedroomDetails || [])];
-                              if (!newDetails[index]) newDetails[index] = {};
-                              newDetails[index].sizeSqFt = e.target.value;
-                              setFieldValue('bedroomDetails', newDetails);
-                            }}
-                          />
-                        </Col>
-                      </Row>
-                      <Row gutter={16} className={styles.checkboxRow}>
-                        <Col span={6}>
-                          <label className={styles.checkboxLabel}>
-                            <input
-                              type="checkbox"
-                              checked={values.bedroomDetails[index]?.furnished || false}
-                              onChange={(e) => {
-                                const newDetails = [...(values.bedroomDetails || [])];
-                                if (!newDetails[index]) newDetails[index] = {};
-                                newDetails[index].furnished = e.target.checked;
-                                setFieldValue('bedroomDetails', newDetails);
-                              }}
-                            />
-                            Furnished
-                          </label>
-                        </Col>
-                        <Col span={6}>
-                          <label className={styles.checkboxLabel}>
-                            <input
-                              type="checkbox"
-                              checked={values.bedroomDetails[index]?.privateWashroom || false}
-                              onChange={(e) => {
-                                const newDetails = [...(values.bedroomDetails || [])];
-                                if (!newDetails[index]) newDetails[index] = {};
-                                newDetails[index].privateWashroom = e.target.checked;
-                                setFieldValue('bedroomDetails', newDetails);
-                              }}
-                            />
-                            Private Washroom
-                          </label>
-                        </Col>
-                        <Col span={6}>
-                          <label className={styles.checkboxLabel}>
-                            <input
-                              type="checkbox"
-                              checked={values.bedroomDetails[index]?.sharedWashroom || false}
-                              onChange={(e) => {
-                                const newDetails = [...(values.bedroomDetails || [])];
-                                if (!newDetails[index]) newDetails[index] = {};
-                                newDetails[index].sharedWashroom = e.target.checked;
-                                setFieldValue('bedroomDetails', newDetails);
-                              }}
-                            />
-                            Shared Washroom
-                          </label>
-                        </Col>
-                        <Col span={6}>
-                          <label className={styles.checkboxLabel}>
-                            <input
-                              type="checkbox"
-                              checked={values.bedroomDetails[index]?.sharedKitchen || false}
-                              onChange={(e) => {
-                                const newDetails = [...(values.bedroomDetails || [])];
-                                if (!newDetails[index]) newDetails[index] = {};
-                                newDetails[index].sharedKitchen = e.target.checked;
-                                setFieldValue('bedroomDetails', newDetails);
-                              }}
-                            />
-                            Shared Kitchen
-                          </label>
-                        </Col>
-                      </Row>
-                    </div>
-                  ))}
-                </div>
-              )}
-
-              <div className={styles.verificationCheckbox}>
-                <label className={styles.checkboxLabel}>
-                  <input
-                    type="checkbox"
-                    name="onSiteVerification"
-                    checked={values.onSiteVerification}
-                    onChange={(e) => setFieldValue('onSiteVerification', e.target.checked)}
-                  />
-                  On-site Verification
-                </label>
-              </div>
-
-              {/* Room Type Section */}
-              <h3 className={styles.formTitle}>Room Type</h3>
-              <Row gutter={16}>
-                <Col span={8}>
-                  <div className={styles.dropdownContainer}>
-                    <label className={styles.label}>Room Type</label>
-                    <Select
-                      placeholder="Select room type"
-                      className={styles.dropdown}
-                      value={values.roomType}
-                      onChange={(value) => setFieldValue("roomType", value)}
-                    >
-                      <Option value="private">Private Room</Option>
-                      <Option value="shared">Shared Room</Option>
-                    </Select>
-                    <ErrorMessage name="roomType">
-                      {(msg) => <div className={styles.error}>{msg}</div>}
-                    </ErrorMessage>
-                  </div>
-                </Col>
-                <Col span={8}>
-                  <div className={styles.dropdownContainer}>
-                    <label className={styles.label}>Kitchen Type</label>
-                    <Select
-                      placeholder="Select kitchen type"
-                      className={styles.dropdown}
-                      value={values.kitchenType}
-                      onChange={(value) => setFieldValue("kitchenType", value)}
-                    >
-                      <Option value="private">Private Kitchen</Option>
-                      <Option value="shared">Shared Kitchen</Option>
-                    </Select>
-                    <ErrorMessage name="kitchenType">
-                      {(msg) => <div className={styles.error}>{msg}</div>}
-                    </ErrorMessage>
-                  </div>
-                </Col>
-                <Col span={8}>
-                  <div className={styles.dropdownContainer}>
-                    <label className={styles.label}>Bathroom Type</label>
-                    <Select
-                      placeholder="Select bathroom type"
-                      className={styles.dropdown}
-                      value={values.bathroomType}
-                      onChange={(value) => setFieldValue("bathroomType", value)}
-                    >
-                      <Option value="private">Private Bathroom</Option>
-                      <Option value="shared">Shared Bathroom</Option>
-                    </Select>
-                    <ErrorMessage name="bathroomType">
-                      {(msg) => <div className={styles.error}>{msg}</div>}
-                    </ErrorMessage>
-                  </div>
-                </Col>
-              </Row>
-
-              {/* Amenities Section */}
-              <h3 className={styles.formTitle}>Amenities</h3>
-              <div className={styles.amenitiesGrid}>
-                {amenitiesList.map((amenity, index) => (
-                  <div className={styles.amenityItem} key={index}>
-                    <label className={styles.checkboxLabel}>
-                      <input
-                        type="checkbox"
-                        name="amenities"
-                        value={amenity}
-                        checked={values.amenities.includes(amenity)}
-                        onChange={() => {
-                          const newAmenities = values.amenities.includes(
-                            amenity
-                          )
-                            ? values.amenities.filter(
-                                (item) => item !== amenity
-                              )
-                            : [...values.amenities, amenity];
-                          setFieldValue("amenities", newAmenities);
-                        }}
-                      />
-                      {amenity}
-                    </label>
-                  </div>
-                ))}
-              </div>
-              <ErrorMessage name="amenities">
-                {(msg) => <div className={styles.error}>{msg}</div>}
-              </ErrorMessage>
-
-              {/* Utilities Section */}
-              <h3 className={styles.formTitle}>Utilities Included</h3>
-              <div className={styles.amenitiesGrid}>
-                {utilitiesList.map((utility, index) => (
-                  <div className={styles.amenityItem} key={index}>
-                    <label className={styles.checkboxLabel}>
-                      <input
-                        type="checkbox"
-                        name="utilities"
-                        value={utility}
-                        checked={values.utilities.includes(utility)}
-                        onChange={() => {
-                          const newUtilities = values.utilities.includes(
-                            utility
-                          )
-                            ? values.utilities.filter(
-                                (item) => item !== utility
-                              )
-                            : [...values.utilities, utility];
-                          setFieldValue("utilities", newUtilities);
-                        }}
-                      />
-                      {utility}
-                    </label>
-                  </div>
-                ))}
-              </div>
-              <ErrorMessage name="utilities">
-                {(msg) => <div className={styles.error}>{msg}</div>}
-              </ErrorMessage>
-
-              {/* Address Section */}
-              <h3 className={styles.formTitle}>Location</h3>
-              <LabelInputComponent
-                name="location"
-                title="Address"
-                placeholder="Enter your location..."
-                textarea
-                className={styles.labelinput}
-              />
-              <Row gutter={16}>
-                <Col span={12}>
-                  <LabelInputComponent
-                    name="city"
-                    title="City"
-                    placeholder="Enter your city"
-                    className={styles.labelinput}
-                    onChange={(e) => handleCityChange(e, setFieldValue)}
-                  />
-                  <ErrorMessage name="city">
-                    {(msg) => <div className={styles.error}>{msg}</div>}
-                  </ErrorMessage>
-                </Col>
-                <Col span={12}>
-                  <div className={styles.dropdownContainer}>
-                    <label className={styles.label}>Country</label>
-                    <Select
-                      placeholder="Select country"
-                      className={styles.dropdown}
-                      value={values.country}
-                      onChange={(value) => handleCountryChange(value, setFieldValue)}
-                    >
-                      <Option value="USA">United States (USD)</Option>
-                      <Option value="India">India (INR)</Option>
-                      <Option value="Canada">Canada (CAD)</Option>
-                      <Option value="UK">United Kingdom (GBP)</Option>
-                      <Option value="EU">European Union (EUR)</Option>
-                      <Option value="Australia">Australia (AUD)</Option>
-                    </Select>
-                    <ErrorMessage name="country">
-                      {(msg) => <div className={styles.error}>{msg}</div>}
-                    </ErrorMessage>
-                  </div>
-                </Col>
-              </Row>
-
-              {/* Locality Field - Appears based on city selection */}
-              {values.city && (
+                {/* Home Type Dropdown */}
                 <div className={styles.dropdownContainer}>
-                  <label className={styles.label}>Locality</label>
+                  <label className={styles.label}>Home Type</label>
                   <Select
-                    placeholder="Select locality"
+                    placeholder="Select home type"
                     className={styles.dropdown}
-                    value={values.locality}
-                    onChange={(value) => setFieldValue("locality", value)}
+                    value={values.homeType}
+                    onChange={(value) => setFieldValue("homeType", value)}
                   >
-                    <Option value="Downtown">Downtown</Option>
-                    <Option value="North">North</Option>
-                    <Option value="East">East</Option>
-                    <Option value="West">West</Option>
-                    <Option value="South">South</Option>
-                    <Option value="Suburbs">Suburbs</Option>
-                    <Option value="Midtown">Midtown</Option>
-                    <Option value="Central">Central</Option>
-                    <Option value="Business District">Business District</Option>
-                    <Option value="Residential Area">Residential Area</Option>
-                    <Option value="Other">Other (Specify in Address)</Option>
+                    <Option value="apartment">
+                      <FaBuilding style={{ marginRight: "8px" }} />
+                      Apartment
+                    </Option>
+                    <Option value="house">
+                      <FaHome style={{ marginRight: "8px" }} />
+                      House
+                    </Option>
+                    <Option value="villa">
+                      <FaHome style={{ marginRight: "8px" }} />
+                      Villa
+                    </Option>
+                    <Option value="studio">
+                      <FaWarehouse style={{ marginRight: "8px" }} />
+                      Studio
+                    </Option>
                   </Select>
-                  <ErrorMessage name="locality">
+                  <ErrorMessage name="homeType">
                     {(msg) => <div className={styles.error}>{msg}</div>}
                   </ErrorMessage>
                 </div>
-              )}
 
-              {/* <Row gutter={16}>
-                <Col span={12}>
-                  <LabelInputComponent
-                    name="longitude"
-                    title="Longitude"
-                    placeholder="Enter longitude"
-                    className={styles.labelinput}
-                  />
-                  <ErrorMessage name="longitude">
-                    {(msg) => <div className={styles.error}>{msg}</div>}
-                  </ErrorMessage>
-                </Col>
-                <Col span={12}>
-                  <LabelInputComponent
-                    name="latitude"
-                    title="Latitude"
-                    placeholder="Enter latitude"
-                    className={styles.labelinput}
-                  />
-                  <ErrorMessage name="latitude">
-                    {(msg) => <div className={styles.error}>{msg}</div>}
-                  </ErrorMessage>
-                </Col>
-              </Row> */}
-
-              {/* Pricing Section */}
-              <h3 className={styles.formTitle}>Pricing</h3>
-              <Row gutter={16}>
-                <Col span={12}>
-                  <LabelInputComponent
-                    name="pricing"
-                    title="Monthly Rent"
-                    placeholder="Enter monthly rent amount"
-                    className={styles.labelinput}
-                  />
-                  <ErrorMessage name="pricing">
-                    {(msg) => <div className={styles.error}>{msg}</div>}
-                  </ErrorMessage>
-                </Col>
-                <Col span={12}>
-                  <LabelInputComponent
-                    name="securityDeposit"
-                    title="Security Deposit"
-                    placeholder="Enter security deposit amount"
-                    className={styles.labelinput}
-                  />
-                  <ErrorMessage name="securityDeposit">
-                    {(msg) => <div className={styles.error}>{msg}</div>}
-                  </ErrorMessage>
-                </Col>
-              </Row>
-
-              {/* Booking Options Section */}
-              <div className={styles.bookingOptionsContainer}>
-                <h4 className={styles.sectionTitle}>Payment Options</h4>
-                <div className={styles.radioGroup}>
-                    <label className={styles.radioLabel}>
-                        <input
-                            type="radio"
-                            name="paymentType"
-                            checked={values.bookingOptions.allowSecurityDeposit}
-                            onChange={() => {
-                                setFieldValue('bookingOptions', {
-                                    ...values.bookingOptions,
-                                    allowSecurityDeposit: true,
-                                    allowFirstRent: false,
-                                    allowFirstAndLastRent: false
-                                });
-                            }}
-                        />
-                        Allow booking by security deposit
-                    </label>
-                </div>
-
-                <div className={styles.radioGroup}>
-                    <label className={styles.radioLabel}>
-                        <input
-                            type="radio"
-                            name="paymentType"
-                            checked={values.bookingOptions.allowFirstRent}
-                            onChange={() => {
-                                setFieldValue('bookingOptions', {
-                                    ...values.bookingOptions,
-                                    allowSecurityDeposit: false,
-                                    allowFirstRent: true,
-                                    allowFirstAndLastRent: false
-                                });
-                            }}
-                        />
-                        Allow booking by First Rent
-                    </label>
-                </div>
-
-                <div className={styles.radioGroup}>
-                    <label className={styles.radioLabel}>
-                        <input
-                            type="radio"
-                            name="paymentType"
-                            checked={values.bookingOptions.allowFirstAndLastRent}
-                            onChange={() => {
-                                setFieldValue('bookingOptions', {
-                                    ...values.bookingOptions,
-                                    allowSecurityDeposit: false,
-                                    allowFirstRent: false,
-                                    allowFirstAndLastRent: true
-                                });
-                            }}
-                        />
-                        Allow booking by First and Last rent
-                    </label>
-                </div>
-
-                <div className={styles.bookingTypeSection}>
-                    <h4 className={styles.sectionTitle}>Booking Type</h4>
-                    <div className={styles.bookingTypeOptions}>
-                        <label className={styles.radioLabel}>
-                            <input
-                                type="radio"
-                                name="bookingType"
-                                checked={values.instantBooking}
-                                onChange={() => {
-                                    setFieldValue('instantBooking', true);
-                                    setFieldValue('bookByEnquiry', false);
-                                }}
-                            />
-                            Instant Booking
-                        </label>
-
-                        <label className={styles.radioLabel}>
-                            <input
-                                type="radio"
-                                name="bookingType"
-                                checked={values.bookByEnquiry}
-                                onChange={() => {
-                                    setFieldValue('bookByEnquiry', true);
-                                    setFieldValue('instantBooking', false);
-                                }}
-                            />
-                            Book by Enquiry
-                        </label>
+                {/* Counter for Bedrooms, Bathrooms, and Kitchens */}
+                <div className={styles.counterGroup}>
+                  {["bedrooms", "bathrooms", "kitchens"].map((field) => (
+                    <div className={styles.counter} key={field}>
+                      <label>
+                        {field === "bedrooms" && (
+                          <>
+                            <FaBed style={{ marginRight: "8px" }} /> Bedrooms
+                          </>
+                        )}
+                        {field === "bathrooms" && (
+                          <>
+                            <FaBath style={{ marginRight: "8px" }} /> Bathrooms
+                          </>
+                        )}
+                        {field === "kitchens" && <>Kitchens</>}
+                      </label>
+                      <div className={styles.counterControls}>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const newValue = Math.max(0, values[field] - 1);
+                            if (field === "bedrooms") {
+                              handleBedroomCountChange(
+                                newValue,
+                                values[field],
+                                setFieldValue,
+                                values
+                              );
+                            } else {
+                              setFieldValue(field, newValue);
+                            }
+                          }}
+                        >
+                          -
+                        </button>
+                        <span>{values[field]}</span>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const newValue = values[field] + 1;
+                            if (field === "bedrooms") {
+                              handleBedroomCountChange(
+                                newValue,
+                                values[field],
+                                setFieldValue,
+                                values
+                              );
+                            } else {
+                              setFieldValue(field, newValue);
+                            }
+                          }}
+                        >
+                          +
+                        </button>
+                      </div>
                     </div>
-                </div>
-              </div>
-
-              {/* Year of Construction */}
-              <Row gutter={16}>
-                <Col span={12}>
-                  <LabelInputComponent
-                    name="yearOfConstruction"
-                    title="Year of Construction"
-                    placeholder="Enter year of construction"
-                    className={styles.labelinput}
-                  />
-                  <ErrorMessage name="yearOfConstruction">
-                    {(msg) => <div className={styles.error}>{msg}</div>}
-                  </ErrorMessage>
-                </Col>
-              </Row>
-
-              {/* Minimum Stay Duration */}
-              <div className={styles.dropdownContainer}>
-                <label className={styles.label}>Minimum Stay Duration</label>
-                <Select
-                  placeholder="Select minimum stay duration"
-                  className={styles.dropdown}
-                  value={values.minimumStayDuration}
-                  onChange={(value) => setFieldValue("minimumStayDuration", value)}
-                >
-                  <Select.Option value="Month-to-Month">Month-to-Month</Select.Option>
-                  
-                  {/* Quarter 1 Ranges */}
-                  <Select.Option value="Jan to Mar">Jan to Mar (Q1)</Select.Option>
-                  <Select.Option value="Jan to Jun">Jan to Jun (Q1-Q2)</Select.Option>
-                  <Select.Option value="Jan to Sep">Jan to Sep (Q1-Q3)</Select.Option>
-                  <Select.Option value="Jan to Dec">Jan to Dec (Full Year)</Select.Option>
-                  <Select.Option value="Feb to Apr">Feb to Apr</Select.Option>
-                  <Select.Option value="Feb to Jul">Feb to Jul</Select.Option>
-                  <Select.Option value="Feb to Dec">Feb to Dec</Select.Option>
-                  <Select.Option value="Mar to May">Mar to May</Select.Option>
-                  <Select.Option value="Mar to Aug">Mar to Aug</Select.Option>
-                  <Select.Option value="Mar to Dec">Mar to Dec</Select.Option>
-                  
-                  {/* Quarter 2 Ranges */}
-                  <Select.Option value="Apr to Jun">Apr to Jun (Q2)</Select.Option>
-                  <Select.Option value="Apr to Sep">Apr to Sep (Q2-Q3)</Select.Option>
-                  <Select.Option value="Apr to Dec">Apr to Dec (Q2-Q4)</Select.Option>
-                  <Select.Option value="May to Jul">May to Jul</Select.Option>
-                  <Select.Option value="May to Oct">May to Oct</Select.Option>
-                  <Select.Option value="May to Dec">May to Dec</Select.Option>
-                  <Select.Option value="Jun to Aug">Jun to Aug</Select.Option>
-                  <Select.Option value="Jun to Nov">Jun to Nov</Select.Option>
-                  <Select.Option value="Jun to Dec">Jun to Dec</Select.Option>
-                  
-                  {/* Quarter 3 Ranges */}
-                  <Select.Option value="Jul to Sep">Jul to Sep (Q3)</Select.Option>
-                  <Select.Option value="Jul to Dec">Jul to Dec (Q3-Q4)</Select.Option>
-                  <Select.Option value="Aug to Oct">Aug to Oct</Select.Option>
-                  <Select.Option value="Aug to Dec">Aug to Dec</Select.Option>
-                  <Select.Option value="Sep to Nov">Sep to Nov</Select.Option>
-                  <Select.Option value="Sep to Dec">Sep to Dec</Select.Option>
-                  
-                  {/* Quarter 4 Ranges */}
-                  <Select.Option value="Oct to Dec">Oct to Dec (Q4)</Select.Option>
-                  <Select.Option value="Nov to Dec">Nov to Dec</Select.Option>
-                  
-                  {/* General Durations */}
-                  <Select.Option value="Less than 6 months">Less than 6 months</Select.Option>
-                  <Select.Option value="6-12 months">6-12 months</Select.Option>
-                  <Select.Option value="1 year+">1 year+</Select.Option>
-                </Select>
-                <ErrorMessage name="minimumStayDuration">
-                  {(msg) => <div className={styles.error}>{msg}</div>}
-                </ErrorMessage>
-              </div>
-
-              {/* Available From */}
-              <div className={styles.dropdownContainer}>
-                <label className={styles.label}>Available From</label>
-                <Select
-                  placeholder="Select availability month"
-                  className={styles.dropdown}
-                  value={values.availableFrom}
-                  onChange={(value) => setFieldValue("availableFrom", value)}
-                >
-                  {['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'].map((month) => (
-                    <Option key={month} value={month}>{month}</Option>
                   ))}
-                </Select>
-                <ErrorMessage name="availableFrom">
-                  {(msg) => <div className={styles.error}>{msg}</div>}
-                </ErrorMessage>
-              </div>
+                </div>
 
-              {/* Nearby Universities */}
-              <h3 className={styles.formTitle}>Nearby Universities</h3>
-              <div className={styles.amenitiesGrid}>
-                {isLoadingUniversities || isFetchingUniversities ? (
-                  <div>Loading universities...</div>
-                ) : universities.length > 0 ? (
-                  universities.map((university, index) => (
+                {/* Bedroom Details Section */}
+                {values.bedrooms > 0 && (
+                  <div className={styles.bedroomDetailsSection}>
+                    <h3 className={styles.formTitle}>Bedroom Details</h3>
+                    {Array.from({ length: values.bedrooms }).map((_, index) => (
+                      <div key={index} className={styles.bedroomCard}>
+                        <h4>Bedroom {index + 1}</h4>
+                        <Row gutter={16}>
+                          <Col span={8}>
+                            <LabelInputComponent
+                              name={`bedroomDetails.${index}.name`}
+                              title="Name"
+                              placeholder="Enter bedroom name"
+                              className={styles.labelinput}
+                              value={values.bedroomDetails[index]?.name || ""}
+                              onChange={(e) => {
+                                const newDetails = [
+                                  ...(values.bedroomDetails || []),
+                                ];
+                                if (!newDetails[index]) newDetails[index] = {};
+                                newDetails[index].name = e.target.value;
+                                setFieldValue("bedroomDetails", newDetails);
+                              }}
+                            />
+                          </Col>
+                          <Col span={8}>
+                            <LabelInputComponent
+                              name={`bedroomDetails.${index}.rent`}
+                              title="Rent"
+                              placeholder="Enter rent amount"
+                              className={styles.labelinput}
+                              value={values.bedroomDetails[index]?.rent || ""}
+                              onChange={(e) => {
+                                const newDetails = [
+                                  ...(values.bedroomDetails || []),
+                                ];
+                                if (!newDetails[index]) newDetails[index] = {};
+                                newDetails[index].rent = e.target.value;
+                                setFieldValue("bedroomDetails", newDetails);
+                              }}
+                            />
+                          </Col>
+                          <Col span={8}>
+                            <LabelInputComponent
+                              name={`bedroomDetails.${index}.sizeSqFt`}
+                              title="Size (sq ft)"
+                              placeholder="Enter size in sq ft"
+                              className={styles.labelinput}
+                              value={values.bedroomDetails[index]?.sizeSqFt || ""}
+                              onChange={(e) => {
+                                const newDetails = [
+                                  ...(values.bedroomDetails || []),
+                                ];
+                                if (!newDetails[index]) newDetails[index] = {};
+                                newDetails[index].sizeSqFt = e.target.value;
+                                setFieldValue("bedroomDetails", newDetails);
+                              }}
+                            />
+                          </Col>
+                        </Row>
+                        <Row gutter={16} className={styles.checkboxRow}>
+                          <Col span={6}>
+                            <label className={styles.checkboxLabel}>
+                              <input
+                                type="checkbox"
+                                checked={
+                                  values.bedroomDetails[index]?.furnished || false
+                                }
+                                onChange={(e) => {
+                                  const newDetails = [
+                                    ...(values.bedroomDetails || []),
+                                  ];
+                                  if (!newDetails[index]) newDetails[index] = {};
+                                  newDetails[index].furnished = e.target.checked;
+                                  setFieldValue("bedroomDetails", newDetails);
+                                }}
+                              />
+                              Furnished
+                            </label>
+                          </Col>
+                          <Col span={6}>
+                            <label className={styles.checkboxLabel}>
+                              <input
+                                type="checkbox"
+                                checked={
+                                  values.bedroomDetails[index]?.privateWashroom ||
+                                  false
+                                }
+                                onChange={(e) => {
+                                  const newDetails = [
+                                    ...(values.bedroomDetails || []),
+                                  ];
+                                  if (!newDetails[index]) newDetails[index] = {};
+                                  newDetails[index].privateWashroom =
+                                    e.target.checked;
+                                  setFieldValue("bedroomDetails", newDetails);
+                                }}
+                              />
+                              Private Washroom
+                            </label>
+                          </Col>
+                          <Col span={6}>
+                            <label className={styles.checkboxLabel}>
+                              <input
+                                type="checkbox"
+                                checked={
+                                  values.bedroomDetails[index]?.sharedWashroom ||
+                                  false
+                                }
+                                onChange={(e) => {
+                                  const newDetails = [
+                                    ...(values.bedroomDetails || []),
+                                  ];
+                                  if (!newDetails[index]) newDetails[index] = {};
+                                  newDetails[index].sharedWashroom =
+                                    e.target.checked;
+                                  setFieldValue("bedroomDetails", newDetails);
+                                }}
+                              />
+                              Shared Washroom
+                            </label>
+                          </Col>
+                          <Col span={6}>
+                            <label className={styles.checkboxLabel}>
+                              <input
+                                type="checkbox"
+                                checked={
+                                  values.bedroomDetails[index]?.sharedKitchen ||
+                                  false
+                                }
+                                onChange={(e) => {
+                                  const newDetails = [
+                                    ...(values.bedroomDetails || []),
+                                  ];
+                                  if (!newDetails[index]) newDetails[index] = {};
+                                  newDetails[index].sharedKitchen =
+                                    e.target.checked;
+                                  setFieldValue("bedroomDetails", newDetails);
+                                }}
+                              />
+                              Shared Kitchen
+                            </label>
+                          </Col>
+                        </Row>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                <div className={styles.verificationCheckbox}>
+                  <label className={styles.checkboxLabel}>
+                    <input
+                      type="checkbox"
+                      name="onSiteVerification"
+                      checked={values.onSiteVerification}
+                      onChange={(e) =>
+                        setFieldValue("onSiteVerification", e.target.checked)
+                      }
+                    />
+                    On-site Verification
+                  </label>
+                </div>
+
+                {/* Room Type Section */}
+                <h3 className={styles.formTitle}>Room Type</h3>
+                <Row gutter={16}>
+                  <Col span={8}>
+                    <div className={styles.dropdownContainer}>
+                      <label className={styles.label}>Room Type</label>
+                      <Select
+                        placeholder="Select room type"
+                        className={styles.dropdown}
+                        value={values.roomType}
+                        onChange={(value) => setFieldValue("roomType", value)}
+                      >
+                        <Option value="private">Private Room</Option>
+                        <Option value="shared">Shared Room</Option>
+                      </Select>
+                      <ErrorMessage name="roomType">
+                        {(msg) => <div className={styles.error}>{msg}</div>}
+                      </ErrorMessage>
+                    </div>
+                  </Col>
+                  <Col span={8}>
+                    <div className={styles.dropdownContainer}>
+                      <label className={styles.label}>Kitchen Type</label>
+                      <Select
+                        placeholder="Select kitchen type"
+                        className={styles.dropdown}
+                        value={values.kitchenType}
+                        onChange={(value) => setFieldValue("kitchenType", value)}
+                      >
+                        <Option value="private">Private Kitchen</Option>
+                        <Option value="shared">Shared Kitchen</Option>
+                      </Select>
+                      <ErrorMessage name="kitchenType">
+                        {(msg) => <div className={styles.error}>{msg}</div>}
+                      </ErrorMessage>
+                    </div>
+                  </Col>
+                  <Col span={8}>
+                    <div className={styles.dropdownContainer}>
+                      <label className={styles.label}>Bathroom Type</label>
+                      <Select
+                        placeholder="Select bathroom type"
+                        className={styles.dropdown}
+                        value={values.bathroomType}
+                        onChange={(value) => setFieldValue("bathroomType", value)}
+                      >
+                        <Option value="private">Private Bathroom</Option>
+                        <Option value="shared">Shared Bathroom</Option>
+                      </Select>
+                      <ErrorMessage name="bathroomType">
+                        {(msg) => <div className={styles.error}>{msg}</div>}
+                      </ErrorMessage>
+                    </div>
+                  </Col>
+                </Row>
+
+                {/* Amenities Section */}
+                <h3 className={styles.formTitle}>Amenities</h3>
+                <div className={styles.amenitiesGrid}>
+                  {amenitiesList.map((amenity, index) => (
                     <div className={styles.amenityItem} key={index}>
                       <label className={styles.checkboxLabel}>
                         <input
                           type="checkbox"
-                          name="nearbyUniversities"
-                          value={university}
-                          checked={values.nearbyUniversities.includes(university)}
+                          name="amenities"
+                          value={amenity}
+                          checked={values.amenities.includes(amenity)}
                           onChange={() => {
-                            const newUniversities = values.nearbyUniversities.includes(university)
-                              ? values.nearbyUniversities.filter((item) => item !== university)
-                              : [...values.nearbyUniversities, university];
-                            setFieldValue("nearbyUniversities", newUniversities);
+                            const newAmenities = values.amenities.includes(
+                              amenity
+                            )
+                              ? values.amenities.filter(
+                                  (item) => item !== amenity
+                                )
+                              : [...values.amenities, amenity];
+                            setFieldValue("amenities", newAmenities);
                           }}
                         />
-                        {university}
+                        {amenity}
                       </label>
-                    </div>
-                  ))
-                ) : (
-                  <div>
-                    {debouncedCity && debouncedCountry 
-                      ? "No universities found for the selected location." 
-                      : "Enter a city and select a country to see universities."}
-                  </div>
-                )}
-              </div>
-              <ErrorMessage name="nearbyUniversities">
-                {(msg) => <div className={styles.error}>{msg}</div>}
-              </ErrorMessage>
-
-              {/* Rent Details Section */}
-              <h3 className={styles.formTitle}>Rent Details</h3>
-              <MyQuillEditor
-                label="Rent Details"
-                name="rentDetails"
-                placeholder="Rent Details"
-                setFieldValue={setFieldValue}
-              />
-              <ErrorMessage name="rentDetails">
-                {(msg) => <div className={styles.error}>{msg}</div>}
-              </ErrorMessage>
-
-              {/* Cancellation Policy Section */}
-              <h3 className={styles.formTitle}>Cancellation Policy</h3>
-              <MyQuillEditor
-                label="Cancellation Policy"
-                name="cancellationPolicy"
-                placeholder="Enter cancellation policy details"
-                setFieldValue={setFieldValue}
-              />
-              <ErrorMessage name="cancellationPolicy">
-                {(msg) => <div className={styles.error}>{msg}</div>}
-              </ErrorMessage>
-
-              {/* Terms of Stay Section */}
-              <h3 className={styles.formTitle}>Terms of Stay</h3>
-              <MyQuillEditor
-                label="Terms of Stay"
-                name="termsOfStay"
-                setFieldValue={setFieldValue}
-              />
-              <ErrorMessage name="termsOfStay">
-                {(msg) => <div className={styles.error}>{msg}</div>}
-              </ErrorMessage>
-
-              {/* Agreement Section */}
-              <div className={styles.checkboxContainer}>
-                <label className={styles.checkboxLabel}>
-                  <input
-                    type="checkbox"
-                    name="ownership"
-                    checked={values.ownership}
-                    onChange={(e) =>
-                      setFieldValue("ownership", e.target.checked)
-                    }
-                  />
-                  I certify that I own this property or am an authorized
-                  representative of the owner.
-                </label>
-                <ErrorMessage name="ownership">
-                  {(msg) => <div className={styles.error}>{msg}</div>}
-                </ErrorMessage>
-                
-                <label className={styles.checkboxLabel}>
-                  <input
-                    type="checkbox"
-                    name="renterAgreement"
-                    checked={values.renterAgreement}
-                    onChange={(e) =>
-                      setFieldValue("renterAgreement", e.target.checked)
-                    }
-                  />
-                  I agree that I will have any renter who contacts me through
-                  Rent-to-Own Realty book the rental through Rent-to-Own Realty.
-                </label>
-                <ErrorMessage name="renterAgreement">
-                  {(msg) => <div className={styles.error}>{msg}</div>}
-                </ErrorMessage>
-                
-                <label className={styles.checkboxLabel}>
-                  <input
-                    type="checkbox"
-                    name="landlordInsurance"
-                    checked={values.landlordInsurance}
-                    onChange={(e) =>
-                      setFieldValue("landlordInsurance", e.target.checked)
-                    }
-                  />
-                  I certify that I have landlord insurance on this property.
-                </label>
-                <ErrorMessage name="landlordInsurance">
-                  {(msg) => <div className={styles.error}>{msg}</div>}
-                </ErrorMessage>
-              </div>
-
-              {/* Add Photos Section */}
-              <h3 className={styles.formTitle}>
-                Photos (minimum add 2 photos)
-              </h3>
-              <div className={styles.photoUploadSection}>
-                <div className={styles.photoUploadGrid}>
-                  {Array.from({ length: 10 }).map((_, index) => (
-                    <div className={styles.photoUploadBox} key={index}>
-                      <label>
-                        <input
-                          type="file"
-                          name={`photos[${index}]`}
-                          accept="image/jpeg, image/png, image/gif"
-                          onChange={(event) => {
-                            const file = event.target.files[0];
-                            if (file) {
-                              setFieldValue(`photos.${index}`, file);
-                            } else {
-                              setFieldValue(`photos.${index}`, null);
-                            }
-                          }}
-                          style={{ display: "none" }}
-                        />
-                        <div className={styles.photoUploadPlaceholder}>
-                          <span className={styles.uploadIcon}>📤</span>
-                          <p>Choose an image</p>
-                          <p>JPG, PNG, GIF, Max 10 MB</p>
-                        </div>
-                      </label>
-                      {values.photos[index] && (
-                        <div className={styles.preview}>
-                          <Image
-                            src={URL.createObjectURL(values.photos[index])}
-                            alt={`Preview ${index + 1}`}
-                            width={200}
-                            height={200}
-                            objectFit="cover"
-                          />
-                          <button
-                            type="button"
-                            className={styles.removeButton}
-                            onClick={() =>
-                              setFieldValue(`photos.${index}`, null)
-                            }
-                          >
-                            ✖
-                          </button>
-                        </div>
-                      )}
                     </div>
                   ))}
                 </div>
-                <ErrorMessage name="photos">
+                <ErrorMessage name="amenities">
                   {(msg) => <div className={styles.error}>{msg}</div>}
                 </ErrorMessage>
-              </div>
 
-              <div className={styles.submitButtonContainer}>
-                <button className={styles.submitButton} type="submit">
-                  Save
-                </button>
-              </div>
-            </Form>
-          )}
+                {/* Utilities Section */}
+                <h3 className={styles.formTitle}>Utilities Included</h3>
+                <div className={styles.amenitiesGrid}>
+                  {utilitiesList.map((utility, index) => (
+                    <div className={styles.amenityItem} key={index}>
+                      <label className={styles.checkboxLabel}>
+                        <input
+                          type="checkbox"
+                          name="utilities"
+                          value={utility}
+                          checked={values.utilities.includes(utility)}
+                          onChange={() => {
+                            const newUtilities = values.utilities.includes(
+                              utility
+                            )
+                              ? values.utilities.filter(
+                                  (item) => item !== utility
+                                )
+                              : [...values.utilities, utility];
+                            setFieldValue("utilities", newUtilities);
+                          }}
+                        />
+                        {utility}
+                      </label>
+                    </div>
+                  ))}
+                </div>
+                <ErrorMessage name="utilities">
+                  {(msg) => <div className={styles.error}>{msg}</div>}
+                </ErrorMessage>
+
+                {/* Address Section */}
+                <h3 className={styles.formTitle}>Location</h3>
+                <LabelInputComponent
+                  name="location"
+                  title="Address"
+                  placeholder="Enter your location..."
+                  textarea
+                  className={styles.labelinput}
+                />
+                <Row gutter={16}>
+                  <Col span={12}>
+                    <LabelInputComponent
+                      name="city"
+                      title="City"
+                      placeholder="Enter your city"
+                      className={styles.labelinput}
+                      onChange={(e) => handleCityChange(e, setFieldValue)}
+                    />
+                    <ErrorMessage name="city">
+                      {(msg) => <div className={styles.error}>{msg}</div>}
+                    </ErrorMessage>
+                  </Col>
+                  <Col span={12}>
+                    <div className={styles.dropdownContainer}>
+                      <label className={styles.label}>Country</label>
+                      <Select
+                        placeholder="Select country"
+                        className={styles.dropdown}
+                        value={values.country}
+                        onChange={(value) =>
+                          handleCountryChange(value, setFieldValue)
+                        }
+                      >
+                        <Option value="USA">United States (USD)</Option>
+                        <Option value="India">India (INR)</Option>
+                        <Option value="Canada">Canada (CAD)</Option>
+                        <Option value="UK">United Kingdom (GBP)</Option>
+                        <Option value="EU">European Union (EUR)</Option>
+                        <Option value="Australia">Australia (AUD)</Option>
+                      </Select>
+                      <ErrorMessage name="country">
+                        {(msg) => <div className={styles.error}>{msg}</div>}
+                      </ErrorMessage>
+                    </div>
+                  </Col>
+                </Row>
+
+                {/* Locality Field - Appears based on city selection */}
+                {values.city && (
+                  <div className={styles.dropdownContainer}>
+                    <label className={styles.label}>Locality</label>
+                    <Select
+                      placeholder="Select locality"
+                      className={styles.dropdown}
+                      value={values.locality}
+                      onChange={(value) => setFieldValue("locality", value)}
+                    >
+                      <Option value="Downtown">Downtown</Option>
+                      <Option value="North">North</Option>
+                      <Option value="East">East</Option>
+                      <Option value="West">West</Option>
+                      <Option value="South">South</Option>
+                      <Option value="Suburbs">Suburbs</Option>
+                      <Option value="Midtown">Midtown</Option>
+                      <Option value="Central">Central</Option>
+                      <Option value="Business District">Business District</Option>
+                      <Option value="Residential Area">Residential Area</Option>
+                      <Option value="Other">Other (Specify in Address)</Option>
+                    </Select>
+                    <ErrorMessage name="locality">
+                      {(msg) => <div className={styles.error}>{msg}</div>}
+                    </ErrorMessage>
+                  </div>
+                )}
+
+                {/* <Row gutter={16}>
+                  <Col span={12}>
+                    <LabelInputComponent
+                      name="longitude"
+                      title="Longitude"
+                      placeholder="Enter longitude"
+                      className={styles.labelinput}
+                    />
+                    <ErrorMessage name="longitude">
+                      {(msg) => <div className={styles.error}>{msg}</div>}
+                    </ErrorMessage>
+                  </Col>
+                  <Col span={12}>
+                    <LabelInputComponent
+                      name="latitude"
+                      title="Latitude"
+                      placeholder="Enter latitude"
+                      className={styles.labelinput}
+                    />
+                    <ErrorMessage name="latitude">
+                      {(msg) => <div className={styles.error}>{msg}</div>}
+                    </ErrorMessage>
+                  </Col>
+                </Row> */}
+
+                {/* Pricing Section */}
+                <h3 className={styles.formTitle}>Pricing</h3>
+                <Row gutter={16}>
+                  <Col span={12}>
+                    <LabelInputComponent
+                      name="pricing"
+                      title="Monthly Rent"
+                      placeholder="Enter monthly rent amount"
+                      className={styles.labelinput}
+                    />
+                    <ErrorMessage name="pricing">
+                      {(msg) => <div className={styles.error}>{msg}</div>}
+                    </ErrorMessage>
+                  </Col>
+                  <Col span={12}>
+                    <LabelInputComponent
+                      name="securityDeposit"
+                      title="Security Deposit"
+                      placeholder="Enter security deposit amount"
+                      className={styles.labelinput}
+                    />
+                    <ErrorMessage name="securityDeposit">
+                      {(msg) => <div className={styles.error}>{msg}</div>}
+                    </ErrorMessage>
+                  </Col>
+                </Row>
+
+                {/* Booking Options Section */}
+                <div className={styles.bookingOptionsContainer}>
+                  <h4 className={styles.sectionTitle}>Payment Options</h4>
+                  <div className={styles.radioGroup}>
+                    <label className={styles.radioLabel}>
+                      <input
+                        type="radio"
+                        name="paymentType"
+                        checked={values.bookingOptions.allowSecurityDeposit}
+                        onChange={() => {
+                          setFieldValue("bookingOptions", {
+                            ...values.bookingOptions,
+                            allowSecurityDeposit: true,
+                            allowFirstRent: false,
+                            allowFirstAndLastRent: false,
+                          });
+                        }}
+                      />
+                      Allow booking by security deposit
+                    </label>
+                  </div>
+
+                  <div className={styles.radioGroup}>
+                    <label className={styles.radioLabel}>
+                      <input
+                        type="radio"
+                        name="paymentType"
+                        checked={values.bookingOptions.allowFirstRent}
+                        onChange={() => {
+                          setFieldValue("bookingOptions", {
+                            ...values.bookingOptions,
+                            allowSecurityDeposit: false,
+                            allowFirstRent: true,
+                            allowFirstAndLastRent: false,
+                          });
+                        }}
+                      />
+                      Allow booking by First Rent
+                    </label>
+                  </div>
+
+                  <div className={styles.radioGroup}>
+                    <label className={styles.radioLabel}>
+                      <input
+                        type="radio"
+                        name="paymentType"
+                        checked={values.bookingOptions.allowFirstAndLastRent}
+                        onChange={() => {
+                          setFieldValue("bookingOptions", {
+                            ...values.bookingOptions,
+                            allowSecurityDeposit: false,
+                            allowFirstRent: false,
+                            allowFirstAndLastRent: true,
+                          });
+                        }}
+                      />
+                      Allow booking by First and Last rent
+                    </label>
+                  </div>
+
+                  <div className={styles.bookingTypeSection}>
+                    <h4 className={styles.sectionTitle}>Booking Type</h4>
+                    <div className={styles.bookingTypeOptions}>
+                      <label className={styles.radioLabel}>
+                        <input
+                          type="radio"
+                          name="bookingType"
+                          checked={values.instantBooking}
+                          onChange={() => {
+                            setFieldValue("instantBooking", true);
+                            setFieldValue("bookByEnquiry", false);
+                          }}
+                        />
+                        Instant Booking
+                      </label>
+
+                      <label className={styles.radioLabel}>
+                        <input
+                          type="radio"
+                          name="bookingType"
+                          checked={values.bookByEnquiry}
+                          onChange={() => {
+                            setFieldValue("bookByEnquiry", true);
+                            setFieldValue("instantBooking", false);
+                          }}
+                        />
+                        Book by Enquiry
+                      </label>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Year of Construction */}
+                <Row gutter={16}>
+                  <Col span={12}>
+                    <LabelInputComponent
+                      name="yearOfConstruction"
+                      title="Year of Construction"
+                      placeholder="Enter year of construction"
+                      className={styles.labelinput}
+                    />
+                    <ErrorMessage name="yearOfConstruction">
+                      {(msg) => <div className={styles.error}>{msg}</div>}
+                    </ErrorMessage>
+                  </Col>
+                </Row>
+
+                {/* Minimum Stay Duration */}
+                <div className={styles.dropdownContainer}>
+                  <label className={styles.label}>Minimum Stay Duration</label>
+                  <Select
+                    placeholder="Select minimum stay duration"
+                    className={styles.dropdown}
+                    value={values.minimumStayDuration}
+                    onChange={(value) =>
+                      setFieldValue("minimumStayDuration", value)
+                    }
+                  >
+                    <Select.Option value="Month-to-Month">
+                      Month-to-Month
+                    </Select.Option>
+
+                    {/* Quarter 1 Ranges */}
+                    <Select.Option value="Jan to Mar">
+                      Jan to Mar (Q1)
+                    </Select.Option>
+                    <Select.Option value="Jan to Jun">
+                      Jan to Jun (Q1-Q2)
+                    </Select.Option>
+                    <Select.Option value="Jan to Sep">
+                      Jan to Sep (Q1-Q3)
+                    </Select.Option>
+                    <Select.Option value="Jan to Dec">
+                      Jan to Dec (Full Year)
+                    </Select.Option>
+                    <Select.Option value="Feb to Apr">Feb to Apr</Select.Option>
+                    <Select.Option value="Feb to Jul">Feb to Jul</Select.Option>
+                    <Select.Option value="Feb to Dec">Feb to Dec</Select.Option>
+                    <Select.Option value="Mar to May">Mar to May</Select.Option>
+                    <Select.Option value="Mar to Aug">Mar to Aug</Select.Option>
+                    <Select.Option value="Mar to Dec">Mar to Dec</Select.Option>
+
+                    {/* Quarter 2 Ranges */}
+                    <Select.Option value="Apr to Jun">
+                      Apr to Jun (Q2)
+                    </Select.Option>
+                    <Select.Option value="Apr to Sep">
+                      Apr to Sep (Q2-Q3)
+                    </Select.Option>
+                    <Select.Option value="Apr to Dec">
+                      Apr to Dec (Q2-Q4)
+                    </Select.Option>
+                    <Select.Option value="May to Jul">May to Jul</Select.Option>
+                    <Select.Option value="May to Oct">May to Oct</Select.Option>
+                    <Select.Option value="May to Dec">May to Dec</Select.Option>
+                    <Select.Option value="Jun to Aug">Jun to Aug</Select.Option>
+                    <Select.Option value="Jun to Nov">Jun to Nov</Select.Option>
+                    <Select.Option value="Jun to Dec">Jun to Dec</Select.Option>
+
+                    {/* Quarter 3 Ranges */}
+                    <Select.Option value="Jul to Sep">
+                      Jul to Sep (Q3)
+                    </Select.Option>
+                    <Select.Option value="Jul to Dec">
+                      Jul to Dec (Q3-Q4)
+                    </Select.Option>
+                    <Select.Option value="Aug to Oct">Aug to Oct</Select.Option>
+                    <Select.Option value="Aug to Dec">Aug to Dec</Select.Option>
+                    <Select.Option value="Sep to Nov">Sep to Nov</Select.Option>
+                    <Select.Option value="Sep to Dec">Sep to Dec</Select.Option>
+
+                    {/* Quarter 4 Ranges */}
+                    <Select.Option value="Oct to Dec">
+                      Oct to Dec (Q4)
+                    </Select.Option>
+                    <Select.Option value="Nov to Dec">Nov to Dec</Select.Option>
+
+                    {/* General Durations */}
+                    <Select.Option value="Less than 6 months">
+                      Less than 6 months
+                    </Select.Option>
+                    <Select.Option value="6-12 months">6-12 months</Select.Option>
+                    <Select.Option value="1 year+">1 year+</Select.Option>
+                  </Select>
+                  <ErrorMessage name="minimumStayDuration">
+                    {(msg) => <div className={styles.error}>{msg}</div>}
+                  </ErrorMessage>
+                </div>
+
+                {/* Available From */}
+                <div className={styles.dropdownContainer}>
+                  <label className={styles.label}>Available From</label>
+                  <Select
+                    placeholder="Select availability month"
+                    className={styles.dropdown}
+                    value={values.availableFrom}
+                    onChange={(value) => setFieldValue("availableFrom", value)}
+                  >
+                    {[
+                      "Jan",
+                      "Feb",
+                      "Mar",
+                      "Apr",
+                      "May",
+                      "Jun",
+                      "Jul",
+                      "Aug",
+                      "Sep",
+                      "Oct",
+                      "Nov",
+                      "Dec",
+                    ].map((month) => (
+                      <Option key={month} value={month}>
+                        {month}
+                      </Option>
+                    ))}
+                  </Select>
+                  <ErrorMessage name="availableFrom">
+                    {(msg) => <div className={styles.error}>{msg}</div>}
+                  </ErrorMessage>
+                </div>
+
+                {/* Nearby Universities */}
+                <h3 className={styles.formTitle}>Nearby Universities</h3>
+                <div className={styles.amenitiesGrid}>
+                  {isLoadingUniversities || isFetchingUniversities ? (
+                    <div>Loading universities...</div>
+                  ) : universities.length > 0 ? (
+                    universities.map((university, index) => (
+                      <div className={styles.amenityItem} key={index}>
+                        <label className={styles.checkboxLabel}>
+                          <input
+                            type="checkbox"
+                            name="nearbyUniversities"
+                            value={university}
+                            checked={values.nearbyUniversities.includes(
+                              university
+                            )}
+                            onChange={() => {
+                              const newUniversities =
+                                values.nearbyUniversities.includes(university)
+                                  ? values.nearbyUniversities.filter(
+                                      (item) => item !== university
+                                    )
+                                  : [...values.nearbyUniversities, university];
+                              setFieldValue(
+                                "nearbyUniversities",
+                                newUniversities
+                              );
+                            }}
+                          />
+                          {university}
+                        </label>
+                      </div>
+                    ))
+                  ) : (
+                    <div>
+                      {debouncedCity && debouncedCountry
+                        ? "No universities found for the selected location."
+                        : "Enter a city and select a country to see universities."}
+                    </div>
+                  )}
+                </div>
+                <ErrorMessage name="nearbyUniversities">
+                  {(msg) => <div className={styles.error}>{msg}</div>}
+                </ErrorMessage>
+
+                {/* Rent Details Section */}
+                <h3 className={styles.formTitle}>Rent Details</h3>
+                <MyQuillEditor
+                  label="Rent Details"
+                  name="rentDetails"
+                  placeholder="Rent Details"
+                  setFieldValue={setFieldValue}
+                />
+                <ErrorMessage name="rentDetails">
+                  {(msg) => <div className={styles.error}>{msg}</div>}
+                </ErrorMessage>
+
+                {/* Cancellation Policy Section */}
+                <h3 className={styles.formTitle}>Cancellation Policy</h3>
+                <MyQuillEditor
+                  label="Cancellation Policy"
+                  name="cancellationPolicy"
+                  placeholder="Enter cancellation policy details"
+                  setFieldValue={setFieldValue}
+                />
+                <ErrorMessage name="cancellationPolicy">
+                  {(msg) => <div className={styles.error}>{msg}</div>}
+                </ErrorMessage>
+
+                {/* Terms of Stay Section */}
+                <h3 className={styles.formTitle}>Terms of Stay</h3>
+                <MyQuillEditor
+                  label="Terms of Stay"
+                  name="termsOfStay"
+                  setFieldValue={setFieldValue}
+                />
+                <ErrorMessage name="termsOfStay">
+                  {(msg) => <div className={styles.error}>{msg}</div>}
+                </ErrorMessage>
+
+                {/* Agreement Section */}
+                <div className={styles.checkboxContainer}>
+                  <label className={styles.checkboxLabel}>
+                    <input
+                      type="checkbox"
+                      name="ownership"
+                      checked={values.ownership}
+                      onChange={(e) =>
+                        setFieldValue("ownership", e.target.checked)
+                      }
+                    />
+                    I certify that I own this property or am an authorized
+                    representative of the owner.
+                  </label>
+                  <ErrorMessage name="ownership">
+                    {(msg) => <div className={styles.error}>{msg}</div>}
+                  </ErrorMessage>
+
+                  <label className={styles.checkboxLabel}>
+                    <input
+                      type="checkbox"
+                      name="renterAgreement"
+                      checked={values.renterAgreement}
+                      onChange={(e) =>
+                        setFieldValue("renterAgreement", e.target.checked)
+                      }
+                    />
+                    I agree that I will have any renter who contacts me through
+                    Rent-to-Own Realty book the rental through Rent-to-Own Realty.
+                  </label>
+                  <ErrorMessage name="renterAgreement">
+                    {(msg) => <div className={styles.error}>{msg}</div>}
+                  </ErrorMessage>
+
+                  <label className={styles.checkboxLabel}>
+                    <input
+                      type="checkbox"
+                      name="landlordInsurance"
+                      checked={values.landlordInsurance}
+                      onChange={(e) =>
+                        setFieldValue("landlordInsurance", e.target.checked)
+                      }
+                    />
+                    I certify that I have landlord insurance on this property.
+                  </label>
+                  <ErrorMessage name="landlordInsurance">
+                    {(msg) => <div className={styles.error}>{msg}</div>}
+                  </ErrorMessage>
+                </div>
+
+                {/* Add Photos Section */}
+                <h3 className={styles.formTitle}>
+                  Photos (minimum add 2 photos)
+                </h3>
+                <div className={styles.photoUploadSection}>
+                  <div className={styles.photoUploadGrid}>
+                    {Array.from({ length: 10 }).map((_, index) => (
+                      <div className={styles.photoUploadBox} key={index}>
+                        <label>
+                          <input
+                            type="file"
+                            name={`photos[${index}]`}
+                            accept="image/jpeg, image/png, image/gif"
+                            onChange={handleImageChange}
+                            style={{ display: "none" }}
+                          />
+                          <div className={styles.photoUploadPlaceholder}>
+                            <span className={styles.uploadIcon}>📤</span>
+                            <p>Choose an image</p>
+                            <p>JPG, PNG, GIF, Max 10 MB</p>
+                          </div>
+                        </label>
+                        {values.photos[index] && (
+                          <div className={styles.preview}>
+                            <Image
+                              src={
+                                values.photos[index]
+                                  ? URL.createObjectURL(values.photos[index])
+                                  : ""
+                              }
+                              alt={`Preview ${index + 1}`}
+                              width={200}
+                              height={200}
+                              objectFit="cover"
+                            />
+                            <button
+                              type="button"
+                              className={styles.removeButton}
+                              onClick={() =>
+                                setFieldValue(`photos.${index}`, null)
+                              }
+                            >
+                              ✖
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                  <ErrorMessage name="photos">
+                    {(msg) => <div className={styles.error}>{msg}</div>}
+                  </ErrorMessage>
+                </div>
+
+                <div className={styles.submitButtonContainer}>
+                  <button className={styles.submitButton} type="submit">
+                    Save
+                  </button>
+                </div>
+              </Form>
+            );
+          }}
         </Formik>
       </div>
     </LayoutHoc>
