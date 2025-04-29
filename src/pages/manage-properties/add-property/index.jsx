@@ -223,6 +223,19 @@ export default function AddProperty() {
     ),
     availableFrom: Yup.string().required("Available from date is required"),
     nearbyUniversities: Yup.array(),
+    bedroomDetails: Yup.array().of(
+      Yup.object().shape({
+        name: Yup.string().required("Bedroom name is required"),
+        rent: Yup.number().required("Rent is required").typeError("Rent must be a number"),
+        sizeSqFt: Yup.number().required("Size is required").typeError("Size must be a number"),
+        // These fields are optional and don't require validation
+        availableFrom: Yup.string(),
+        lease: Yup.string(),
+        moveInDate: Yup.date().nullable(),
+        note: Yup.string(),
+        leaseTerms: Yup.string()
+      })
+    ),
     onSiteVerification: Yup.boolean(),
     bookingOptions: Yup.object().shape({
       allowSecurityDeposit: Yup.boolean(),
@@ -379,6 +392,11 @@ export default function AddProperty() {
           privateWashroom: false,
           sharedWashroom: false,
           sharedKitchen: false,
+          availableFrom: "",
+          lease: "",
+          moveInDate: "",
+          note: "",
+          leaseTerms: ""
         },
       ]);
     } else if (newCount < currentCount) {
@@ -693,6 +711,122 @@ export default function AddProperty() {
                               />
                               Shared Kitchen
                             </label>
+                          </Col>
+                        </Row>
+                        
+                        {/* New fields for bedroom details */}
+                        <Row gutter={16} style={{ marginTop: '16px' }}>
+                          <Col span={8}>
+                            <div className={styles.dropdownContainer}>
+                              <label className={styles.label}>Available From</label>
+                              <Select
+                                placeholder="Select month"
+                                className={styles.dropdown}
+                                value={values.bedroomDetails[index]?.availableFrom || ""}
+                                onChange={(value) => {
+                                  const newDetails = [
+                                    ...(values.bedroomDetails || []),
+                                  ];
+                                  if (!newDetails[index]) newDetails[index] = {};
+                                  newDetails[index].availableFrom = value;
+                                  setFieldValue("bedroomDetails", newDetails);
+                                }}
+                              >
+                                {[
+                                  "Jan", "Feb", "Mar", "Apr", "May", "Jun", 
+                                  "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+                                ].map((month) => (
+                                  <Option key={month} value={month}>
+                                    {month}
+                                  </Option>
+                                ))}
+                              </Select>
+                            </div>
+                          </Col>
+                          <Col span={8}>
+                            <div className={styles.dropdownContainer}>
+                              <label className={styles.label}>Lease</label>
+                              <Select
+                                placeholder="Select lease type"
+                                className={styles.dropdown}
+                                value={values.bedroomDetails[index]?.lease || ""}
+                                onChange={(value) => {
+                                  const newDetails = [
+                                    ...(values.bedroomDetails || []),
+                                  ];
+                                  if (!newDetails[index]) newDetails[index] = {};
+                                  newDetails[index].lease = value;
+                                  setFieldValue("bedroomDetails", newDetails);
+                                }}
+                              >
+                                <Option value="Month-to-Month">Month-to-Month</Option>
+                                <Option value="6-Month">6-Month</Option>
+                                <Option value="1-Year">1-Year</Option>
+                              </Select>
+                            </div>
+                          </Col>
+                          <Col span={8}>
+                            <LabelInputComponent
+                              name={`bedroomDetails.${index}.moveInDate`}
+                              title="Move-in Date"
+                              type="date"
+                              className={styles.labelinput}
+                              value={values.bedroomDetails[index]?.moveInDate || ""}
+                              onChange={(e) => {
+                                const newDetails = [
+                                  ...(values.bedroomDetails || []),
+                                ];
+                                if (!newDetails[index]) newDetails[index] = {};
+                                newDetails[index].moveInDate = e.target.value;
+                                setFieldValue("bedroomDetails", newDetails);
+                              }}
+                            />
+                          </Col>
+                        </Row>
+                        
+                        <Row gutter={16} style={{ marginTop: '16px' }}>
+                          <Col span={12}>
+                            <LabelInputComponent
+                              name={`bedroomDetails.${index}.note`}
+                              title="Note"
+                              placeholder="Enter any additional notes"
+                              textarea
+                              className={styles.labelinput}
+                              value={values.bedroomDetails[index]?.note || ""}
+                              onChange={(e) => {
+                                const newDetails = [
+                                  ...(values.bedroomDetails || []),
+                                ];
+                                if (!newDetails[index]) newDetails[index] = {};
+                                newDetails[index].note = e.target.value;
+                                setFieldValue("bedroomDetails", newDetails);
+                              }}
+                            />
+                          </Col>
+                          <Col span={12}>
+                            <div className={styles.quillEditorContainer}>
+                              <label className={styles.label}>Lease Terms</label>
+                              <MyQuillEditor
+                                name={`bedroomDetails.${index}.leaseTerms`}
+                                value={values.bedroomDetails[index]?.leaseTerms || ""}
+                                onChange={(content) => {
+                                  const newDetails = [
+                                    ...(values.bedroomDetails || []),
+                                  ];
+                                  if (!newDetails[index]) newDetails[index] = {};
+                                  newDetails[index].leaseTerms = content;
+                                  setFieldValue("bedroomDetails", newDetails);
+                                }}
+                                setFieldValue={(_, value) => {
+                                  const newDetails = [
+                                    ...(values.bedroomDetails || []),
+                                  ];
+                                  if (!newDetails[index]) newDetails[index] = {};
+                                  newDetails[index].leaseTerms = value;
+                                  setFieldValue("bedroomDetails", newDetails);
+                                }}
+                              />
+                            </div>
                           </Col>
                         </Row>
                       </div>
