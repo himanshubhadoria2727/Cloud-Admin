@@ -120,7 +120,7 @@ export default function AddProperty() {
     minimumStayDuration: "",
     availableFrom: "",
     nearbyUniversities: [],
-    bedroomDetails: [], // Add this new field for bedroom details
+    bedroomDetails: [], // Will be populated based on bedroom count
     onSiteVerification: false,
     bookingOptions: {
       allowSecurityDeposit: false,
@@ -283,80 +283,124 @@ export default function AddProperty() {
     "Pest Control",
   ];
 
+  const validateFileSize = (file) => {
+    const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+    
+    if (file.size > MAX_FILE_SIZE) {
+      toast.error(`File "${file.name}" exceeds the 10MB limit. Please resize it before uploading.`);
+      return false;
+    }
+    return true;
+  };
+
   const handleSubmit = async (values, { setSubmitting, setErrors }) => {
     try {
-      // Create JSON payload
-      const jsonPayload = {
-        // Basic property details
-        title: values.propertyName,
-        description: values.description,
-        price: values.pricing,
-        securityDeposit: values.securityDeposit,
-        type: values.homeType,
-        
-        // Location details
-        location: values.location,
-        city: values.city,
-        country: values.country,
-        locality: values.locality,
-        latitude: values.latitude || "",
-        longitude: values.longitude || "",
-        
-        // Arrays
-        amenities: values.amenities || [],
-        utilities: values.utilities || [],
-        nearbyUniversities: values.nearbyUniversities || [],
-        
-        // Overview object
-        overview: {
-          bedrooms: parseInt(values.bedrooms),
-          bathrooms: parseInt(values.bathrooms),
-          squareFeet: parseInt(values.squareFootage),
-          kitchen: values.kitchens,
-          roomType: values.roomType,
-          kitchenType: values.kitchenType,
-          bathroomType: values.bathroomType,
-          yearOfConstruction: parseInt(values.yearOfConstruction),
-          bedroomDetails: values.bedroomDetails || [],
-        },
-        
-        // Text fields
-        rentDetails: values.rentDetails || "Details about rent",
-        termsOfStay: values.termsOfStay || "Terms of stay",
-        cancellationPolicy: values.cancellationPolicy || "Cancellation policy",
-        
-        // Booking options
-        bookingOptions: values.bookingOptions || {},
-        instantBooking: values.instantBooking,
-        bookByEnquiry: values.bookByEnquiry,
-        
-        // Verification flags
-        onSiteVerification: values.onSiteVerification,
-        ownership: values.ownership,
-        renterAgreement: values.renterAgreement,
-        landlordInsurance: values.landlordInsurance,
-        
-        // Availability
-        minimumStayDuration: values.minimumStayDuration,
-        availableFrom: values.availableFrom,
-      };
-
-      console.log("JSON Payload:", JSON.stringify(jsonPayload, null, 2));
-      
-      // Handle images with FormData
-      // Images need special handling because they can't be serialized to JSON
+      // Create FormData for sending both JSON and files
       const formData = new FormData();
       
-      // Add the JSON payload as a serialized string in a field called 'data'
-      formData.append("data", JSON.stringify(jsonPayload));
+      // Basic property details
+      formData.append('title', values.propertyName);
+      formData.append('description', values.description);
+      formData.append('price', values.pricing);
+      formData.append('securityDeposit', values.securityDeposit);
       
-      // Add images separately
-      const validPhotos = values.photos.filter((photo) => photo !== null);
-      validPhotos.forEach((photo, index) => {
+      // Map 'studio' to 'apartment' since it's not a valid enum value
+      let propertyType = values.homeType;
+      if (propertyType === 'studio' || propertyType === 'villa') {
+        propertyType = 'apartment';
+      }
+      formData.append('type', propertyType);
+      
+      // Location details
+      formData.append('location', values.location);
+      formData.append('city', values.city);
+      formData.append('country', values.country);
+      formData.append('locality', values.locality);
+      formData.append('latitude', values.latitude || '0');
+      formData.append('longitude', values.longitude || '0');
+      
+      // Arrays
+      formData.append('amenities', JSON.stringify(values.amenities || []));
+      formData.append('utilities', JSON.stringify(values.utilities || []));
+      formData.append('nearbyUniversities', JSON.stringify(values.nearbyUniversities || []));
+      
+      // Process bedroom details (remove the image data URLs which are just for previews)
+      const bedroomDetailsWithoutImages = values.bedroomDetails.map(bedroom => {
+        // Remove the images and imageFiles which are just for previews
+        const { images, imageFiles, ...bedroomWithoutImages } = bedroom;
+        return bedroomWithoutImages;
+      });
+      
+      // Create overview object with all required fields
+      const overview = {
+        bedrooms: parseInt(values.bedrooms),
+        bathrooms: parseInt(values.bathrooms),
+        squareFeet: parseInt(values.squareFootage),
+        kitchen: values.kitchens,
+        roomType: values.roomType,
+        kitchenType: values.kitchenType,
+        bathroomType: values.bathroomType,
+        yearOfConstruction: parseInt(values.yearOfConstruction),
+        bedroomDetails: bedroomDetailsWithoutImages,
+      };
+      
+      // Important: stringify the overview object
+      formData.append('overview', JSON.stringify(overview));
+      
+      // Text fields
+      formData.append('rentDetails', values.rentDetails);
+      formData.append('termsOfStay', values.termsOfStay);
+      formData.append('cancellationPolicy', values.cancellationPolicy);
+      
+      // Booking options
+      formData.append('bookingOptions', JSON.stringify(values.bookingOptions || {}));
+      formData.append('instantBooking', values.instantBooking);
+      formData.append('bookByEnquiry', values.bookByEnquiry);
+      
+      // Verification flags
+      formData.append('onSiteVerification', values.onSiteVerification);
+      formData.append('ownership', values.ownership);
+      formData.append('renterAgreement', values.renterAgreement);
+      formData.append('landlordInsurance', values.landlordInsurance);
+      
+      // Availability
+      formData.append('minimumStayDuration', values.minimumStayDuration);
+
+      formData.append('availableFrom', values.availableFrom);
+      
+      // Add main property images - only include File objects, not null values
+      const validPhotos = values.photos.filter(photo => photo instanceof File);
+      validPhotos.forEach(photo => {
         formData.append("images", photo);
       });
+      
+      // Add bedroom images with metadata to identify which bedroom they belong to
+      values.bedroomDetails.forEach((bedroom, roomIndex) => {
+        // Only process bedrooms that have imageFiles
+        if (bedroom.imageFiles && bedroom.imageFiles.some(file => file instanceof File)) {
+          // Add all files for this bedroom with the roomIndex in the fieldname
+          bedroom.imageFiles.forEach(file => {
+            if (file instanceof File) {
+              // Use a consistent and simple field name
+              formData.append('images', file);
+              // Also append metadata to identify which bedroom this image belongs to
+              formData.append(`bedroom_image_index_${formData.getAll('images').length - 1}`, roomIndex);
+            }
+          });
+        }
+      });
 
-      // Send the combined data (JSON + images) to the server
+      // Log the FormData contents for debugging
+      console.log('FormData entries:');
+      for (let [key, value] of formData.entries()) {
+        if (value instanceof File) {
+          console.log(key, ':', value.name, '(', value.size, 'bytes )');
+        } else {
+          console.log(key, ':', typeof value === 'string' && value.length > 100 ? value.substring(0, 100) + '...' : value);
+        }
+      }
+
+      // Send the form data directly to the server
       const result = await createProperty(formData).unwrap();
       
       console.log("Property created successfully:", result);
@@ -396,7 +440,9 @@ export default function AddProperty() {
           lease: "",
           moveInDate: "",
           note: "",
-          leaseTerms: ""
+          leaseTerms: "",
+          images: [],
+          imageFiles: [],
         },
       ]);
     } else if (newCount < currentCount) {
@@ -442,6 +488,51 @@ export default function AddProperty() {
               setFieldValue("photos", [...values.photos, ...files]);
             };
             
+            const handlePropertyImageChange = (e, index) => {
+              const file = e.target.files[0];
+              if (file) {
+                // Validate file size
+                if (!validateFileSize(file)) {
+                  return;
+                }
+                
+                // Store the file directly in the photos array at the specified index
+                const newPhotos = [...values.photos];
+                newPhotos[index] = file;
+                setFieldValue("photos", newPhotos);
+              }
+            };
+            
+            const handleBedroomImageChange = (event, bedroomIndex, photoIndex) => {
+              const file = event.target.files[0];
+              if (file) {
+                // Validate file size
+                if (!validateFileSize(file)) {
+                  return;
+                }
+                
+                const newDetails = [...(values.bedroomDetails || [])];
+                if (!newDetails[bedroomIndex]) newDetails[bedroomIndex] = {};
+                if (!newDetails[bedroomIndex].images) newDetails[bedroomIndex].images = [];
+                
+                // Store the actual file in a temporary field for submission
+                if (!newDetails[bedroomIndex].imageFiles) {
+                  newDetails[bedroomIndex].imageFiles = [];
+                }
+                newDetails[bedroomIndex].imageFiles[photoIndex] = file;
+                
+                // Convert to URL for preview only
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                  const images = [...(newDetails[bedroomIndex].images || [])];
+                  images[photoIndex] = e.target.result;
+                  newDetails[bedroomIndex].images = images;
+                  setFieldValue("bedroomDetails", newDetails);
+                };
+                reader.readAsDataURL(file);
+              }
+            };
+            
             return (
               <Form className={styles.formCard}>
                 <h3 className={styles.formTitle}>Basic Details</h3>
@@ -473,6 +564,7 @@ export default function AddProperty() {
                   label="Description"
                   name="description"
                   setFieldValue={setFieldValue}
+                  height="300px"
                 />
                 <ErrorMessage name="description">
                   {(msg) => <div className={styles.error}>{msg}</div>}
@@ -805,30 +897,78 @@ export default function AddProperty() {
                           </Col>
                           <Col span={12}>
                             <div className={styles.quillEditorContainer}>
-                              <label className={styles.label}>Lease Terms</label>
+                              {/* <label className={styles.label}>Lease Terms</label> */}
                               <MyQuillEditor
+                                label="Lease Terms"
                                 name={`bedroomDetails.${index}.leaseTerms`}
-                                value={values.bedroomDetails[index]?.leaseTerms || ""}
-                                onChange={(content) => {
-                                  const newDetails = [
-                                    ...(values.bedroomDetails || []),
-                                  ];
-                                  if (!newDetails[index]) newDetails[index] = {};
-                                  newDetails[index].leaseTerms = content;
-                                  setFieldValue("bedroomDetails", newDetails);
-                                }}
-                                setFieldValue={(_, value) => {
-                                  const newDetails = [
-                                    ...(values.bedroomDetails || []),
-                                  ];
+                                setFieldValue={(name, value) => {
+                                  const newDetails = [...(values.bedroomDetails || [])];
                                   if (!newDetails[index]) newDetails[index] = {};
                                   newDetails[index].leaseTerms = value;
                                   setFieldValue("bedroomDetails", newDetails);
                                 }}
+                                compact={true}
+                                height="150px"
                               />
                             </div>
                           </Col>
                         </Row>
+
+                        {/* New Row for Bedroom Images Section */}
+                        <div className={styles.bedroomImagesSection}>
+                          <h5 className={styles.subSectionTitle}>Bedroom Images</h5>
+                          <div className={styles.bedroomPhotoGrid}>
+                            {Array.from({ length: 3 }).map((_, photoIndex) => (
+                              <div className={styles.bedroomPhotoBox} key={photoIndex}>
+                                <label>
+                                  <input
+                                    type="file"
+                                    accept="image/jpeg, image/png, image/gif"
+                                    onChange={(event) => {
+                                      handleBedroomImageChange(event, index, photoIndex);
+                                    }}
+                                    style={{ display: "none" }}
+                                  />
+                                  {values.bedroomDetails[index]?.images?.[photoIndex] ? (
+                                    <div className={styles.bedroomPreview}>
+                                      <Image
+                                        src={values.bedroomDetails[index].images[photoIndex]}
+                                        alt={`Bedroom ${index + 1} Image ${photoIndex + 1}`}
+                                        width={100}
+                                        height={100}
+                                        objectFit="cover"
+                                      />
+                                      <button
+                                        type="button"
+                                        className={styles.removeButton}
+                                        onClick={() => {
+                                          const newDetails = [...(values.bedroomDetails || [])];
+                                          const images = [...(newDetails[index].images || [])];
+                                          images[photoIndex] = null;
+                                          
+                                          // Also clear the file
+                                          if (newDetails[index].imageFiles) {
+                                            newDetails[index].imageFiles[photoIndex] = null;
+                                          }
+                                          
+                                          newDetails[index].images = images;
+                                          setFieldValue("bedroomDetails", newDetails);
+                                        }}
+                                      >
+                                        ✖
+                                      </button>
+                                    </div>
+                                  ) : (
+                                    <div className={styles.bedroomPhotoPlaceholder}>
+                                      <span className={styles.uploadIcon}>📤</span>
+                                      <p>Add Image</p>
+                                    </div>
+                                  )}
+                                </label>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
                       </div>
                     ))}
                   </div>
@@ -1367,6 +1507,7 @@ export default function AddProperty() {
                   name="rentDetails"
                   placeholder="Rent Details"
                   setFieldValue={setFieldValue}
+                  height="250px"
                 />
                 <ErrorMessage name="rentDetails">
                   {(msg) => <div className={styles.error}>{msg}</div>}
@@ -1379,6 +1520,7 @@ export default function AddProperty() {
                   name="cancellationPolicy"
                   placeholder="Enter cancellation policy details"
                   setFieldValue={setFieldValue}
+                  height="250px"
                 />
                 <ErrorMessage name="cancellationPolicy">
                   {(msg) => <div className={styles.error}>{msg}</div>}
@@ -1390,6 +1532,7 @@ export default function AddProperty() {
                   label="Terms of Stay"
                   name="termsOfStay"
                   setFieldValue={setFieldValue}
+                  height="250px"
                 />
                 <ErrorMessage name="termsOfStay">
                   {(msg) => <div className={styles.error}>{msg}</div>}
@@ -1458,7 +1601,9 @@ export default function AddProperty() {
                             type="file"
                             name={`photos[${index}]`}
                             accept="image/jpeg, image/png, image/gif"
-                            onChange={handleImageChange}
+                            onChange={(event) => {
+                              handlePropertyImageChange(event, index);
+                            }}
                             style={{ display: "none" }}
                           />
                           <div className={styles.photoUploadPlaceholder}>
@@ -1471,9 +1616,9 @@ export default function AddProperty() {
                           <div className={styles.preview}>
                             <Image
                               src={
-                                values.photos[index]
-                                  ? URL.createObjectURL(values.photos[index])
-                                  : ""
+                                typeof values.photos[index] === "string" 
+                                  ? values.photos[index] 
+                                  : URL.createObjectURL(values.photos[index])
                               }
                               alt={`Preview ${index + 1}`}
                               width={200}

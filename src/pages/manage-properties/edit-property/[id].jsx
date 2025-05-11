@@ -473,12 +473,11 @@ export default function EditProperty() {
                 </Col>
               </Row>
 
-              <LabelInputComponent
+              <MyQuillEditor
+                label="Description"
                 name="description"
-                title="Description"
-                placeholder="Describe your home"
-                textarea
-                className={styles.labelinput}
+                setFieldValue={setFieldValue}
+                height="300px"
               />
               <ErrorMessage name="description">
                 {(msg) => <div className={styles.error}>{msg}</div>}
@@ -813,24 +812,16 @@ export default function EditProperty() {
                           <div className={styles.quillEditorContainer}>
                             <label className={styles.label}>Lease Terms</label>
                             <MyQuillEditor
+                              label="Lease Terms"
                               name={`bedroomDetails.${index}.leaseTerms`}
-                              value={values.bedroomDetails[index]?.leaseTerms || ""}
-                              onChange={(content) => {
-                                const newDetails = [
-                                  ...(values.bedroomDetails || []),
-                                ];
-                                if (!newDetails[index]) newDetails[index] = {};
-                                newDetails[index].leaseTerms = content;
-                                setFieldValue("bedroomDetails", newDetails);
-                              }}
-                              setFieldValue={(_, value) => {
-                                const newDetails = [
-                                  ...(values.bedroomDetails || []),
-                                ];
+                              setFieldValue={(name, value) => {
+                                const newDetails = [...(values.bedroomDetails || [])];
                                 if (!newDetails[index]) newDetails[index] = {};
                                 newDetails[index].leaseTerms = value;
                                 setFieldValue("bedroomDetails", newDetails);
                               }}
+                              compact={true}
+                              height="150px"
                             />
                           </div>
                         </Col>
@@ -1274,6 +1265,7 @@ export default function EditProperty() {
                 name="cancellationPolicy"
                 placeholder="Enter cancellation policy details"
                 setFieldValue={setFieldValue}
+                height="250px"
               />
               <ErrorMessage name="cancellationPolicy">
                 {(msg) => <div className={styles.error}>{msg}</div>}
@@ -1285,6 +1277,7 @@ export default function EditProperty() {
                 name="rentDetails"
                 placeholder="Rent Details"
                 setFieldValue={setFieldValue}
+                height="250px"
               />
               <ErrorMessage name="rentDetails">
                 {(msg) => <div className={styles.error}>{msg}</div>}
@@ -1296,6 +1289,7 @@ export default function EditProperty() {
                 label="Terms of Stay"
                 name="termsOfStay"
                 setFieldValue={setFieldValue}
+                height="250px"
               />
               <ErrorMessage name="termsOfStay">
                 {(msg) => <div className={styles.error}>{msg}</div>}
@@ -1578,7 +1572,7 @@ export default function EditProperty() {
               </div>
 
               {/* On-site Verification Checkbox */}
-              <div className={styles.checkboxContainer}>
+              {/* <div className={styles.checkboxContainer}>
                 <label className={styles.checkboxLabel}>
                   <input
                     type="checkbox"
@@ -1590,7 +1584,7 @@ export default function EditProperty() {
                   />
                   On-site Verification Required
                 </label>
-              </div>
+              </div> */}
 
               <div className={styles.submitButtonContainer}>
                 <button className={styles.submitButton} type="submit">
