@@ -128,7 +128,7 @@ export default function EditProperty() {
           lease: "",
           moveInDate: "",
           note: "",
-          leaseTerms: ""
+          leaseTerms: "",
         },
       ]);
     } else if (newCount < currentCount) {
@@ -182,12 +182,14 @@ export default function EditProperty() {
     minimumStayDuration: property?.minimumStayDuration || "",
     availableFrom: property?.availableFrom || "",
     nearbyUniversities: property?.nearbyUniversities || [],
-    bedroomDetails: property?.overview?.bedroomDetails ? 
-      property.overview.bedroomDetails.map(bedroom => ({
-        ...bedroom,
-        images: bedroom.images || [],
-        imageFiles: [] // Initialize empty array for actual file objects
-      })) : [],
+    bedroomDetails: property?.overview?.bedroomDetails
+      ? property.overview.bedroomDetails.map((bedroom) => ({
+          ...bedroom,
+          images: bedroom.images || [],
+          imageFiles: [], // Initialize empty array for actual file objects
+          floor: bedroom.floor || "",
+        }))
+      : [],
     onSiteVerification: property?.onSiteVerification || false,
   };
 
@@ -240,14 +242,19 @@ export default function EditProperty() {
     bedroomDetails: Yup.array().of(
       Yup.object().shape({
         name: Yup.string().required("Bedroom name is required"),
-        rent: Yup.number().required("Rent is required").typeError("Rent must be a number"),
-        sizeSqFt: Yup.number().required("Size is required").typeError("Size must be a number"),
+        rent: Yup.number()
+          .required("Rent is required")
+          .typeError("Rent must be a number"),
+        sizeSqFt: Yup.number()
+          .required("Size is required")
+          .typeError("Size must be a number"),
         // These fields are optional and don't require validation
         availableFrom: Yup.string(),
         lease: Yup.string(),
         moveInDate: Yup.date().nullable(),
         note: Yup.string(),
-        leaseTerms: Yup.string()
+        leaseTerms: Yup.string(),
+        floor: Yup.string(),
       })
     ),
   });
@@ -291,9 +298,11 @@ export default function EditProperty() {
 
   const validateFileSize = (file) => {
     const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
-    
+
     if (file.size > MAX_FILE_SIZE) {
-      toast.error(`File "${file.name}" exceeds the 10MB limit. Please resize it before uploading.`);
+      toast.error(
+        `File "${file.name}" exceeds the 10MB limit. Please resize it before uploading.`
+      );
       return false;
     }
     return true;
@@ -302,44 +311,51 @@ export default function EditProperty() {
   const handleSubmit = async (values, { setSubmitting, setErrors }) => {
     try {
       const formData = new FormData();
-      
+
       // Basic property details
-      formData.append('title', values.propertyName);
-      formData.append('description', values.description);
-      formData.append('price', values.pricing);
-      formData.append('securityDeposit', values.securityDeposit);
-      formData.append('type', values.homeType);
-      
+      formData.append("title", values.propertyName);
+      formData.append("description", values.description);
+      formData.append("price", values.pricing);
+      formData.append("securityDeposit", values.securityDeposit);
+      formData.append("type", values.homeType);
+
       // Location details
-      formData.append('location', values.location);
-      formData.append('city', values.city);
-      formData.append('country', values.country);
-      formData.append('locality', values.locality);
-      formData.append('latitude', values.latitude || '0'); // Default to 0 if empty
-      formData.append('longitude', values.longitude || '0'); // Default to 0 if empty
-      
+      formData.append("location", values.location);
+      formData.append("city", values.city);
+      formData.append("country", values.country);
+      formData.append("locality", values.locality);
+      formData.append("latitude", values.latitude || "0"); // Default to 0 if empty
+      formData.append("longitude", values.longitude || "0"); // Default to 0 if empty
+
       // Arrays and objects
-      formData.append('amenities', JSON.stringify(values.amenities || []));
-      formData.append('utilities', JSON.stringify(values.utilities || []));
-      formData.append('nearbyUniversities', JSON.stringify(values.nearbyUniversities || []));
-      
+      formData.append("amenities", JSON.stringify(values.amenities || []));
+      formData.append("utilities", JSON.stringify(values.utilities || []));
+      formData.append(
+        "nearbyUniversities",
+        JSON.stringify(values.nearbyUniversities || [])
+      );
+
       // Process bedroom details (remove the image data URLs which are just for previews)
-      const bedroomDetailsWithoutImages = values.bedroomDetails.map(bedroom => {
-        // Remove the images field (which contains data URLs) and imageFiles field
-        // The imageFiles will be handled separately
-        const { images, imageFiles, ...bedroomWithoutImages } = bedroom;
-        
-        // If the bedroom has existing URL images (not data URLs), attach them to the bedroom
-        const existingUrls = Array.isArray(images) 
-          ? images.filter(url => typeof url === 'string' && !url.startsWith('data:'))
-          : [];
-          
-        return {
-          ...bedroomWithoutImages,
-          images: existingUrls // Keep existing non-data URL images
-        };
-      });
-      
+      const bedroomDetailsWithoutImages = values.bedroomDetails.map(
+        (bedroom) => {
+          // Remove the images field (which contains data URLs) and imageFiles field
+          // The imageFiles will be handled separately
+          const { images, imageFiles, ...bedroomWithoutImages } = bedroom;
+
+          // If the bedroom has existing URL images (not data URLs), attach them to the bedroom
+          const existingUrls = Array.isArray(images)
+            ? images.filter(
+                (url) => typeof url === "string" && !url.startsWith("data:")
+              )
+            : [];
+
+          return {
+            ...bedroomWithoutImages,
+            images: existingUrls, // Keep existing non-data URL images
+          };
+        }
+      );
+
       // Add processed bedroom details to overview
       const overview = {
         bedrooms: parseInt(values.bedrooms),
@@ -350,69 +366,86 @@ export default function EditProperty() {
         kitchenType: values.kitchenType,
         bathroomType: values.bathroomType,
         yearOfConstruction: parseInt(values.yearOfConstruction),
-        bedroomDetails: bedroomDetailsWithoutImages
+        bedroomDetails: bedroomDetailsWithoutImages,
       };
-      
+
       // Important: stringify the overview object
-      formData.append('overview', JSON.stringify(overview));
-      
+      formData.append("overview", JSON.stringify(overview));
+
       // Text fields
-      formData.append('rentDetails', values.rentDetails);
-      formData.append('termsOfStay', values.termsOfStay);
-      formData.append('cancellationPolicy', values.cancellationPolicy);
-      
+      formData.append("rentDetails", values.rentDetails);
+      formData.append("termsOfStay", values.termsOfStay);
+      formData.append("cancellationPolicy", values.cancellationPolicy);
+
       // Booking options
-      formData.append('bookingOptions', JSON.stringify(values.bookingOptions || {}));
-      formData.append('instantBooking', values.instantBooking);
-      formData.append('bookByEnquiry', values.bookByEnquiry);
-      
+      formData.append(
+        "bookingOptions",
+        JSON.stringify(values.bookingOptions || {})
+      );
+      formData.append("instantBooking", values.instantBooking);
+      formData.append("bookByEnquiry", values.bookByEnquiry);
+
       // Verification flags
-      formData.append('onSiteVerification', values.onSiteVerification);
-      formData.append('ownership', values.ownership);
-      formData.append('renterAgreement', values.renterAgreement);
-      formData.append('landlordInsurance', values.landlordInsurance);
-      
+      formData.append("onSiteVerification", values.onSiteVerification);
+      formData.append("ownership", values.ownership);
+      formData.append("renterAgreement", values.renterAgreement);
+      formData.append("landlordInsurance", values.landlordInsurance);
+
       // Availability
-      formData.append('minimumStayDuration', values.minimumStayDuration);
-      formData.append('availableFrom', values.availableFrom);
-      
+      formData.append("minimumStayDuration", values.minimumStayDuration);
+      formData.append("availableFrom", values.availableFrom);
+
       // Handle main property images
-      const existingPhotos = values.photos.filter(photo => typeof photo === 'string');
-      const newPhotos = values.photos.filter(photo => photo instanceof File);
-      
+      const existingPhotos = values.photos.filter(
+        (photo) => typeof photo === "string"
+      );
+      const newPhotos = values.photos.filter((photo) => photo instanceof File);
+
       // Append existing images
-      existingPhotos.forEach(photoUrl => {
-        formData.append('existingImages', photoUrl);
+      existingPhotos.forEach((photoUrl) => {
+        formData.append("existingImages", photoUrl);
       });
-      
+
       // Append new images
-      newPhotos.forEach(photo => {
-        formData.append('images', photo);
+      newPhotos.forEach((photo) => {
+        formData.append("images", photo);
       });
-      
+
       // Handle bedroom images - use a simpler approach without complex indexing
       values.bedroomDetails.forEach((bedroom, roomIndex) => {
         // Only process bedrooms that have imageFiles
-        if (bedroom.imageFiles && bedroom.imageFiles.some(file => file instanceof File)) {
+        if (
+          bedroom.imageFiles &&
+          bedroom.imageFiles.some((file) => file instanceof File)
+        ) {
           // Add all files for this bedroom with the roomIndex in the fieldname
-          bedroom.imageFiles.forEach(file => {
+          bedroom.imageFiles.forEach((file) => {
             if (file instanceof File) {
               // Use a consistent and simple field name
-              formData.append('images', file);
+              formData.append("images", file);
               // Also append metadata to identify which bedroom this image belongs to
-              formData.append(`bedroom_image_index_${formData.getAll('images').length - 1}`, roomIndex);
+              formData.append(
+                `bedroom_image_index_${formData.getAll("images").length - 1}`,
+                roomIndex
+              );
             }
           });
         }
       });
 
       // Log the FormData contents for debugging
-      console.log('FormData entries:');
+      console.log("FormData entries:");
       for (let [key, value] of formData.entries()) {
         if (value instanceof File) {
-          console.log(key, ':', value.name, '(', value.size, 'bytes )');
+          console.log(key, ":", value.name, "(", value.size, "bytes )");
         } else {
-          console.log(key, ':', typeof value === 'string' && value.length > 100 ? value.substring(0, 100) + '...' : value);
+          console.log(
+            key,
+            ":",
+            typeof value === "string" && value.length > 100
+              ? value.substring(0, 100) + "..."
+              : value
+          );
         }
       }
 
@@ -427,7 +460,8 @@ export default function EditProperty() {
       router.back();
     } catch (error) {
       console.error("Failed to update property:", error);
-      const errorMessage = error.data?.message || error.message || "Failed to update property";
+      const errorMessage =
+        error.data?.message || error.message || "Failed to update property";
       setErrors({ submit: errorMessage });
       toast.error(errorMessage);
     } finally {
@@ -633,6 +667,23 @@ export default function EditProperty() {
                             }}
                           />
                         </Col>
+                          <Col span={8}>
+                            <LabelInputComponent
+                              name={`bedroomDetails.${index}.floor`}
+                              title="Floor"
+                              placeholder="Enter floor (e.g. Ground, 1st, Basement)"
+                              className={styles.labelinput}
+                              value={values.bedroomDetails[index]?.floor || ""}
+                              onChange={(e) => {
+                                const newDetails = [
+                                  ...(values.bedroomDetails || []),
+                                ];
+                                if (!newDetails[index]) newDetails[index] = {};
+                                newDetails[index].floor = e.target.value;
+                                setFieldValue("bedroomDetails", newDetails);
+                              }}
+                            />
+                          </Col>
                       </Row>
                       <Row gutter={16} className={styles.checkboxRow}>
                         <Col span={6}>
@@ -718,16 +769,21 @@ export default function EditProperty() {
                           </label>
                         </Col>
                       </Row>
-                      
+
                       {/* New fields for bedroom details */}
-                      <Row gutter={16} style={{ marginTop: '16px' }}>
+                      <Row gutter={16} style={{ marginTop: "16px" }}>
                         <Col span={8}>
                           <div className={styles.dropdownContainer}>
-                            <label className={styles.label}>Available From</label>
+                            <label className={styles.label}>
+                              Available From
+                            </label>
                             <Select
                               placeholder="Select month"
                               className={styles.dropdown}
-                              value={values.bedroomDetails[index]?.availableFrom || ""}
+                              value={
+                                values.bedroomDetails[index]?.availableFrom ||
+                                ""
+                              }
                               onChange={(value) => {
                                 const newDetails = [
                                   ...(values.bedroomDetails || []),
@@ -738,8 +794,18 @@ export default function EditProperty() {
                               }}
                             >
                               {[
-                                "Jan", "Feb", "Mar", "Apr", "May", "Jun", 
-                                "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+                                "Jan",
+                                "Feb",
+                                "Mar",
+                                "Apr",
+                                "May",
+                                "Jun",
+                                "Jul",
+                                "Aug",
+                                "Sep",
+                                "Oct",
+                                "Nov",
+                                "Dec",
                               ].map((month) => (
                                 <Option key={month} value={month}>
                                   {month}
@@ -764,7 +830,9 @@ export default function EditProperty() {
                                 setFieldValue("bedroomDetails", newDetails);
                               }}
                             >
-                              <Option value="Month-to-Month">Month-to-Month</Option>
+                              <Option value="Month-to-Month">
+                                Month-to-Month
+                              </Option>
                               <Option value="6-Month">6-Month</Option>
                               <Option value="1-Year">1-Year</Option>
                             </Select>
@@ -776,7 +844,9 @@ export default function EditProperty() {
                             title="Move-in Date"
                             type="date"
                             className={styles.labelinput}
-                            value={values.bedroomDetails[index]?.moveInDate || ""}
+                            value={
+                              values.bedroomDetails[index]?.moveInDate || ""
+                            }
                             onChange={(e) => {
                               const newDetails = [
                                 ...(values.bedroomDetails || []),
@@ -788,8 +858,8 @@ export default function EditProperty() {
                           />
                         </Col>
                       </Row>
-                      
-                      <Row gutter={16} style={{ marginTop: '16px' }}>
+
+                      <Row gutter={16} style={{ marginTop: "16px" }}>
                         <Col span={12}>
                           <LabelInputComponent
                             name={`bedroomDetails.${index}.note`}
@@ -815,7 +885,9 @@ export default function EditProperty() {
                               label="Lease Terms"
                               name={`bedroomDetails.${index}.leaseTerms`}
                               setFieldValue={(name, value) => {
-                                const newDetails = [...(values.bedroomDetails || [])];
+                                const newDetails = [
+                                  ...(values.bedroomDetails || []),
+                                ];
                                 if (!newDetails[index]) newDetails[index] = {};
                                 newDetails[index].leaseTerms = value;
                                 setFieldValue("bedroomDetails", newDetails);
@@ -826,13 +898,18 @@ export default function EditProperty() {
                           </div>
                         </Col>
                       </Row>
-                      
+
                       {/* Bedroom Images Section */}
                       <div className={styles.bedroomImagesSection}>
-                        <h5 className={styles.subSectionTitle}>Bedroom Images</h5>
+                        <h5 className={styles.subSectionTitle}>
+                          Bedroom Images
+                        </h5>
                         <div className={styles.bedroomPhotoGrid}>
                           {Array.from({ length: 3 }).map((_, photoIndex) => (
-                            <div className={styles.bedroomPhotoBox} key={photoIndex}>
+                            <div
+                              className={styles.bedroomPhotoBox}
+                              key={photoIndex}
+                            >
                               <label>
                                 <input
                                   type="file"
@@ -844,35 +921,53 @@ export default function EditProperty() {
                                       if (!validateFileSize(file)) {
                                         return;
                                       }
-                                      
-                                      const newDetails = [...(values.bedroomDetails || [])];
-                                      if (!newDetails[index]) newDetails[index] = {};
-                                      if (!newDetails[index].images) newDetails[index].images = [];
-                                      
+
+                                      const newDetails = [
+                                        ...(values.bedroomDetails || []),
+                                      ];
+                                      if (!newDetails[index])
+                                        newDetails[index] = {};
+                                      if (!newDetails[index].images)
+                                        newDetails[index].images = [];
+
                                       // Store the actual file in a temporary field for submission
                                       if (!newDetails[index].imageFiles) {
                                         newDetails[index].imageFiles = [];
                                       }
-                                      newDetails[index].imageFiles[photoIndex] = file;
-                                      
+                                      newDetails[index].imageFiles[photoIndex] =
+                                        file;
+
                                       // Convert to URL for preview only
                                       const reader = new FileReader();
                                       reader.onload = (e) => {
-                                        const images = [...(newDetails[index].images || [])];
+                                        const images = [
+                                          ...(newDetails[index].images || []),
+                                        ];
                                         images[photoIndex] = e.target.result;
                                         newDetails[index].images = images;
-                                        setFieldValue("bedroomDetails", newDetails);
+                                        setFieldValue(
+                                          "bedroomDetails",
+                                          newDetails
+                                        );
                                       };
                                       reader.readAsDataURL(file);
                                     }
                                   }}
                                   style={{ display: "none" }}
                                 />
-                                {values.bedroomDetails[index]?.images?.[photoIndex] ? (
+                                {values.bedroomDetails[index]?.images?.[
+                                  photoIndex
+                                ] ? (
                                   <div className={styles.bedroomPreview}>
                                     <Image
-                                      src={values.bedroomDetails[index].images[photoIndex]}
-                                      alt={`Bedroom ${index + 1} Image ${photoIndex + 1}`}
+                                      src={
+                                        values.bedroomDetails[index].images[
+                                          photoIndex
+                                        ]
+                                      }
+                                      alt={`Bedroom ${index + 1} Image ${
+                                        photoIndex + 1
+                                      }`}
                                       width={100}
                                       height={100}
                                       objectFit="cover"
@@ -881,25 +976,38 @@ export default function EditProperty() {
                                       type="button"
                                       className={styles.removeButton}
                                       onClick={() => {
-                                        const newDetails = [...(values.bedroomDetails || [])];
-                                        const images = [...(newDetails[index].images || [])];
+                                        const newDetails = [
+                                          ...(values.bedroomDetails || []),
+                                        ];
+                                        const images = [
+                                          ...(newDetails[index].images || []),
+                                        ];
                                         images[photoIndex] = null;
-                                        
+
                                         // Also clear the file
                                         if (newDetails[index].imageFiles) {
-                                          newDetails[index].imageFiles[photoIndex] = null;
+                                          newDetails[index].imageFiles[
+                                            photoIndex
+                                          ] = null;
                                         }
-                                        
+
                                         newDetails[index].images = images;
-                                        setFieldValue("bedroomDetails", newDetails);
+                                        setFieldValue(
+                                          "bedroomDetails",
+                                          newDetails
+                                        );
                                       }}
                                     >
                                       ✖
                                     </button>
                                   </div>
                                 ) : (
-                                  <div className={styles.bedroomPhotoPlaceholder}>
-                                    <span className={styles.uploadIcon}>📤</span>
+                                  <div
+                                    className={styles.bedroomPhotoPlaceholder}
+                                  >
+                                    <span className={styles.uploadIcon}>
+                                      📤
+                                    </span>
                                     <p>Add Image</p>
                                   </div>
                                 )}

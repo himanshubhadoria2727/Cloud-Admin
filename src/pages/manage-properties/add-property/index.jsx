@@ -231,9 +231,9 @@ export default function AddProperty() {
         // These fields are optional and don't require validation
         availableFrom: Yup.string(),
         lease: Yup.string(),
-        moveInDate: Yup.date().nullable(),
-        note: Yup.string(),
-        leaseTerms: Yup.string()
+        moveInDate: Yup.date().nullable(),        note: Yup.string(),
+        leaseTerms: Yup.string(),
+        floor: Yup.string()
       })
     ),
     onSiteVerification: Yup.boolean(),
@@ -677,9 +677,7 @@ export default function AddProperty() {
                               className={styles.labelinput}
                               value={values.bedroomDetails[index]?.name || ""}
                               onChange={(e) => {
-                                const newDetails = [
-                                  ...(values.bedroomDetails || []),
-                                ];
+                                const newDetails = [...(values.bedroomDetails || [])];
                                 if (!newDetails[index]) newDetails[index] = {};
                                 newDetails[index].name = e.target.value;
                                 setFieldValue("bedroomDetails", newDetails);
@@ -694,9 +692,7 @@ export default function AddProperty() {
                               className={styles.labelinput}
                               value={values.bedroomDetails[index]?.rent || ""}
                               onChange={(e) => {
-                                const newDetails = [
-                                  ...(values.bedroomDetails || []),
-                                ];
+                                const newDetails = [...(values.bedroomDetails || [])];
                                 if (!newDetails[index]) newDetails[index] = {};
                                 newDetails[index].rent = e.target.value;
                                 setFieldValue("bedroomDetails", newDetails);
@@ -711,11 +707,26 @@ export default function AddProperty() {
                               className={styles.labelinput}
                               value={values.bedroomDetails[index]?.sizeSqFt || ""}
                               onChange={(e) => {
-                                const newDetails = [
-                                  ...(values.bedroomDetails || []),
-                                ];
+                                const newDetails = [...(values.bedroomDetails || [])];
                                 if (!newDetails[index]) newDetails[index] = {};
                                 newDetails[index].sizeSqFt = e.target.value;
+                                setFieldValue("bedroomDetails", newDetails);
+                              }}
+                            />
+                          </Col>
+                        </Row>
+                        <Row gutter={16} style={{ marginTop: '16px' }}>
+                          <Col span={8}>
+                            <LabelInputComponent
+                              name={`bedroomDetails.${index}.floor`}
+                              title="Floor"
+                              placeholder="Enter floor (e.g. Ground, 1st, Basement)"
+                              className={styles.labelinput}
+                              value={values.bedroomDetails[index]?.floor || ""}
+                              onChange={(e) => {
+                                const newDetails = [...(values.bedroomDetails || [])];
+                                if (!newDetails[index]) newDetails[index] = {};
+                                newDetails[index].floor = e.target.value;
                                 setFieldValue("bedroomDetails", newDetails);
                               }}
                             />
