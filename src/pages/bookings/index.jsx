@@ -1,10 +1,11 @@
 import LayoutHoc from "@/HOC/LayoutHoc";
 import DataTable from "@/components/Datatable";
 import { Button, Col, Modal, Select, Space, Tag, message } from "antd";
+import { EyeOutlined, ExclamationCircleOutlined } from "@ant-design/icons";
 import styles from "./styles.module.css";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { ExclamationCircleOutlined } from "@ant-design/icons";
+import { useRouter } from "next/router";
 import { 
   useGetBookingsQuery, 
   useUpdateBookingStatusMutation, 
@@ -15,6 +16,7 @@ const { confirm } = Modal;
 const { Option } = Select;
 
 const ManageBookings = () => {
+  const router = useRouter();
   const [selectedBooking, setSelectedBooking] = useState(null);
   const [isStatusModalVisible, setIsStatusModalVisible] = useState(false);
   const [newStatus, setNewStatus] = useState("");
@@ -82,6 +84,10 @@ const ManageBookings = () => {
         }
       },
     });
+  };
+
+  const handleViewDetails = (bookingId) => {
+    router.push(`/bookings/${bookingId}`);
   };
 
   const getStatusTag = (status) => {
@@ -164,6 +170,13 @@ const ManageBookings = () => {
       key: "actions",
       render: (_, record) => (
         <Space size="middle">
+          <Button 
+            type="primary" 
+            icon={<EyeOutlined />}
+            onClick={() => handleViewDetails(record.key)}
+          >
+            View
+          </Button>
           <Button 
             type="primary" 
             onClick={() => showStatusModal(record)}

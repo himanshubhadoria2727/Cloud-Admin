@@ -216,6 +216,7 @@ export const apiSlice = createApi({
     getBookingById: builder.query({
       query: (id) => `/booking/${id}`,
       providesTags: (result, error, id) => [{ type: 'Booking', id }],
+      transformResponse: (response) => (response as { booking: any }).booking, // Transform the response to get the booking data directly
     }),
     updateBookingStatus: builder.mutation({
       query: ({ id, status }) => ({

@@ -10,7 +10,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 30px;
+    margin-bottom: 24px;
   }
   
   .title button {
@@ -63,5 +63,25 @@
   
   .tableBox .btn.submit:hover {
     background-color: #026e90; /* Darker shade on hover */
+  }
+  
+  .container {
+    padding: 24px;
+  }
+  
+  .card {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Add styles for the descriptions component */
+  .descriptions :global(.ant-descriptions-item-label) {
+    font-weight: 500;
+    background-color: #fafafa;
+  }
+  
+  .descriptions :global(.ant-descriptions-item-content) {
+    word-break: break-word;
   }
   
