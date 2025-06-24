@@ -5,7 +5,7 @@ import { Formik, Form, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import LayoutHoc from "../../../HOC/LayoutHoc";
 import styles from "../properties.module.css";
-import { Col, Row, Select, Button, DatePicker, Spin, message } from "antd";
+import { Col, Row, Select, Button, DatePicker, Spin, message, Switch } from "antd";
 import LabelInputComponent from "../../../components/TextFields/labelInput";
 import { FaBed, FaBath, FaHome, FaBuilding, FaWarehouse } from "react-icons/fa";
 import {
@@ -895,6 +895,33 @@ export default function EditProperty() {
                               compact={true}
                               height="150px"
                             />
+                          </div>
+                        </Col>
+                      </Row>
+
+                      {/* Add Status Switch */}
+                      <Row gutter={16} style={{ marginTop: "16px" }}>
+                        <Col span={24}>
+                          <div className={styles.statusSwitchContainer}>
+                            <label className={styles.label}>Bedroom Status</label>
+                            <div className={styles.statusSwitch}>
+                              <Switch
+                                checked={values.bedroomDetails[index]?.status === 'booked'}
+                                onChange={(checked) => {
+                                  const newDetails = [
+                                    ...(values.bedroomDetails || []),
+                                  ];
+                                  if (!newDetails[index]) newDetails[index] = {};
+                                  newDetails[index].status = checked ? 'booked' : 'available';
+                                  setFieldValue("bedroomDetails", newDetails);
+                                }}
+                                checkedChildren="Booked"
+                                unCheckedChildren="Available"
+                              />
+                              <span className={styles.statusLabel}>
+                                {values.bedroomDetails[index]?.status === 'booked' ? 'Booked' : 'Available'}
+                              </span>
+                            </div>
                           </div>
                         </Col>
                       </Row>

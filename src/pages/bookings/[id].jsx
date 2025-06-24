@@ -109,7 +109,15 @@ const BookingDetails = () => {
             </Descriptions.Item>
             
             <Descriptions.Item label="Country">{booking?.country}</Descriptions.Item>
-            <Descriptions.Item label="Property">{booking?.propertyId?.title}</Descriptions.Item>
+            <Descriptions.Item label="Property">
+              <a
+                href={`${process.env.NEXT_PUBLIC_WEBSITE_URL}/property/${booking?.propertyId?._id}`}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {booking?.propertyId?.title}
+              </a>
+            </Descriptions.Item>
             
             <Descriptions.Item label="Move-in Date">
               {booking?.moveInDate ? new Date(booking.moveInDate).toLocaleDateString() : 'N/A'}
