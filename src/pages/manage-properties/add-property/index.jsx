@@ -1223,8 +1223,8 @@ export default function AddProperty() {
                   <Col span={12}>
                     <LabelInputComponent
                       name="pricing"
-                      title="Monthly Rent"
-                      placeholder="Enter monthly rent amount"
+                      title="Staring price"
+                      placeholder="Enter staring price amount"
                       className={styles.labelinput}
                     />
                     <ErrorMessage name="pricing">

@@ -880,7 +880,7 @@ export default function EditProperty() {
                         </Col>
                         <Col span={12}>
                           <div className={styles.quillEditorContainer}>
-                            <label className={styles.label}>Lease Terms</label>
+                            {/* <label className={styles.label}>Lease Terms</label> */}
                             <MyQuillEditor
                               label="Lease Terms"
                               name={`bedroomDetails.${index}.leaseTerms`}
@@ -1280,8 +1280,8 @@ export default function EditProperty() {
                 <Col span={12}>
                   <LabelInputComponent
                     name="pricing"
-                    title="Monthly Rent"
-                    placeholder="Enter monthly rent amount"
+                    title="Staring price"
+                    placeholder="Enter staring price amount"
                     className={styles.labelinput}
                   />
                   <ErrorMessage name="pricing">
