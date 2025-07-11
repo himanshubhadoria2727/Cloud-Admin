@@ -6,9 +6,10 @@ import Link from "next/link";
 import { SVG } from "@/assest/svg";
 import { useRouter } from "next/router";
 import dynamic from "next/dynamic";
-import { SearchOutlined, BellOutlined, DashboardOutlined, SettingOutlined, UserOutlined, FileTextOutlined, MenuUnfoldOutlined, MenuFoldOutlined, StarOutlined } from "@ant-design/icons";
+import { SearchOutlined, BellOutlined, DashboardOutlined, SettingOutlined, UserOutlined, FileTextOutlined, MenuUnfoldOutlined, MenuFoldOutlined, StarOutlined, PullRequestOutlined, ProfileTwoTone, ProfileOutlined, PhoneOutlined } from "@ant-design/icons";
 import Loader from "@/loader/loader";
 import Image from "next/image";
+import { FaPhoneSquare, FaUser, FaUserAstronaut } from "react-icons/fa";
 
 const Lottie = dynamic(() => import("lottie-react"), { ssr: false });
 
@@ -131,6 +132,16 @@ const LayoutHoc = ({ children }) => {
               style: {
                 backgroundColor: router.pathname === "/manage-user" ? "#3861fb" : "white",
                 color: router.pathname === "/manage-user" ? "white" : "black",
+              },
+            },
+            {
+              key: "/agent-request",
+              icon: <PhoneOutlined />,
+              label: " Agent Request",
+              onClick: () => router.push("/agent-request"),
+              style: {
+                backgroundColor: router.pathname === "/agent-request" ? "#3861fb" : "white",
+                color: router.pathname === "/agent-request" ? "white" : "black",
               },
             },
             // {

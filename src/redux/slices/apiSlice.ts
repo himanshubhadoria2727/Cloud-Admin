@@ -61,7 +61,7 @@ export const apiSlice = createApi({
     return result;
   },
 
-  tagTypes: ["User", "Auth", "Property", "Booking", "Enquiry", "Content", "Category", "Review", "Universities"], // Updated tag types
+  tagTypes: ["User", "Auth", "Property", "Booking", "Enquiry", "Content", "Category", "Review", "Universities", "AgentRequest"],
   endpoints: (builder) => ({
     register: builder.mutation({
       query: (userData) => ({
@@ -82,7 +82,11 @@ export const apiSlice = createApi({
       invalidatesTags: ["User", "Auth"],
     }),
     getUserDetails: builder.query({
-      query: () => "/user/getUserDetails",
+      query: (params) => ({
+        url: "/user/getUserDetails",
+        method: "GET",
+        params,
+      }),
       providesTags: ["User"], // Tag this endpoint for future invalidation
     }),
     saveUserDetails: builder.mutation({
@@ -161,6 +165,45 @@ export const apiSlice = createApi({
       invalidatesTags: ["User"],
     }),
 
+    // Agent Request endpoints
+    createAgentRequest: builder.mutation({
+      query: (agentRequestData) => ({
+        url: "/getAgent/createAgentRequest",
+        method: "POST",
+        body: agentRequestData,
+      }),
+      invalidatesTags: ["AgentRequest"],
+    }),
+    getAllAgentRequests: builder.query({
+      query: (params) => ({
+        url: "/getAgent/getAllAgentRequest",
+        params,
+      }),
+      providesTags: ["AgentRequest"],
+    }),
+    getAgentRequestById: builder.query({
+      query: (id) => `/getAgent/getAgentRequest/${id}`,
+      providesTags: (result, error, id) => [{ type: 'AgentRequest', id }],
+    }),
+    updateAgentRequestStatus: builder.mutation({
+      query: ({ id, ...statusData }) => ({
+        url: `/getAgent/updateAgentRequest/${id}`,
+        method: "PUT",
+        body: statusData,
+      }),
+      invalidatesTags: (result, error, { id }) => [
+        { type: 'AgentRequest', id },
+        'AgentRequest',
+      ],
+    }),
+    deleteAgentRequest: builder.mutation({
+      query: (id) => ({
+        url: `/getAgent/deleteAgentRequest/${id}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["AgentRequest"],
+    }),
+
     // Property-related endpoints
     createProperty: builder.mutation({
       query: (formdata) => ({
@@ -210,7 +253,10 @@ export const apiSlice = createApi({
 
     // Booking endpoints
     getBookings: builder.query({
-      query: () => '/booking/all',
+      query: (params) => ({
+        url: '/booking/all',
+        params,
+      }),
       providesTags: ['Booking'],
     }),
     getBookingById: builder.query({
@@ -334,10 +380,20 @@ export const apiSlice = createApi({
       }),
       providesTags: ['Universities'],
     }),
+   
+
   }),
 });
 
 export const {
+  // Agent Request hooks
+  useCreateAgentRequestMutation,
+  useGetAllAgentRequestsQuery,
+  useGetAgentRequestByIdQuery,
+  useUpdateAgentRequestStatusMutation,
+  useDeleteAgentRequestMutation,
+  
+  // Auth hooks
   useRegisterMutation,
   useLoginMutation,
   useGetUserDetailsQuery,

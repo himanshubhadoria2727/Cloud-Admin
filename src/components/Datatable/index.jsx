@@ -125,6 +125,7 @@ const DataTable = ({ rowData, colData }) => {
       <Table
         columns={handleDataSource()}
         dataSource={rowData}
+        rowKey={(record) => record._id || record.id || record.key || Math.random().toString(36).substr(2, 9)}
         pagination={false}
         onChange={handleChange}
         scroll={{ x: 1300 }}
