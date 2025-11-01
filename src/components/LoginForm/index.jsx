@@ -38,19 +38,27 @@ function LoginForm() {
         // validationSchema={validationSchema}
 
         onSubmit={(values) => {
-
-
-          console.log(values, "sciehui");
+          console.log(values, "admin login");
           login(values).then((res) => {
-            if (res?.data?.Message === "Invalid Credential") {
-              toast.error('Invalid Credential')
+            // Handle error responses
+            if (!res?.data?.success) {
+              toast.error(res?.data?.message || 'Login failed')
               return
             }
 
-            localStorage.setItem("auth_token", res?.data?.signature);
-            toast.success('Logged in Succesfully.')
+            // Store token in both localStorage and cookie
+            const token = res?.data?.token;
+            localStorage.setItem("auth_token", token);
+
+            // Set cookie for middleware
+            document.cookie = `auth_token=${token}; path=/; max-age=${60 * 60 * 24 * 50}`; // 50 days
+
+            toast.success('Admin logged in successfully.')
             router.push('/dashboard')
 
+          }).catch((error) => {
+            console.error('Login error:', error);
+            toast.error(error?.response?.data?.message || 'Login failed. Please try again.')
           })
         }}
       >

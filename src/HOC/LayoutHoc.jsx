@@ -49,6 +49,8 @@ const LayoutHoc = ({ children }) => {
           onClick={(e) => {
             e.preventDefault();
             localStorage.removeItem("auth_token");
+            // Clear cookie
+            document.cookie = "auth_token=; path=/; max-age=0";
             router.push("/");
           }}
           rel="noopener noreferrer"
