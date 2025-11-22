@@ -19,8 +19,46 @@
   padding: 24px;
 }
 
+@media (max-width: 1024px) {
+  .title h3 {
+    font-size: 18px;
+  }
+
+  .tableBox {
+    padding: 20px;
+  }
+}
+
 @media (max-width: 768px) {
+  .title {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  .title h3 {
+    font-size: 16px;
+  }
+
   .tableBox {
     padding: 12px;
+    border-radius: 6px;
+  }
+}
+
+@media (max-width: 480px) {
+  .title {
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+
+  .title h3 {
+    font-size: 15px;
+  }
+
+  .tableBox {
+    padding: 10px;
+    overflow-x: auto;
   }
 }

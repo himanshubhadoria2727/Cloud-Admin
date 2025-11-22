@@ -1,75 +1,294 @@
+/* Main Container */
 .container {
-    padding: 20px;
-    background-color: #f9f9f9;
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    padding: 32px;
+    background: linear-gradient(135deg, #f5f7fa 0%, #f0f3f7 100%);
+    min-height: 100vh;
+    border-radius: 0;
 }
 
+/* Page Title */
 .title {
-    font-size: 24px;
-    font-weight: bold;
-    margin-bottom: 20px;
+    font-size: 32px;
+    font-weight: 800;
+    margin-bottom: 32px;
+    color: #1a1a1a;
+    letter-spacing: -0.5px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
 }
 
+.title::before {
+    content: '';
+    display: inline-block;
+    width: 5px;
+    height: 32px;
+    background: linear-gradient(135deg, #3861fb 0%, #5b7cff 100%);
+    border-radius: 3px;
+}
+
+/* Form Card Container */
 .formCard {
-    background-color: white;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
+    background: white;
+    padding: 32px;
+    border-radius: 16px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    margin-bottom: 24px;
 }
 
+.formCard:hover {
+    box-shadow: 0 15px 50px rgba(0, 0, 0, 0.12);
+}
+
+/* Section Titles */
 .formTitle {
-    font-size: 20px;
-    margin: 15px 0;
+    font-size: 22px;
+    font-weight: 700;
+    margin: 28px 0 20px 0;
+    color: #1a1a1a;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding-bottom: 16px;
+    border-bottom: 2px solid #f0f3f7;
 }
 
+.formTitle::before {
+    content: '';
+    display: inline-block;
+    width: 4px;
+    height: 24px;
+    background: linear-gradient(135deg, #3861fb 0%, #5b7cff 100%);
+    border-radius: 2px;
+}
+
+/* Error Messages */
 .error {
-    color: red;
-    font-size: 14px;
+    color: #ef4444;
+    font-size: 13px;
+    margin-top: 6px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    animation: slideIn 0.2s ease;
 }
 
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-4px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Dropdown Container */
 .dropdownContainer {
-    margin-bottom: 20px;
+    margin-bottom: 24px;
+}
+
+.dropdownContainer label {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    color: #1a1a1a;
+    margin-bottom: 8px;
+    letter-spacing: 0.3px;
 }
 
 .dropdown {
     width: 100%;
+    border-radius: 8px;
+}
+
+.dropdown :global(.ant-select-selector) {
+    border-radius: 8px !important;
+    border: 2px solid #e5e7eb !important;
+    padding: 8px 12px !important;
+    transition: all 0.3s ease !important;
+    background-color: #fafbfc !important;
+}
+
+.dropdown :global(.ant-select-selector:hover) {
+    border-color: #3861fb !important;
+    background-color: #f5f7ff !important;
+}
+
+.dropdown :global(.ant-select-focused .ant-select-selector) {
+    border-color: #3861fb !important;
+    box-shadow: 0 0 0 3px rgba(56, 97, 251, 0.1) !important;
+    background-color: #f5f7ff !important;
+}
+
+/* Counter Section */
+.counterSection {
+    display: flex;
+    justify-content: space-between;
+    margin: 28px 0;
+    gap: 20px;
 }
 
 .counterGroup {
     display: flex;
-    justify-content: space-between;
-    margin-bottom: 20px;
+    gap: 20px;
 }
 
 .counter {
+    flex: 1;
+    background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
+    padding: 20px;
+    border-radius: 12px;
+    border: 2px solid #e5e7eb;
+    transition: all 0.3s ease;
     display: flex;
+    flex-direction: column;
     align-items: center;
+}
+
+.counter:hover {
+    border-color: #3861fb;
+    box-shadow: 0 4px 16px rgba(56, 97, 251, 0.1);
+    transform: translateY(-2px);
+}
+
+.counter label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #6b7280;
+    margin-bottom: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
 .counterControls {
     display: flex;
     align-items: center;
-    margin-left: 10px;
+    justify-content: center;
+    gap: 12px;
 }
 
 .counterControls button {
-    border: none;
-    background-color: #007bff;
+    background: linear-gradient(135deg, #3861fb 0%, #5b7cff 100%);
     color: white;
-    padding: 5px 10px;
+    border: none;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    font-size: 18px;
     cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(56, 97, 251, 0.2);
+}
+
+.counterControls button:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 16px rgba(56, 97, 251, 0.3);
+}
+
+.counterControls button:active {
+    transform: scale(0.95);
 }
 
 .counterControls span {
-    margin: 0 10px;
+    font-size: 24px;
+    font-weight: 700;
+    color: #1a1a1a;
+    min-width: 40px;
+    text-align: center;
 }
 
+/* Input Fields & Text Areas */
+.labelinput,
+.largeTextarea {
+    padding-bottom: 20px;
+}
+
+:global(.ant-input),
+:global(.ant-input-number) {
+    border-radius: 8px !important;
+    border: 2px solid #e5e7eb !important;
+    padding: 10px 12px !important;
+    font-size: 14px !important;
+    transition: all 0.3s ease !important;
+    background-color: #fafbfc !important;
+}
+
+:global(.ant-input:hover),
+:global(.ant-input-number:hover) {
+    border-color: #3861fb !important;
+    background-color: #f5f7ff !important;
+}
+
+:global(.ant-input:focus),
+:global(.ant-input-focused),
+:global(.ant-input-number:focus),
+:global(.ant-input-number-focused) {
+    border-color: #3861fb !important;
+    box-shadow: 0 0 0 3px rgba(56, 97, 251, 0.1) !important;
+    background-color: white !important;
+}
+
+:global(.ant-input::placeholder) {
+    color: #9ca3af !important;
+    font-weight: 400;
+}
+
+/* Checkbox Container */
+.checkboxContainer {
+    margin: 20px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+/* Radio Options */
+.radioGroup {
+    margin-bottom: 15px;
+    padding: 12px 16px;
+    border-radius: 8px;
+    border: 2px solid #e5e7eb;
+    background: linear-gradient(135deg, #fafbfc 0%, #f9fafb 100%);
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.radioGroup:hover {
+    border-color: #3861fb;
+    background: linear-gradient(135deg, #f5f7ff 0%, #f0f3ff 100%);
+}
+
+.radioLabel {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+    color: #4b5563;
+    cursor: pointer;
+    user-select: none;
+    font-weight: 500;
+}
+
+.radioLabel input[type="radio"] {
+    width: 18px;
+    height: 18px;
+    margin: 0;
+    accent-color: #3861fb;
+    cursor: pointer;
+}
+
+/* Amenities & Utilities Grid */
 .amenitiesGrid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-    gap: 10px;
-    margin-bottom: 20px;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 12px;
+    margin: 20px 0;
 }
 
 .amenityItem {
@@ -79,12 +298,235 @@
 
 .checkboxLabel {
     cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 16px;
+    border: 2px solid #e5e7eb;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #fafbfc 0%, #f9fafb 100%);
+    transition: all 0.3s ease;
+    font-size: 14px;
+    font-weight: 500;
+    color: #4b5563;
+    width: 100%;
+}
+
+.checkboxLabel:hover {
+    border-color: #3861fb;
+    background: linear-gradient(135deg, #f5f7ff 0%, #f0f3ff 100%);
+    box-shadow: 0 4px 12px rgba(56, 97, 251, 0.1);
+    transform: translateY(-2px);
+}
+
+.checkboxLabel input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    accent-color: #3861fb;
+    transition: all 0.2s ease;
+}
+
+.checkboxLabel input[type="checkbox"]:checked {
+    transform: scale(1.1);
 }
 
 .photoUploadSection {
+    margin-bottom: 30px;
+}
+
+/* Drag and Drop Zone Container - Modern Design */
+.photoDropZone {
+    border: 2px dashed #d1d9e6;
+    border-radius: 16px;
+    padding: 48px 24px;
+    background: #fafbfc;
+    min-height: 350px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.photoDropZone:hover {
+    border-color: #3861fb;
+    background: #f5f7ff;
+}
+
+.photoDropZone.dragOver {
+    border-color: #3861fb;
+    background: #eef3ff;
+    border-width: 3px;
+    box-shadow: 0 8px 24px rgba(56, 97, 251, 0.12);
+}
+
+/* Drop Zone Label */
+.dropZoneLabel {
+    display: block;
+    cursor: pointer;
+    width: 100%;
+}
+
+.dropZoneContent {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    transition: all 0.3s ease;
+    padding: 24px;
+}
+
+/* Upload Icon Wrapper */
+.uploadIconWrapper {
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, #3861fb 0%, #5b7cff 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 24px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 16px rgba(56, 97, 251, 0.2);
+}
+
+.dropZoneLabel:hover .uploadIconWrapper {
+    transform: scale(1.05);
+    box-shadow: 0 6px 20px rgba(56, 97, 251, 0.3);
+}
+
+.uploadSvgIcon {
+    width: 40px;
+    height: 40px;
+    color: white;
+    stroke-width: 2.5;
+}
+
+/* Main Heading */
+.uploadMainHeading {
+    font-size: 28px;
+    color: #1a1a1a;
+    margin: 0 0 12px 0;
+    font-weight: 700;
+    line-height: 1.3;
+}
+
+/* Subtext */
+.uploadSubtext {
+    font-size: 16px;
+    color: #6b7280;
+    margin: 0 0 20px 0;
+    font-weight: 400;
+    line-height: 1.5;
+}
+
+/* Hint Text */
+.dropZoneHint {
+    display: inline-block;
+    padding: 8px 16px;
+    background-color: #f3f4f6;
+    border-radius: 8px;
+    font-size: 13px;
+    color: #6b7280;
+    font-weight: 500;
+}
+
+/* Uploaded Photos Section */
+.uploadedPhotosSection {
+    margin-top: 32px;
+    padding-top: 24px;
+    border-top: 1px solid #e5e7eb;
+}
+
+/* Photo Count Badge */
+.photoCountBadge {
+    display: inline-block;
+    padding: 8px 16px;
+    background: #3861fb;
+    color: white;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 600;
     margin-bottom: 20px;
 }
 
+/* Preview Grid */
+.photoPreviewGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 16px;
+}
+
+.photoPreviewBox {
+    position: relative;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    overflow: hidden;
+    transition: all 0.2s ease;
+    background: white;
+}
+
+.photoPreviewBox:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    border-color: #3861fb;
+}
+
+.photoNumber {
+    text-align: center;
+    padding: 8px;
+    font-size: 12px;
+    color: #6b7280;
+    background-color: #f9fafb;
+    margin: 0;
+    font-weight: 500;
+}
+
+.preview {
+    position: relative;
+    width: 100%;
+    height: 140px;
+    overflow: hidden;
+    background: #f3f4f6;
+}
+
+.preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.removeButton {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background-color: #ef4444;
+    color: white;
+    border: 2px solid white;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    z-index: 10;
+    opacity: 0.95;
+}
+
+.removeButton:hover {
+    background-color: #dc2626;
+    transform: scale(1.1);
+    opacity: 1;
+    box-shadow: 0 2px 8px rgba(239, 68, 68, 0.4);
+}
+
+/* Legacy styles - keeping for backward compatibility */
 .photoUploadGrid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
@@ -98,36 +540,362 @@
     text-align: center;
 }
 
-.photoUploadPlaceholder {
-    cursor: pointer;
-}
-
-.preview {
-    margin-top: 10px;
-}
-
-.preview img {
-    max-width: 100%;
-    border-radius: 4px;
-}
-
-.removeButton {
-    background-color: red;
-    color: white;
-    border: none;
-    padding: 5px;
-    cursor: pointer;
-}
-
+/* Buttons */
 .submitButtonContainer {
     text-align: right;
+    margin-top: 32px;
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
 }
 
-.submitButton {
-    background-color: #28a745;
+.submitButton,
+.addButton {
+    padding: 12px 28px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #3861fb 0%, #5b7cff 100%);
     color: white;
     border: none;
-    padding: 10px 20px;
+    font-size: 15px;
+    font-weight: 600;
     cursor: pointer;
-    border-radius: 4px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 4px 16px rgba(56, 97, 251, 0.3);
+    letter-spacing: 0.5px;
+}
+
+.submitButton:hover,
+.addButton:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(56, 97, 251, 0.4);
+}
+
+.submitButton:active,
+.addButton:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 8px rgba(56, 97, 251, 0.2);
+}
+
+.addButtonContainer {
+    text-align: right;
+    margin: 20px 0;
+}
+
+.addButton {
+    background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
+    box-shadow: 0 4px 16px rgba(16, 185, 129, 0.3);
+}
+
+.addButton:hover {
+    box-shadow: 0 8px 24px rgba(16, 185, 129, 0.4);
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .container {
+    padding: 24px;
+  }
+
+  .title {
+    font-size: 28px;
+    margin-bottom: 24px;
+  }
+
+  .formCard {
+    padding: 24px;
+  }
+
+  .formTitle {
+    font-size: 20px;
+    margin: 24px 0 16px 0;
+  }
+
+  .amenitiesGrid {
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  }
+
+  .counterGroup {
+    flex-wrap: wrap;
+  }
+
+  .counter {
+    flex: 0 1 calc(50% - 10px);
+  }
+
+  .photoPreviewGrid {
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 12px;
+  }
+
+  .submitButton,
+  .addButton {
+    padding: 10px 20px;
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 16px;
+  }
+
+  .title {
+    font-size: 24px;
+    margin-bottom: 20px;
+  }
+
+  .formCard {
+    padding: 20px;
+  }
+
+  .formTitle {
+    font-size: 18px;
+    margin: 20px 0 14px 0;
+  }
+
+  .counterGroup {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .counterSection {
+    flex-direction: column;
+  }
+
+  .counter {
+    flex: 1;
+    width: 100%;
+  }
+
+  .amenitiesGrid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+
+  .checkboxLabel {
+    padding: 10px 12px;
+    font-size: 13px;
+  }
+
+  .photoUploadGrid {
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 12px;
+  }
+
+  .photoUploadBox {
+    height: 120px;
+  }
+
+  .photoPreviewGrid {
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 12px;
+  }
+
+  /* Drop Zone Responsive */
+  .photoDropZone {
+    padding: 32px 20px;
+    min-height: 300px;
+  }
+
+  .dropZoneContent {
+    padding: 20px 16px;
+  }
+
+  .uploadIconWrapper {
+    width: 70px;
+    height: 70px;
+    margin-bottom: 20px;
+  }
+
+  .uploadSvgIcon {
+    width: 36px;
+    height: 36px;
+  }
+
+  .uploadMainHeading {
+    font-size: 24px;
+  }
+
+  .uploadSubtext {
+    font-size: 15px;
+    margin-bottom: 16px;
+  }
+
+  .dropZoneHint {
+    font-size: 12px;
+    padding: 7px 14px;
+  }
+
+  .uploadedPhotosSection {
+    margin-top: 24px;
+    padding-top: 24px;
+  }
+
+  .photoCountBadge {
+    font-size: 13px;
+    padding: 8px 16px;
+  }
+
+  .submitButton,
+  .addButton {
+    width: 100%;
+    justify-content: center;
+    padding: 12px 16px;
+  }
+
+  .submitButtonContainer {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 12px;
+  }
+
+  .title {
+    font-size: 20px;
+    margin-bottom: 16px;
+  }
+
+  .title::before {
+    height: 20px;
+  }
+
+  .formCard {
+    padding: 16px;
+    margin-bottom: 16px;
+  }
+
+  .formTitle {
+    font-size: 16px;
+    margin: 16px 0 12px 0;
+  }
+
+  .formTitle::before {
+    height: 20px;
+  }
+
+  .amenitiesGrid {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .checkboxLabel {
+    padding: 10px 12px;
+    font-size: 12px;
+  }
+
+  .photoUploadGrid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+
+  .photoUploadBox {
+    height: 100px;
+  }
+
+  .photoPreviewGrid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+
+  .preview {
+    height: 100px;
+  }
+
+  .photoNumber {
+    font-size: 11px;
+    padding: 6px;
+  }
+
+  .removeButton {
+    width: 24px;
+    height: 24px;
+    font-size: 12px;
+    top: 6px;
+    right: 6px;
+  }
+
+  /* Drop Zone Mobile */
+  .photoDropZone {
+    padding: 24px 16px;
+    min-height: 240px;
+    border-radius: 12px;
+  }
+
+  .dropZoneContent {
+    padding: 16px 12px;
+  }
+
+  .uploadIconWrapper {
+    width: 60px;
+    height: 60px;
+    margin-bottom: 16px;
+  }
+
+  .uploadSvgIcon {
+    width: 30px;
+    height: 30px;
+  }
+
+  .uploadMainHeading {
+    font-size: 20px;
+    margin-bottom: 8px;
+  }
+
+  .uploadSubtext {
+    font-size: 13px;
+    margin-bottom: 12px;
+  }
+
+  .dropZoneHint {
+    font-size: 11px;
+    padding: 6px 12px;
+  }
+
+  .uploadedPhotosSection {
+    margin-top: 20px;
+    padding-top: 20px;
+  }
+
+  .photoCountBadge {
+    font-size: 12px;
+    padding: 8px 14px;
+  }
+
+  .counterControls button {
+    width: 32px;
+    height: 32px;
+    font-size: 16px;
+  }
+
+  .counterControls span {
+    font-size: 20px;
+    min-width: 36px;
+  }
+
+  .submitButton,
+  .addButton {
+    width: 100%;
+    padding: 10px 16px;
+    font-size: 14px;
+    justify-content: center;
+  }
+
+  .submitButtonContainer {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .error {
+    font-size: 12px;
+  }
+
+  .dropdownContainer label {
+    font-size: 13px;
+  }
 } 

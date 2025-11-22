@@ -177,24 +177,95 @@
 }
 
 /* Responsive adjustments */
+@media (max-width: 1024px) {
+  .headerContainer {
+    max-width: 100%;
+    padding: 0 16px;
+  }
+
+  .searchBar {
+    max-width: 250px;
+  }
+
+  .rightSection {
+    gap: 15px;
+  }
+}
+
 @media (max-width: 768px) {
   .Header {
-    width: 100%;
+    width: 100% !important;
     position: fixed;
+    padding: 0 12px;
+    left: 0 !important;
+  }
+
+  .HeaderCollapsed {
+    width: 100% !important;
   }
 
   .sideBar {
-    position: fixed !important;
-    transform: translateX(-100%);
-    transition: transform 0.3s ease;
-  }
-
-  .sideBarVisible {
-    transform: translateX(0);
+    display: none !important;
   }
 
   .mainLayout {
     margin-left: 0 !important;
     width: 100%;
+    padding: 16px;
+    margin-top: 64px !important;
+  }
+
+  .mainLayoutCollapsed {
+    margin-left: 0 !important;
+  }
+
+  .headerContainer {
+    padding: 0 8px;
+  }
+
+  .searchBar {
+    max-width: 200px;
+    font-size: 13px;
+  }
+
+  .rightSection {
+    gap: 12px;
+  }
+
+  .username {
+    display: none; /* Hide username text on tablet */
+  }
+}
+
+@media (max-width: 480px) {
+  .Header {
+    padding: 0 8px;
+    height: 56px;
+  }
+
+  .mainLayout {
+    margin-top: 56px !important;
+    padding: 12px;
+  }
+
+  .searchBar {
+    display: none; /* Hide search bar on mobile phones */
+  }
+
+  .rightSection {
+    gap: 8px;
+  }
+
+  .notificationIcon {
+    font-size: 18px;
+  }
+
+  .avatar {
+    width: 28px;
+    height: 28px;
+  }
+
+  .headerContainer {
+    padding: 0;
   }
 }

@@ -115,12 +115,129 @@
   white-space: pre-wrap;
 }
 
+@media (max-width: 1024px) {
+  .filtersSection {
+    padding: 16px;
+  }
+
+  .reviewText {
+    max-width: 300px;
+  }
+}
+
 @media (max-width: 768px) {
+  .reviewsCard {
+    border-radius: 8px;
+  }
+
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+
+  .title {
+    font-size: 20px !important;
+  }
+
+  .filtersSection {
+    padding: 12px;
+    margin-bottom: 16px;
+  }
+
   .filterActions {
     justify-content: flex-start;
+    flex-wrap: wrap;
+    gap: 8px;
   }
-  
+
   .reviewText {
-    max-width: 250px;
+    max-width: 200px;
+    font-size: 13px;
+  }
+
+  .searchInput input {
+    height: 36px;
+  }
+
+  .reviewDetailCard {
+    border-radius: 8px;
+  }
+
+  .ratingDisplay {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  .reviewComment {
+    padding: 12px;
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .reviewsCard,
+  .reviewDetailCard {
+    border-radius: 6px;
+  }
+
+  .header {
+    margin-bottom: 16px;
+  }
+
+  .title {
+    font-size: 18px !important;
+    gap: 6px;
+  }
+
+  .filtersSection {
+    padding: 10px;
+    margin-bottom: 12px;
+  }
+
+  .searchInput input {
+    height: 32px;
+    font-size: 13px;
+  }
+
+  .reviewText {
+    max-width: 150px;
+    font-size: 12px;
+  }
+
+  .reviewsTable :global(.ant-table-thead > tr > th) {
+    font-size: 12px;
+    padding: 8px 4px;
+  }
+
+  .reviewsTable :global(.ant-table-tbody > tr > td) {
+    font-size: 12px;
+    padding: 8px 4px;
+  }
+
+  .breadcrumb {
+    margin-bottom: 12px;
+  }
+
+  .reviewContent {
+    gap: 16px;
+  }
+
+  .ratingDisplay {
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+
+  .reviewComment {
+    padding: 10px;
+    font-size: 13px;
+    line-height: 1.5;
+  }
+
+  .reviewDetails {
+    padding: 12px 0;
   }
 } 

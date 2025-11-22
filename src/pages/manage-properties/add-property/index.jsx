@@ -105,7 +105,7 @@ export default function AddProperty() {
     landlordInsurance: true,
     amenities: [],
     utilities: [],
-    photos: Array(10).fill(null),
+    photos: [],
     pricing: "",
     latitude: "",
     longitude: "",
@@ -150,7 +150,7 @@ export default function AddProperty() {
         landlordInsurance: property.landlordInsurance !== false,
         amenities: property.amenities || [],
         utilities: property.utilities || [],
-        photos: property.images || Array(10).fill(null),
+        photos: property.images || [],
         pricing: property.price || "",
         latitude: property.latitude || "",
         city: property.city || "",
@@ -487,22 +487,6 @@ export default function AddProperty() {
 
               setFieldValue("photos", [...values.photos, ...files]);
             };
-            
-            const handlePropertyImageChange = (e, index) => {
-              const file = e.target.files[0];
-              if (file) {
-                // Validate file size
-                if (!validateFileSize(file)) {
-                  return;
-                }
-                
-                // Store the file directly in the photos array at the specified index
-                const newPhotos = [...values.photos];
-                newPhotos[index] = file;
-                setFieldValue("photos", newPhotos);
-              }
-            };
-            
             const handleBedroomImageChange = (event, bedroomIndex, photoIndex) => {
               const file = event.target.files[0];
               if (file) {
@@ -1366,65 +1350,7 @@ export default function AddProperty() {
                       Month-to-Month
                     </Select.Option>
 
-                    {/* Quarter 1 Ranges */}
-                    <Select.Option value="Jan to Mar">
-                      Jan to Mar (Q1)
-                    </Select.Option>
-                    <Select.Option value="Jan to Jun">
-                      Jan to Jun (Q1-Q2)
-                    </Select.Option>
-                    <Select.Option value="Jan to Sep">
-                      Jan to Sep (Q1-Q3)
-                    </Select.Option>
-                    <Select.Option value="Jan to Dec">
-                      Jan to Dec (Full Year)
-                    </Select.Option>
-                    <Select.Option value="Feb to Apr">Feb to Apr</Select.Option>
-                    <Select.Option value="Feb to Jul">Feb to Jul</Select.Option>
-                    <Select.Option value="Feb to Dec">Feb to Dec</Select.Option>
-                    <Select.Option value="Mar to May">Mar to May</Select.Option>
-                    <Select.Option value="Mar to Aug">Mar to Aug</Select.Option>
-                    <Select.Option value="Mar to Dec">Mar to Dec</Select.Option>
-
-                    {/* Quarter 2 Ranges */}
-                    <Select.Option value="Apr to Jun">
-                      Apr to Jun (Q2)
-                    </Select.Option>
-                    <Select.Option value="Apr to Sep">
-                      Apr to Sep (Q2-Q3)
-                    </Select.Option>
-                    <Select.Option value="Apr to Dec">
-                      Apr to Dec (Q2-Q4)
-                    </Select.Option>
-                    <Select.Option value="May to Jul">May to Jul</Select.Option>
-                    <Select.Option value="May to Oct">May to Oct</Select.Option>
-                    <Select.Option value="May to Dec">May to Dec</Select.Option>
-                    <Select.Option value="Jun to Aug">Jun to Aug</Select.Option>
-                    <Select.Option value="Jun to Nov">Jun to Nov</Select.Option>
-                    <Select.Option value="Jun to Dec">Jun to Dec</Select.Option>
-
-                    {/* Quarter 3 Ranges */}
-                    <Select.Option value="Jul to Sep">
-                      Jul to Sep (Q3)
-                    </Select.Option>
-                    <Select.Option value="Jul to Dec">
-                      Jul to Dec (Q3-Q4)
-                    </Select.Option>
-                    <Select.Option value="Aug to Oct">Aug to Oct</Select.Option>
-                    <Select.Option value="Aug to Dec">Aug to Dec</Select.Option>
-                    <Select.Option value="Sep to Nov">Sep to Nov</Select.Option>
-                    <Select.Option value="Sep to Dec">Sep to Dec</Select.Option>
-
-                    {/* Quarter 4 Ranges */}
-                    <Select.Option value="Oct to Dec">
-                      Oct to Dec (Q4)
-                    </Select.Option>
-                    <Select.Option value="Nov to Dec">Nov to Dec</Select.Option>
-
-                    {/* General Durations */}
-                    <Select.Option value="Less than 6 months">
-                      Less than 6 months
-                    </Select.Option>
+              
                     <Select.Option value="6-12 months">6-12 months</Select.Option>
                     <Select.Option value="1 year+">1 year+</Select.Option>
                   </Select>
@@ -1604,52 +1530,154 @@ export default function AddProperty() {
                   Photos (minimum add 2 photos)
                 </h3>
                 <div className={styles.photoUploadSection}>
-                  <div className={styles.photoUploadGrid}>
-                    {Array.from({ length: 10 }).map((_, index) => (
-                      <div className={styles.photoUploadBox} key={index}>
-                        <label>
-                          <input
-                            type="file"
-                            name={`photos[${index}]`}
-                            accept="image/jpeg, image/png, image/gif"
-                            onChange={(event) => {
-                              handlePropertyImageChange(event, index);
-                            }}
-                            style={{ display: "none" }}
-                          />
-                          <div className={styles.photoUploadPlaceholder}>
-                            <span className={styles.uploadIcon}>📤</span>
-                            <p>Choose an image</p>
-                            <p>JPG, PNG, GIF, Max 10 MB</p>
-                          </div>
-                        </label>
-                        {values.photos[index] && (
-                          <div className={styles.preview}>
-                            <Image
-                              src={
-                                typeof values.photos[index] === "string" 
-                                  ? values.photos[index] 
-                                  : URL.createObjectURL(values.photos[index])
-                              }
-                              alt={`Preview ${index + 1}`}
-                              width={200}
-                              height={200}
-                              objectFit="cover"
-                            />
-                            <button
-                              type="button"
-                              className={styles.removeButton}
-                              onClick={() =>
-                                setFieldValue(`photos.${index}`, null)
-                              }
-                            >
-                              ✖
-                            </button>
-                          </div>
-                        )}
+                  <div
+                    className={styles.photoDropZone}
+                    onDragOver={(e) => {
+                      e.preventDefault();
+                      e.currentTarget.classList.add(styles.dragOver);
+                    }}
+                    onDragLeave={(e) => {
+                      e.currentTarget.classList.remove(styles.dragOver);
+                    }}
+                    onDrop={(e) => {
+                      e.preventDefault();
+                      e.currentTarget.classList.remove(styles.dragOver);
+
+                      const files = Array.from(e.dataTransfer.files);
+                      const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+
+                      // Filter only image files
+                      const imageFiles = files.filter(file =>
+                        file.type === 'image/jpeg' ||
+                        file.type === 'image/png' ||
+                        file.type === 'image/gif' ||
+                        file.type === 'image/webp'
+                      );
+
+                      if (imageFiles.length === 0) {
+                        toast.error('Please drop only image files (JPG, PNG, GIF, WebP)');
+                        return;
+                      }
+
+                      // Check individual file sizes
+                      const oversizedFiles = imageFiles.filter(file => file.size > MAX_FILE_SIZE);
+                      if (oversizedFiles.length > 0) {
+                        toast.error(`${oversizedFiles.length} image(s) exceed the 10MB limit. Please resize them before uploading.`);
+                        return;
+                      }
+
+                      // Filter out null values and add new files
+                      const currentPhotos = values.photos.filter(photo => photo !== null);
+                      const newPhotos = [...currentPhotos, ...imageFiles];
+
+                      if (newPhotos.length > 100) {
+                        toast.warning('Maximum 100 photos allowed. Only added as many as possible.');
+                        setFieldValue("photos", newPhotos.slice(0, 20));
+                      } else {
+                        setFieldValue("photos", newPhotos);
+                      }
+                      toast.success(`${imageFiles.length} photo(s) added successfully!`);
+                    }}
+                  >
+                    <label className={styles.dropZoneLabel}>
+                      <input
+                        type="file"
+                        accept="image/jpeg,image/png,image/gif,image/webp"
+                        multiple
+                        onChange={(e) => {
+                          const files = Array.from(e.target.files);
+                          const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+
+                          // Check individual file sizes
+                          const oversizedFiles = files.filter(file => file.size > MAX_FILE_SIZE);
+                          if (oversizedFiles.length > 0) {
+                            toast.error(`${oversizedFiles.length} image(s) exceed the 10MB limit. Please resize them before uploading.`);
+                            return;
+                          }
+
+                          // Filter out null values and add new files
+                          const currentPhotos = values.photos.filter(photo => photo !== null);
+                          const newPhotos = [...currentPhotos, ...files];
+
+                          if (newPhotos.length > 20) {
+                            toast.warning('Maximum 20 photos allowed. Only added as many as possible.');
+                            setFieldValue("photos", newPhotos.slice(0, 20));
+                          } else {
+                            setFieldValue("photos", newPhotos);
+                          }
+                          
+                          if (files.length > 0) {
+                            toast.success(`${files.length} photo(s) added successfully!`);
+                          }
+                          // Reset input to allow re-selecting same files
+                          e.target.value = '';
+                        }}
+                        style={{ display: "none" }}
+                      />
+                      <div className={styles.dropZoneContent}>
+                        <div className={styles.uploadIconWrapper}>
+                          <svg className={styles.uploadSvgIcon} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                          </svg>
+                        </div>
+                        <h2 className={styles.uploadMainHeading}>Upload Your Photos</h2>
+                        <p className={styles.uploadSubtext}>Drag & drop images or click to browse</p>
+                        <span className={styles.dropZoneHint}>JPG, PNG, GIF or WebP (Max 10MB per file, up to 20 photos)</span>
                       </div>
-                    ))}
+                    </label>
+
+                    {/* Preview Grid - Show after upload */}
+                    {values.photos.filter(photo => photo !== null).length > 0 && (
+                      <div className={styles.uploadedPhotosSection}>
+                        <div className={styles.photoCountBadge}>
+                          📸 {values.photos.filter(photo => photo !== null).length}/{20} Photos Uploaded
+                        </div>
+                        <div className={styles.photoPreviewGrid}>
+                          {values.photos.map((photo, index) => {
+                            if (!photo) return null;
+                            return (
+                              <div className={styles.photoPreviewBox} key={index}>
+                                <div className={styles.preview}>
+                                  <Image
+                                    src={
+                                      typeof photo === "string"
+                                        ? photo
+                                        : URL.createObjectURL(photo)
+                                    }
+                                    alt={`Preview ${index + 1}`}
+                                    width={200}
+                                    height={200}
+                                    objectFit="cover"
+                                  />
+                                  <button
+                                    type="button"
+                                    className={styles.removeButton}
+                                    onClick={() => {
+                                      const newPhotos = values.photos.filter((_, i) => i !== index);
+                                      setFieldValue("photos", newPhotos);
+                                      toast.info('Photo removed');
+                                    }}
+                                    title="Remove this photo"
+                                  >
+                                    ✕
+                                  </button>
+                                </div>
+                                <p className={styles.photoNumber}>
+                                  #{index + 1}
+                                  {typeof photo !== "string" && (
+                                    <div style={{ fontSize: '11px', color: '#999', marginTop: '2px' }}>
+                                      {(photo.size / 1024 / 1024).toFixed(2)} MB
+                                    </div>
+                                  )}
+                                </p>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    )}
                   </div>
+
                   <ErrorMessage name="photos">
                     {(msg) => <div className={styles.error}>{msg}</div>}
                   </ErrorMessage>

@@ -59,3 +59,109 @@
   font-family: 'Gothic A1', sans-serif !important;
   margin-top: 20px;
 }
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .loginBox {
+    width: 480px;
+    padding: 18px;
+  }
+
+  .loginBox h3 {
+    font-size: 32px;
+  }
+
+  .title h2 {
+    font-size: 36px;
+  }
+}
+
+@media (max-width: 768px) {
+  .rightBody {
+    padding: 20px;
+  }
+
+  .loginBox {
+    width: 100%;
+    max-width: 420px;
+    padding: 24px 20px;
+    box-shadow: 0px 0px 15px #ccc;
+  }
+
+  .loginBox img {
+    width: 120px;
+  }
+
+  .loginBox h3 {
+    font-size: 28px;
+    margin-top: 8px;
+  }
+
+  .title h2 {
+    font-size: 32px;
+    margin: 12px;
+  }
+
+  .loginBox label {
+    font-size: 15px;
+    margin: 6px 0;
+  }
+
+  .loginBox input {
+    height: 50px;
+    border-radius: 10px;
+  }
+
+  .submitBtn {
+    height: 50px;
+    font-size: 18px;
+    border-radius: 10px;
+    margin-top: 18px;
+  }
+}
+
+@media (max-width: 480px) {
+  .rightBody {
+    padding: 16px;
+  }
+
+  .loginBox {
+    width: 100%;
+    max-width: 100%;
+    padding: 20px 16px;
+    box-shadow: 0px 0px 10px #ccc;
+    border-radius: 8px;
+  }
+
+  .loginBox img {
+    width: 100px;
+  }
+
+  .loginBox h3 {
+    font-size: 24px;
+    margin-top: 6px;
+  }
+
+  .title h2 {
+    font-size: 28px;
+    margin: 10px;
+  }
+
+  .loginBox label {
+    font-size: 14px;
+    margin: 5px 0;
+  }
+
+  .loginBox input {
+    height: 45px;
+    border-radius: 8px;
+    font-size: 14px;
+  }
+
+  .submitBtn {
+    height: 45px;
+    font-size: 16px;
+    border-radius: 8px;
+    margin-top: 16px;
+  }
+}

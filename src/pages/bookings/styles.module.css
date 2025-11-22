@@ -61,4 +61,81 @@
 
 .bookingDetailsCard :global(.ant-descriptions-item-content) {
   font-size: 14px;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .tableBox {
+    padding: 16px;
+  }
+}
+
+@media (max-width: 768px) {
+  .title {
+    margin-bottom: 16px;
+    padding: 8px;
+  }
+
+  .title h3 {
+    font-size: 20px;
+  }
+
+  .tableBox {
+    padding: 12px;
+    border-radius: 6px;
+  }
+
+  .statusTag {
+    font-size: 11px;
+    padding: 2px 6px;
+  }
+
+  .actionButton {
+    margin-right: 4px;
+    font-size: 12px;
+  }
+
+  .bookingDetailsCard {
+    margin-top: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .title {
+    margin-bottom: 12px;
+    padding: 6px;
+  }
+
+  .title h3 {
+    font-size: 18px;
+  }
+
+  .tableBox {
+    padding: 10px;
+    overflow-x: auto;
+  }
+
+  .statusTag {
+    font-size: 10px;
+    padding: 1px 4px;
+  }
+
+  .actionButton {
+    margin-right: 2px;
+    font-size: 11px;
+    padding: 4px 8px;
+  }
+
+  .modalSelect {
+    margin-bottom: 12px;
+  }
+
+  .bookingDetailsCard {
+    margin-top: 12px;
+  }
+
+  .bookingDetailsCard :global(.ant-descriptions-item-label),
+  .bookingDetailsCard :global(.ant-descriptions-item-content) {
+    font-size: 13px;
+  }
 } 

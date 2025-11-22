@@ -84,4 +84,103 @@
   .descriptions :global(.ant-descriptions-item-content) {
     word-break: break-word;
   }
+
+  /* Responsive Design */
+  @media (max-width: 1024px) {
+    .container {
+      padding: 20px;
+    }
+
+    .tableBox {
+      padding: 16px;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .title {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .title h3 {
+      font-size: 20px;
+    }
+
+    .title button {
+      width: 100%;
+      height: 36px;
+      font-size: 14px !important;
+    }
+
+    .tableBox {
+      padding: 12px;
+      border-radius: 6px;
+    }
+
+    .tableBox textarea {
+      font-size: 14px;
+      padding: 8px;
+      margin-bottom: 16px;
+    }
+
+    .tableBox .btn.submit {
+      font-size: 14px;
+      padding: 8px 12px;
+    }
+
+    .container {
+      padding: 16px;
+    }
+
+    .card {
+      border-radius: 6px;
+    }
+
+    .descriptions :global(.ant-descriptions-item-label),
+    .descriptions :global(.ant-descriptions-item-content) {
+      font-size: 13px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .title {
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .title h3 {
+      font-size: 18px;
+    }
+
+    .title button {
+      height: 34px;
+      font-size: 13px !important;
+    }
+
+    .tableBox {
+      padding: 10px;
+    }
+
+    .tableBox textarea {
+      font-size: 13px;
+      padding: 6px;
+      margin-bottom: 12px;
+    }
+
+    .tableBox .btn.submit {
+      font-size: 13px;
+      padding: 6px 10px;
+    }
+
+    .container {
+      padding: 12px;
+    }
+
+    .descriptions :global(.ant-descriptions-item-label),
+    .descriptions :global(.ant-descriptions-item-content) {
+      font-size: 12px;
+    }
+  }
   

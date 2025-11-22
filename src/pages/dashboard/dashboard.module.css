@@ -174,35 +174,217 @@
 }
 
 /* Responsive adjustments */
+@media (max-width: 1024px) {
+  .dashboardContainer {
+    padding: 20px;
+  }
+
+  .statsRow {
+    margin-bottom: 32px;
+  }
+
+  .contentRow {
+    margin-top: 32px;
+  }
+}
+
 @media (max-width: 768px) {
   .dashboardContainer {
     padding: 16px;
   }
-  
+
   .header {
-    text-align: center;
-    margin-bottom: 32px;
+    text-align: left;
+    margin-bottom: 24px;
+    padding: 0;
   }
-  
+
+  .header h3 {
+    font-size: 20px !important;
+  }
+
+  .header span {
+    font-size: 14px !important;
+  }
+
   .datePickerWrapper {
-    justify-content: center;
+    justify-content: flex-start;
+    margin-top: 16px;
   }
-  
+
+  .statsRow {
+    margin-bottom: 24px;
+  }
+
   .statsCard,
+  .chartCard,
+  .messagesCard,
+  .transactionsCard {
+    padding: 18px;
+  }
+
+  .cardContent {
+    gap: 16px;
+  }
+
+  .cardIcon {
+    height: 48px;
+    width: 48px;
+    font-size: 18px;
+    padding: 12px;
+  }
+
+  .cardDetails h4 {
+    font-size: 20px;
+  }
+
+  .cardDetails .ant-typography-title {
+    font-size: 20px !important;
+  }
+
   .chartCard,
   .messagesCard,
   .transactionsCard {
     padding: 20px;
   }
-  
-  .cardIcon {
-    height: 50px;
-    width: 50px;
-    font-size: 20px;
+
+  .contentRow {
+    margin-top: 24px;
   }
-  
+
+  .viewMoreBtn {
+    height: 44px;
+    font-size: 15px;
+    margin-top: 20px;
+  }
+
+  .transactionsCard .ant-table-cell {
+    padding: 12px !important;
+    font-size: 13px;
+  }
+
+  .messagesCard .ant-list-item {
+    padding: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .dashboardContainer {
+    padding: 12px;
+  }
+
+  .header {
+    margin-bottom: 20px;
+  }
+
+  .header h3 {
+    font-size: 18px !important;
+    margin-bottom: 6px !important;
+  }
+
+  .header span {
+    font-size: 13px !important;
+  }
+
+  .statsRow {
+    margin-bottom: 20px;
+  }
+
+  .statsCard {
+    padding: 16px;
+    border-radius: 12px;
+  }
+
+  .cardContent {
+    gap: 12px;
+    flex-direction: row;
+  }
+
+  .cardIcon {
+    height: 42px;
+    width: 42px;
+    font-size: 16px;
+    padding: 10px;
+    border-radius: 10px;
+  }
+
   .cardDetails h4 {
-    font-size: 20px;
+    font-size: 18px;
+    margin-bottom: 2px;
+  }
+
+  .cardDetails .ant-typography-title {
+    font-size: 18px !important;
+    margin-bottom: 2px !important;
+  }
+
+  .cardDetails .ant-typography {
+    font-size: 12px;
+  }
+
+  .chartCard,
+  .messagesCard,
+  .transactionsCard {
+    padding: 16px;
+    border-radius: 12px;
+  }
+
+  .chartCard h4,
+  .messagesCard h4,
+  .transactionsCard h4 {
+    font-size: 16px !important;
+  }
+
+  .contentRow {
+    margin-top: 20px;
+  }
+
+  .viewMoreBtn {
+    height: 40px;
+    font-size: 14px;
+    margin-top: 16px;
+    border-radius: 10px;
+  }
+
+  .transactionsCard .ant-table-cell {
+    padding: 10px 8px !important;
+    font-size: 12px;
+  }
+
+  .transactionsCard .ant-table-wrapper {
+    overflow-x: auto;
+  }
+
+  .messagesCard .ant-list-item {
+    padding: 10px;
+    margin: 6px 0;
+    border-radius: 6px;
+  }
+
+  .messagesCard .ant-list-item-meta-avatar {
+    margin-right: 12px;
+  }
+
+  .messagesCard .ant-list-item-meta-avatar > div {
+    width: 36px !important;
+    height: 36px !important;
+    font-size: 14px !important;
+  }
+
+  .messagesCard .ant-list-item-meta-title {
+    font-size: 13px;
+  }
+
+  .messagesCard .ant-list-item-meta-description {
+    font-size: 12px;
+  }
+
+  .datePickerWrapper {
+    width: 100%;
+  }
+
+  .datePickerWrapper > * {
+    width: 100%;
   }
 }
 

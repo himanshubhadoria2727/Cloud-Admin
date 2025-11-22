@@ -228,10 +228,11 @@
   margin: 30px auto 0;
   background-color: #E5E5E5;
   border: none;
-  color: white;
+  color: #2c3e50;
   padding: 10px 20px;
   font-size: 16px;
   border-radius: 8px;
+  border: 2px solid #9fa8b1ff;
   transition: background-color 0.3s ease;
   justify-content: center;
   align-items: center;
@@ -285,8 +286,225 @@
 }
 .photoUploadSection {
   margin-bottom: 24px;
+  border-radius: 12px;
+  padding: 0;
+  background: linear-gradient(135deg, #f5f7fa 0%, #f0f3f7 100%);
 }
 
+/* Drop Zone Container */
+.photoDropZone {
+  position: relative;
+  border: 2px dashed #0066cc;
+  border-radius: 12px;
+  padding: 40px 20px;
+  background: linear-gradient(135deg, rgba(0, 102, 204, 0.02) 0%, rgba(0, 150, 255, 0.04) 100%);
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  min-height: 250px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.photoDropZone:hover {
+  border-color: #0052a3;
+  background: linear-gradient(135deg, rgba(0, 102, 204, 0.05) 0%, rgba(0, 150, 255, 0.08) 100%);
+  box-shadow: 0 8px 24px rgba(0, 102, 204, 0.15);
+  transform: translateY(-2px);
+}
+
+.photoDropZone.dragOver {
+  border-color: #0052a3;
+  background: linear-gradient(135deg, rgba(0, 102, 204, 0.1) 0%, rgba(0, 150, 255, 0.12) 100%);
+  box-shadow: 0 12px 32px rgba(0, 102, 204, 0.25);
+  transform: scale(1.02);
+}
+
+/* Drop Zone Label */
+.dropZoneLabel {
+  cursor: pointer;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+}
+
+/* Drop Zone Content */
+.dropZoneContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  width: 100%;
+}
+
+.uploadIconWrapper {
+  width: 80px;
+  height: 80px;
+  background: linear-gradient(135deg, #0066cc 0%, #0099ff 100%);
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 20px rgba(0, 102, 204, 0.2);
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.uploadSvgIcon {
+  width: 40px;
+  height: 40px;
+  color: white;
+  stroke-width: 1.5;
+}
+
+.uploadMainHeading {
+  font-size: 24px;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin: 0;
+  letter-spacing: -0.5px;
+}
+
+.uploadSubtext {
+  font-size: 16px;
+  color: #666;
+  margin: 0;
+  font-weight: 500;
+}
+
+.dropZoneHint {
+  font-size: 13px;
+  color: #999;
+  margin-top: 8px;
+  display: block;
+}
+
+/* Uploaded Photos Section */
+.uploadedPhotosSection {
+  margin-top: 32px;
+  padding-top: 32px;
+  border-top: 2px solid rgba(0, 102, 204, 0.1);
+}
+
+.photoCountBadge {
+  display: inline-block;
+  background: linear-gradient(135deg, #0066cc 0%, #0099ff 100%);
+  color: white;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 12px rgba(0, 102, 204, 0.2);
+  letter-spacing: 0.5px;
+}
+
+/* Photo Preview Grid */
+.photoPreviewGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 16px;
+  width: 100%;
+}
+
+.photoPreviewBox {
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  background: white;
+}
+
+.photoPreviewBox:hover {
+  box-shadow: 0 12px 28px rgba(0, 102, 204, 0.15);
+  transform: translateY(-4px) scale(1.02);
+}
+
+.preview {
+  position: relative;
+  width: 100%;
+  height: 160px;
+  overflow: hidden;
+  background: #f0f0f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 12px 12px 0 0;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.photoPreviewBox:hover .preview img {
+  transform: scale(1.05);
+}
+
+.removeButton {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: rgba(255, 77, 79, 0.95);
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 12px rgba(255, 77, 79, 0.3);
+  opacity: 0;
+}
+
+.photoPreviewBox:hover .removeButton {
+  opacity: 1;
+}
+
+.removeButton:hover {
+  background: rgba(255, 77, 79, 1);
+  transform: scale(1.1) rotate(90deg);
+  box-shadow: 0 6px 16px rgba(255, 77, 79, 0.4);
+}
+
+.removeButton:active {
+  transform: scale(0.95);
+}
+
+.photoNumber {
+  padding: 12px;
+  margin: 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: #666;
+  background: #f9fafb;
+  text-align: center;
+  border-top: 1px solid #f0f0f0;
+  letter-spacing: 0.5px;
+}
+
+/* Old styles for compatibility */
 .photoUploadGrid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
@@ -321,136 +539,176 @@
   margin-bottom: 8px;
 }
 
-.preview {
-  position: relative;
-  width: 100%;
-  height: 100%;
-}
-
-.preview img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: 8px;
-}
-
-.removeButton {
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  background: rgba(0, 0, 0, 0.6);
-  color: #fff;
-  border: none;
-  border-radius: 50%;
-  width: 24px;
-  height: 24px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-}
-
-.removeButton:hover {
-  background: rgba(0, 0, 0, 0.8);
-}
-
 .bedroomDetailsSection {
-  margin: 20px 0;
+  margin: 28px 0;
 }
 
 .bedroomCard {
-  background: #f5f5f5;
-  border-radius: 8px;
-  padding: 20px;
+  background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
+  border-radius: 12px;
+  padding: 24px;
   margin-bottom: 20px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  border: 2px solid #e5e7eb;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.bedroomCard::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #3861fb 0%, #5b7cff 100%);
+}
+
+.bedroomCard:hover {
+  box-shadow: 0 8px 20px rgba(56, 97, 251, 0.15);
+  border-color: #3861fb;
+  transform: translateY(-2px);
 }
 
 .bedroomCard h4 {
-  margin-bottom: 15px;
-  color: #333;
+  margin: 0 0 16px 0;
+  color: #1a1a1a;
   font-size: 18px;
+  font-weight: 700;
+  padding-left: 0;
 }
 
 .checkboxRow {
-  margin-top: 15px;
+  margin-top: 16px;
+  padding: 12px 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.checkboxRow input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: #3861fb;
+  cursor: pointer;
 }
 
 .bookingOptionsContainer {
-    background-color: #f5f5f5;
-    padding: 20px;
-    border-radius: 8px;
+    background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
+    padding: 24px;
+    border-radius: 12px;
     margin-bottom: 20px;
+    border: 2px solid #e5e7eb;
+    transition: all 0.3s ease;
+}
+
+.bookingOptionsContainer:hover {
+    border-color: #3861fb;
+    box-shadow: 0 4px 16px rgba(56, 97, 251, 0.1);
 }
 
 .radioGroup {
-    margin-bottom: 15px;
-    padding: 8px;
-    border-radius: 6px;
-    transition: background-color 0.2s;
+    margin-bottom: 12px;
+    padding: 12px 16px;
+    border-radius: 8px;
+    background: white;
+    border: 2px solid #e5e7eb;
+    transition: all 0.3s ease;
+    cursor: pointer;
 }
 
 .radioGroup:hover {
-    background-color: #f0f0f0;
+    border-color: #3861fb;
+    background: linear-gradient(135deg, #f5f7ff 0%, #f0f3ff 100%);
+    box-shadow: 0 2px 8px rgba(56, 97, 251, 0.1);
+}
+
+.radioGroup input[type="radio"]:checked + .radioLabel {
+    color: #3861fb;
+    font-weight: 600;
 }
 
 .radioLabel {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
     font-size: 14px;
-    color: #333;
+    color: #4b5563;
     cursor: pointer;
     user-select: none;
+    margin: 0;
 }
 
 .radioLabel input[type="radio"] {
     width: 18px;
     height: 18px;
-    margin-right: 8px;
-    accent-color: teal;
+    margin: 0;
+    accent-color: #3861fb;
+    cursor: pointer;
 }
 
 .securityDepositInput {
-    margin-top: 10px;
-    margin-left: 24px;
+    margin-top: 12px;
+    margin-left: 28px;
+    padding: 12px 16px;
+    background: white;
+    border: 2px solid #e5e7eb;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.securityDepositInput:hover {
+    border-color: #3861fb;
+    background: #f5f7ff;
+}
+
+.securityDepositInput:focus-within {
+    border-color: #3861fb;
+    box-shadow: 0 0 0 3px rgba(56, 97, 251, 0.1);
 }
 
 .instantBookingOption {
     margin-top: 20px;
-    padding-top: 15px;
-    border-top: 1px solid #ddd;
+    padding-top: 16px;
+    border-top: 2px solid #e5e7eb;
 }
 
 .verificationCheckbox {
     margin: 20px 0;
-    padding: 15px;
-    background-color: #f8f8f8;
-    border-radius: 8px;
-    border: 1px solid #e8e8e8;
+    padding: 16px;
+    background: linear-gradient(135deg, #fef3c7 0%, #fef08a 100%);
+    border-radius: 10px;
+    border: 2px solid #fcd34d;
+    transition: all 0.3s ease;
+}
+
+.verificationCheckbox:hover {
+    box-shadow: 0 4px 12px rgba(252, 211, 77, 0.2);
 }
 
 .bookingTypeOptions {
     margin-top: 20px;
-    padding-top: 15px;
-    border-top: 1px solid #ddd;
+    padding-top: 16px;
+    border-top: 2px solid #e5e7eb;
     display: flex;
-    gap: 30px;
+    gap: 20px;
 }
 
 .sectionTitle {
-    font-size: 16px;
-    font-weight: 600;
-    color: #333;
-    margin-bottom: 15px;
-    padding-bottom: 8px;
-    border-bottom: 1px solid #eee;
+    font-size: 15px;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin-bottom: 16px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #f0f3f7;
+    letter-spacing: 0.3px;
 }
 
 .bookingTypeSection {
-    margin-top: 30px;
+    margin-top: 28px;
     padding-top: 20px;
-    border-top: 2px solid #ddd;
+    border-top: 2px solid #e5e7eb;
 }
 
 /* Bedroom Images Styling */
@@ -566,4 +824,414 @@
 
 .statusSwitch :global(.ant-switch-checked) {
   background-color: #1890ff;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .container {
+    padding: 24px;
+  }
+
+  .title {
+    font-size: 28px;
+  }
+
+  .formCard {
+    padding: 24px;
+  }
+
+  .formTitle {
+    font-size: 20px;
+  }
+
+  .amenitiesGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .bedroomCard {
+    padding: 20px;
+  }
+
+  .bookingOptionsContainer {
+    padding: 20px;
+  }
+
+  .photoPreviewGrid {
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 12px;
+  }
+
+  .uploadIconWrapper {
+    width: 70px;
+    height: 70px;
+  }
+
+  .uploadSvgIcon {
+    width: 35px;
+    height: 35px;
+  }
+
+  .uploadMainHeading {
+    font-size: 20px;
+  }
+
+  .uploadSubtext {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 16px;
+  }
+
+  .title {
+    font-size: 22px;
+    margin-bottom: 16px;
+  }
+
+  .formCard {
+    padding: 20px;
+  }
+
+  .formTitle {
+    font-size: 18px;
+    margin: 20px 0 14px 0;
+  }
+
+  .counterGroup {
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .counterSection {
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .counter {
+    width: 100%;
+  }
+
+  .amenitiesGrid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 6px;
+  }
+
+  .checkboxLabel {
+    font-size: 13px;
+    padding: 10px 12px;
+  }
+
+  .photoUploadGrid {
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 12px;
+  }
+
+  .photoUploadBox {
+    height: 120px;
+  }
+
+  .photoPreviewGrid {
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 12px;
+  }
+
+  .preview {
+    height: 120px;
+  }
+
+  .bedroomCard {
+    padding: 16px;
+  }
+
+  .bedroomCard h4 {
+    font-size: 16px;
+    margin-bottom: 12px;
+  }
+
+  .bookingOptionsContainer {
+    padding: 16px;
+  }
+
+  .radioGroup {
+    margin-bottom: 10px;
+    padding: 10px 12px;
+  }
+
+  .sectionTitle {
+    font-size: 14px;
+    margin-bottom: 12px;
+  }
+
+  .bookingTypeOptions {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .submitButton,
+  .addButton {
+    width: 100%;
+    padding: 10px 16px;
+    font-size: 14px;
+  }
+
+  .verificationCheckbox {
+    padding: 12px;
+    border-radius: 8px;
+  }
+
+  .photoDropZone {
+    padding: 30px 16px;
+    min-height: 200px;
+  }
+
+  .uploadIconWrapper {
+    width: 60px;
+    height: 60px;
+  }
+
+  .uploadSvgIcon {
+    width: 30px;
+    height: 30px;
+  }
+
+  .uploadMainHeading {
+    font-size: 18px;
+  }
+
+  .uploadSubtext {
+    font-size: 14px;
+  }
+
+  .propertyCard {
+    margin: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 12px;
+  }
+
+  .title {
+    font-size: 20px;
+    margin-bottom: 12px;
+  }
+
+  .title::before {
+    height: 20px;
+  }
+
+  .formCard {
+    padding: 16px;
+    margin-bottom: 16px;
+  }
+
+  .formTitle {
+    font-size: 16px;
+    margin: 16px 0 12px 0;
+  }
+
+  .formTitle::before {
+    height: 20px;
+  }
+
+  .amenitiesGrid {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .checkboxLabel {
+    font-size: 12px;
+    padding: 8px 10px;
+  }
+
+  .photoUploadGrid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+
+  .photoUploadBox {
+    height: 100px;
+  }
+
+  .photoPreviewGrid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+
+  .preview {
+    height: 100px;
+  }
+
+  .photoNumber {
+    font-size: 11px;
+    padding: 6px;
+  }
+
+  .removeButton {
+    width: 24px;
+    height: 24px;
+    font-size: 12px;
+    top: 6px;
+    right: 6px;
+  }
+
+  .photoDropZone {
+    padding: 20px 12px;
+    min-height: 180px;
+  }
+
+  .uploadIconWrapper {
+    width: 50px;
+    height: 50px;
+  }
+
+  .uploadSvgIcon {
+    width: 26px;
+    height: 26px;
+  }
+
+  .uploadMainHeading {
+    font-size: 18px;
+    margin-bottom: 8px;
+  }
+
+  .uploadSubtext {
+    font-size: 12px;
+    margin-bottom: 12px;
+  }
+
+  .dropZoneHint {
+    font-size: 11px;
+    padding: 6px 12px;
+  }
+
+  .uploadedPhotosSection {
+    margin-top: 20px;
+    padding-top: 20px;
+  }
+
+  .photoCountBadge {
+    font-size: 12px;
+    padding: 8px 14px;
+  }
+
+  .counterControls button {
+    width: 32px;
+    height: 32px;
+    font-size: 16px;
+  }
+
+  .counterControls span {
+    font-size: 20px;
+    min-width: 36px;
+  }
+
+  .bedroomCard {
+    padding: 12px;
+  }
+
+  .bedroomCard h4 {
+    font-size: 14px;
+    margin-bottom: 10px;
+  }
+
+  .bedroomPhotoBox {
+    width: 80px;
+    height: 80px;
+  }
+
+  .bedroomPhotoGrid {
+    gap: 8px;
+  }
+
+  .bookingOptionsContainer {
+    padding: 12px;
+  }
+
+  .radioGroup {
+    margin-bottom: 8px;
+    padding: 8px 10px;
+  }
+
+  .radioLabel {
+    font-size: 12px;
+  }
+
+  .securityDepositInput {
+    margin-top: 8px;
+    margin-left: 24px;
+    padding: 10px 12px;
+  }
+
+  .verificationCheckbox {
+    padding: 10px;
+    border-radius: 6px;
+  }
+
+  .sectionTitle {
+    font-size: 13px;
+    margin-bottom: 10px;
+  }
+
+  .bookingTypeOptions {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .submitButton,
+  .addButton {
+    width: 100%;
+    padding: 10px 14px;
+    font-size: 13px;
+    justify-content: center;
+  }
+
+  .submitButtonContainer {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .dropdown_menu {
+    padding: 8px 12px;
+    font-size: 13px;
+  }
+
+  .error {
+    font-size: 11px;
+  }
+
+  .dropdownContainer label {
+    font-size: 12px;
+  }
+
+  .dropdown :global(.ant-select-selector) {
+    padding: 6px 10px !important;
+  }
+
+  .counter {
+    padding: 12px;
+  }
+
+  .counter label {
+    font-size: 12px;
+    margin-bottom: 8px;
+  }
+
+  .propertyCard {
+    margin: 12px;
+  }
+
+  .propertyTitle {
+    font-size: 16px;
+  }
+
+  .location,
+  .propertySeller,
+  .propertyDetails,
+  .propertyPrice {
+    font-size: 14px;
+  }
 }

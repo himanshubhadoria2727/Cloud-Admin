@@ -13,3 +13,31 @@
   margin-top: 15px;
   margin-bottom: 4px;
 }
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .title h3 {
+    font-size: 20px;
+    margin-bottom: 8px;
+  }
+
+  .dateFilter {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    margin-top: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .title h3 {
+    font-size: 18px;
+    margin-bottom: 6px;
+  }
+
+  .dateFilter {
+    gap: 10px;
+    margin-top: 10px;
+    margin-bottom: 2px;
+  }
+}
