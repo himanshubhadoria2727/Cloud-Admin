@@ -1572,7 +1572,7 @@ export default function AddProperty() {
 
                       if (newPhotos.length > 100) {
                         toast.warning('Maximum 100 photos allowed. Only added as many as possible.');
-                        setFieldValue("photos", newPhotos.slice(0, 20));
+                        setFieldValue("photos", newPhotos.slice(0, 100));
                       } else {
                         setFieldValue("photos", newPhotos);
                       }
@@ -1599,9 +1599,9 @@ export default function AddProperty() {
                           const currentPhotos = values.photos.filter(photo => photo !== null);
                           const newPhotos = [...currentPhotos, ...files];
 
-                          if (newPhotos.length > 20) {
-                            toast.warning('Maximum 20 photos allowed. Only added as many as possible.');
-                            setFieldValue("photos", newPhotos.slice(0, 20));
+                          if (newPhotos.length > 100) {
+                            toast.warning('Maximum 100 photos allowed. Only added as many as possible.');
+                            setFieldValue("photos", newPhotos.slice(0, 100));
                           } else {
                             setFieldValue("photos", newPhotos);
                           }
@@ -1622,7 +1622,7 @@ export default function AddProperty() {
                         </div>
                         <h2 className={styles.uploadMainHeading}>Upload Your Photos</h2>
                         <p className={styles.uploadSubtext}>Drag & drop images or click to browse</p>
-                        <span className={styles.dropZoneHint}>JPG, PNG, GIF or WebP (Max 10MB per file, up to 20 photos)</span>
+                        <span className={styles.dropZoneHint}>JPG, PNG, GIF or WebP (Max 10MB per file, up to 100 photos)</span>
                       </div>
                     </label>
 
@@ -1630,7 +1630,7 @@ export default function AddProperty() {
                     {values.photos.filter(photo => photo !== null).length > 0 && (
                       <div className={styles.uploadedPhotosSection}>
                         <div className={styles.photoCountBadge}>
-                          📸 {values.photos.filter(photo => photo !== null).length}/{20} Photos Uploaded
+                          📸 {values.photos.filter(photo => photo !== null).length}/{100} Photos Uploaded
                         </div>
                         <div className={styles.photoPreviewGrid}>
                           {values.photos.map((photo, index) => {

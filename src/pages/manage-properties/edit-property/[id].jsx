@@ -167,7 +167,7 @@ export default function EditProperty() {
     landlordInsurance: property?.landlordInsurance !== false,
     amenities: property?.amenities || [],
     utilities: property?.utilities || [],
-    photos: property?.images || Array(10).fill(null),
+    photos: property?.images || [],
     pricing: property?.price || "",
     latitude: property?.latitude || "",
     longitude: property?.longitude || "",
@@ -479,7 +479,30 @@ export default function EditProperty() {
           onSubmit={handleSubmit}
           enableReinitialize
         >
-          {({ values, setFieldValue }) => (
+          {({ values, setFieldValue }) => {
+            const handleImageChange = (e) => {
+              const files = Array.from(e.target.files);
+              const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+              const MAX_TOTAL_SIZE = 50 * 1024 * 1024; // 50MB
+
+              // Check individual file sizes
+              const oversizedFiles = files.filter(file => file.size > MAX_FILE_SIZE);
+              if (oversizedFiles.length > 0) {
+                  toast.error(`Some images exceed the 10MB limit. Please resize them before uploading.`);
+                  return;
+              }
+
+              // Check total size
+              const totalSize = files.reduce((acc, file) => acc + file.size, 0);
+              if (totalSize > MAX_TOTAL_SIZE) {
+                  toast.error(`Total size of images exceeds 50MB. Please reduce the number of images or their size.`);
+                  return;
+              }
+
+              setFieldValue("photos", [...values.photos, ...files]);
+            };
+
+            return (
             <Form className={styles.formCard}>
               <h3 className={styles.formTitle}>Basic Details</h3>
               <Row gutter={16}>
@@ -1646,61 +1669,154 @@ export default function EditProperty() {
                 Photos (minimum add 2 photos)
               </h3>
               <div className={styles.photoUploadSection}>
-                <div className={styles.photoUploadGrid}>
-                  {Array.from({ length: 10 }).map((_, index) => (
-                    <div className={styles.photoUploadBox} key={index}>
-                      <label>
-                        <input
-                          type="file"
-                          name={`photos[${index}]`}
-                          accept="image/jpeg, image/png, image/gif"
-                          onChange={(event) => {
-                            const file = event.target.files[0];
-                            if (file) {
-                              // Validate file size
-                              if (!validateFileSize(file)) {
-                                return;
-                              }
-                              setFieldValue(`photos.${index}`, file);
-                            } else {
-                              setFieldValue(`photos.${index}`, null);
-                            }
-                          }}
-                          style={{ display: "none" }}
-                        />
-                        <div className={styles.photoUploadPlaceholder}>
-                          <span className={styles.uploadIcon}>📤</span>
-                          <p>Choose an image</p>
-                          <p>JPG, PNG, GIF, Max 10 MB</p>
-                        </div>
-                      </label>
-                      {values.photos[index] && (
-                        <div className={styles.preview}>
-                          <Image
-                            src={
-                              typeof values.photos[index] === "string"
-                                ? values.photos[index]
-                                : URL.createObjectURL(values.photos[index])
-                            }
-                            alt={`Preview ${index + 1}`}
-                            width={200}
-                            height={200}
-                            objectFit="cover"
-                          />
-                          <button
-                            type="button"
-                            className={styles.removeButton}
-                            onClick={() =>
-                              setFieldValue(`photos.${index}`, null)
-                            }
-                          >
-                            ✖
-                          </button>
-                        </div>
-                      )}
+                <div
+                  className={styles.photoDropZone}
+                  onDragOver={(e) => {
+                    e.preventDefault();
+                    e.currentTarget.classList.add(styles.dragOver);
+                  }}
+                  onDragLeave={(e) => {
+                    e.currentTarget.classList.remove(styles.dragOver);
+                  }}
+                  onDrop={(e) => {
+                    e.preventDefault();
+                    e.currentTarget.classList.remove(styles.dragOver);
+
+                    const files = Array.from(e.dataTransfer.files);
+                    const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+
+                    // Filter only image files
+                    const imageFiles = files.filter(file =>
+                      file.type === 'image/jpeg' ||
+                      file.type === 'image/png' ||
+                      file.type === 'image/gif' ||
+                      file.type === 'image/webp'
+                    );
+
+                    if (imageFiles.length === 0) {
+                      toast.error('Please drop only image files (JPG, PNG, GIF, WebP)');
+                      return;
+                    }
+
+                    // Check individual file sizes
+                    const oversizedFiles = imageFiles.filter(file => file.size > MAX_FILE_SIZE);
+                    if (oversizedFiles.length > 0) {
+                      toast.error(`${oversizedFiles.length} image(s) exceed the 10MB limit. Please resize them before uploading.`);
+                      return;
+                    }
+
+                    // Filter out null values and add new files
+                    const currentPhotos = values.photos.filter(photo => photo !== null);
+                    const newPhotos = [...currentPhotos, ...imageFiles];
+
+                    if (newPhotos.length > 100) {
+                      toast.warning('Maximum 100 photos allowed. Only added as many as possible.');
+                      setFieldValue("photos", newPhotos.slice(0, 100));
+                    } else {
+                      setFieldValue("photos", newPhotos);
+                    }
+                    toast.success(`${imageFiles.length} photo(s) added successfully!`);
+                  }}
+                >
+                  <label className={styles.dropZoneLabel}>
+                    <input
+                      type="file"
+                      accept="image/jpeg,image/png,image/gif,image/webp"
+                      multiple
+                      onChange={(e) => {
+                        const files = Array.from(e.target.files);
+                        const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+
+                        // Check individual file sizes
+                        const oversizedFiles = files.filter(file => file.size > MAX_FILE_SIZE);
+                        if (oversizedFiles.length > 0) {
+                          toast.error(`${oversizedFiles.length} image(s) exceed the 10MB limit. Please resize them before uploading.`);
+                          return;
+                        }
+
+                        // Filter out null values and add new files
+                        const currentPhotos = values.photos.filter(photo => photo !== null);
+                        const newPhotos = [...currentPhotos, ...files];
+
+                        if (newPhotos.length > 100) {
+                          toast.warning('Maximum 100 photos allowed. Only added as many as possible.');
+                          setFieldValue("photos", newPhotos.slice(0, 100));
+                        } else {
+                          setFieldValue("photos", newPhotos);
+                        }
+
+                        if (files.length > 0) {
+                          toast.success(`${files.length} photo(s) added successfully!`);
+                        }
+                        // Reset input to allow re-selecting same files
+                        e.target.value = '';
+                      }}
+                      style={{ display: "none" }}
+                    />
+                    <div className={styles.dropZoneContent}>
+                      <div className={styles.uploadIconWrapper}>
+                        <svg className={styles.uploadSvgIcon} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        </svg>
+                      </div>
+                      <h2 className={styles.uploadMainHeading}>Upload Your Photos</h2>
+                      <p className={styles.uploadSubtext}>Drag & drop images or click to browse</p>
+                      <span className={styles.dropZoneHint}>JPG, PNG, GIF or WebP (Max 10MB per file, up to 100 photos)</span>
                     </div>
-                  ))}
+                  </label>
+
+                  {/* Preview Grid - Show after upload */}
+                  {values.photos.filter(photo => photo !== null).length > 0 && (
+                    <div className={styles.uploadedPhotosSection}>
+                      <div className={styles.photoCountBadge}>
+                        📸 {values.photos.filter(photo => photo !== null).length}/{100} Photos Uploaded
+                      </div>
+                      <div className={styles.photoPreviewGrid}>
+                        {values.photos.map((photo, index) => {
+                          if (!photo) return null;
+                          return (
+                            <div className={styles.photoPreviewBox} key={index}>
+                              <div className={styles.preview}>
+                                <Image
+                                  src={
+                                    typeof photo === "string"
+                                      ? photo
+                                      : URL.createObjectURL(photo)
+                                  }
+                                  alt={`Preview ${index + 1}`}
+                                  width={200}
+                                  height={200}
+                                  objectFit="cover"
+                                />
+                                <button
+                                  type="button"
+                                  className={styles.removeButton}
+                                  onClick={() => {
+                                    const newPhotos = values.photos.filter((_, i) => i !== index);
+                                    setFieldValue("photos", newPhotos);
+                                    toast.info('Photo removed');
+                                  }}
+                                  title="Remove this photo"
+                                >
+                                  ✕
+                                </button>
+                              </div>
+                              <p className={styles.photoNumber}>
+                                #{index + 1}
+                                {typeof photo !== "string" && (
+                                  <div style={{ fontSize: '11px', color: '#999', marginTop: '2px' }}>
+                                    {(photo.size / 1024 / 1024).toFixed(2)} MB
+                                  </div>
+                                )}
+                              </p>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
                 </div>
+
                 <ErrorMessage name="photos">
                   {(msg) => <div className={styles.error}>{msg}</div>}
                 </ErrorMessage>
@@ -1727,7 +1843,8 @@ export default function EditProperty() {
                 </button>
               </div>
             </Form>
-          )}
+            );
+          }}
         </Formik>
       </div>
     </LayoutHoc>
