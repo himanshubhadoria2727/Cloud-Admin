@@ -4,9 +4,10 @@ const path = require("path");
 const nextConfig = {
   reactStrictMode: true,
   images: {
-    domains: ["145.223.23.97","localhost"],
+    domains: ["145.223.23.97","localhost","cloudaccomodation.com"],
   },
   webpack(config) {
+
     // Add alias for '@' to resolve 'src' directory
     config.resolve.alias["@"] = path.resolve(__dirname, "src");
 

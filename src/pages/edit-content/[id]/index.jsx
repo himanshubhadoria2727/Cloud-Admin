@@ -39,7 +39,6 @@ export default function EditContent() {
             bathrooms: 0,
             squareFeet: 0,
             kitchen: 0,
-            yearOfConstruction: new Date().getFullYear(),
             roomType: "private",
             kitchenType: "private",
             bathroomType: "private",
@@ -84,7 +83,6 @@ export default function EditContent() {
                         bathrooms: 0,
                         squareFeet: 0,
                         kitchen: 0,
-                        yearOfConstruction: new Date().getFullYear(),
                         roomType: "private",
                         kitchenType: "private",
                         bathroomType: "private",
@@ -129,7 +127,6 @@ export default function EditContent() {
         'overview.bathrooms': Yup.number().min(0, "Bathrooms cannot be negative").required("Bathrooms is required"),
         'overview.squareFeet': Yup.number().min(0, "Square feet cannot be negative").required("Square feet is required"),
         'overview.kitchen': Yup.number().min(0, "Kitchen cannot be negative").required("Kitchen is required"),
-        'overview.yearOfConstruction': Yup.number().required("Year of construction is required"),
         'overview.roomType': Yup.string().required("Room type is required"),
         'overview.kitchenType': Yup.string().required("Kitchen type is required"),
         'overview.bathroomType': Yup.string().required("Bathroom type is required"),
@@ -295,12 +292,6 @@ export default function EditContent() {
                                         <Col span={12}>
                                             <LabelInputComponent title="Square Feet" name="overview.squareFeet" />
                                             <ErrorMessage name="overview.squareFeet">
-                                                {(msg) => <div className="error">{msg}</div>}
-                                            </ErrorMessage>
-                                        </Col>
-                                        <Col span={12}>
-                                            <LabelInputComponent title="Year of Construction" name="overview.yearOfConstruction" />
-                                            <ErrorMessage name="overview.yearOfConstruction">
                                                 {(msg) => <div className="error">{msg}</div>}
                                             </ErrorMessage>
                                         </Col>

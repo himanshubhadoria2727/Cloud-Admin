@@ -116,7 +116,6 @@ export default function AddProperty() {
     rentDetails: "Details about rent",
     termsOfStay: "Terms of stay",
     cancellationPolicy: "Cancellation policy",
-    yearOfConstruction: "",
     minimumStayDuration: "",
     availableFrom: "",
     nearbyUniversities: [],
@@ -162,7 +161,6 @@ export default function AddProperty() {
         termsOfStay: property.termsOfStay || "Terms of stay",
         cancellationPolicy:
           property.cancellationPolicy || "Cancellation policy",
-        yearOfConstruction: property.yearOfConstruction || "",
         minimumStayDuration: property.minimumStayDuration || "",
         availableFrom: property.availableFrom || "",
         nearbyUniversities: property.nearbyUniversities || [],
@@ -214,9 +212,6 @@ export default function AddProperty() {
     termsOfStay: Yup.string().required("Terms of stay are required"),
     cancellationPolicy: Yup.string().required(
       "Cancellation policy is required"
-    ),
-    yearOfConstruction: Yup.number().required(
-      "Year of construction is required"
     ),
     minimumStayDuration: Yup.string().required(
       "Minimum stay duration is required"
@@ -293,8 +288,16 @@ export default function AddProperty() {
     return true;
   };
 
-  const handleSubmit = async (values, { setSubmitting, setErrors }) => {
+  const handleSubmit = async (values, { setSubmitting, setErrors, setFieldError }) => {
     try {
+      // Validate minimum number of photos
+      if (!values.photos || values.photos.length < 2) {
+        toast.error("Please upload at least 2 photos");
+        setFieldError("photos", "Minimum 2 photos required");
+        setSubmitting(false);
+        return;
+      }
+
       // Create FormData for sending both JSON and files
       const formData = new FormData();
       
@@ -340,7 +343,6 @@ export default function AddProperty() {
         roomType: values.roomType,
         kitchenType: values.kitchenType,
         bathroomType: values.bathroomType,
-        yearOfConstruction: parseInt(values.yearOfConstruction),
         bedroomDetails: bedroomDetailsWithoutImages,
       };
       
@@ -404,14 +406,27 @@ export default function AddProperty() {
       const result = await createProperty(formData).unwrap();
       
       console.log("Property created successfully:", result);
-      toast.success("Property created successfully");
+      toast.success("Property created successfully!");
       router.back();
     } catch (error) {
       console.error("Failed to create property:", error);
-      const errorMessage =
-        error.data?.message || error.message || "Failed to create property";
-      setErrors({ submit: errorMessage });
-      toast.error(errorMessage);
+
+      // Handle different types of errors
+      if (error.data?.error) {
+        // Backend validation error
+        toast.error(error.data.error);
+        if (error.data.details) {
+          console.error("Error details:", error.data.details);
+        }
+      } else if (error.data?.message) {
+        toast.error(error.data.message);
+      } else if (error.message) {
+        toast.error(error.message);
+      } else {
+        toast.error("Failed to create property. Please check all required fields.");
+      }
+
+      setErrors({ submit: error.data?.error || error.message || "Failed to create property" });
     } finally {
       setSubmitting(false);
     }
@@ -462,10 +477,14 @@ export default function AddProperty() {
         <Formik
           initialValues={initialValues}
           validationSchema={validationSchema}
-          onSubmit={handleSubmit}
+          onSubmit={(values, formikBag) => {
+            handleSubmit(values, formikBag);
+          }}
           enableReinitialize
+          validateOnChange={false}
+          validateOnBlur={true}
         >
-          {({ values, setFieldValue }) => {
+          {({ values, setFieldValue, errors, touched, isSubmitting }) => {
             const handleImageChange = (e) => {
               const files = Array.from(e.target.files);
               const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
@@ -1320,21 +1339,6 @@ export default function AddProperty() {
                   </div>
                 </div>
 
-                {/* Year of Construction */}
-                <Row gutter={16}>
-                  <Col span={12}>
-                    <LabelInputComponent
-                      name="yearOfConstruction"
-                      title="Year of Construction"
-                      placeholder="Enter year of construction"
-                      className={styles.labelinput}
-                    />
-                    <ErrorMessage name="yearOfConstruction">
-                      {(msg) => <div className={styles.error}>{msg}</div>}
-                    </ErrorMessage>
-                  </Col>
-                </Row>
-
                 {/* Minimum Stay Duration */}
                 <div className={styles.dropdownContainer}>
                   <label className={styles.label}>Minimum Stay Duration</label>
@@ -1684,8 +1688,80 @@ export default function AddProperty() {
                 </div>
 
                 <div className={styles.submitButtonContainer}>
-                  <button className={styles.submitButton} type="submit">
-                    Save
+                  <button
+                    className={styles.submitButton}
+                    type="submit"
+                    onClick={(e) => {
+                      // Check for errors before submitting
+                      if (Object.keys(errors).length > 0) {
+                        e.preventDefault();
+
+                        // Collect all error messages
+                        const errorMessages = [];
+                        const fieldLabels = {
+                          propertyName: 'Property Name',
+                          squareFootage: 'Square Footage',
+                          description: 'Description',
+                          homeType: 'Home Type',
+                          bedrooms: 'Bedrooms',
+                          bathrooms: 'Bathrooms',
+                          kitchens: 'Kitchens',
+                          roomType: 'Room Type',
+                          kitchenType: 'Kitchen Type',
+                          bathroomType: 'Bathroom Type',
+                          securityDeposit: 'Security Deposit',
+                          ownership: 'Ownership Certification',
+                          renterAgreement: 'Renter Agreement',
+                          landlordInsurance: 'Landlord Insurance',
+                          amenities: 'Amenities',
+                          pricing: 'Pricing',
+                          location: 'Address',
+                          city: 'City',
+                          country: 'Country',
+                          locality: 'Locality',
+                          rentDetails: 'Rent Details',
+                          termsOfStay: 'Terms of Stay',
+                          cancellationPolicy: 'Cancellation Policy',
+                          minimumStayDuration: 'Minimum Stay Duration',
+                          availableFrom: 'Available From',
+                          photos: 'Photos',
+                        };
+
+                        // Process all errors
+                        Object.entries(errors).forEach(([field, error]) => {
+                          if (field === 'bedroomDetails' && Array.isArray(error)) {
+                            error.forEach((bedroomError, index) => {
+                              if (bedroomError && typeof bedroomError === 'object') {
+                                Object.entries(bedroomError).forEach(([bedroomField, bedroomMsg]) => {
+                                  if (bedroomMsg) {
+                                    errorMessages.push(`Bedroom ${index + 1} - ${bedroomField}: ${bedroomMsg}`);
+                                  }
+                                });
+                              }
+                            });
+                          } else if (typeof error === 'string') {
+                            const fieldLabel = fieldLabels[field] || field;
+                            errorMessages.push(`${fieldLabel}: ${error}`);
+                          }
+                        });
+
+                        // Display comprehensive error message
+                        if (errorMessages.length > 0) {
+                          const errorCount = errorMessages.length;
+                          const displayMessage = errorCount === 1
+                            ? errorMessages[0]
+                            : `Please fill the following ${errorCount} required fields:\n\n${errorMessages.slice(0, 5).map((msg, i) => `${i + 1}. ${msg}`).join('\n')}${errorCount > 5 ? `\n... and ${errorCount - 5} more fields` : ''}`;
+
+                          toast.error(displayMessage, {
+                            autoClose: 5000,
+                            style: { whiteSpace: 'pre-line' }
+                          });
+                        }
+                      }
+                    }}
+                    disabled={isSubmitting}
+                  >
+                    {isSubmitting ? 'Saving...' : 'Save'}
                   </button>
                 </div>
               </Form>
