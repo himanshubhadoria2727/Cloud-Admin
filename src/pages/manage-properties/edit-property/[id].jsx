@@ -212,6 +212,7 @@ export default function EditProperty() {
       allowFirstAndLastRent: Yup.boolean(),
     }),
     instantBooking: Yup.boolean(),
+    bookByEnquiry: Yup.boolean(),
     ownership: Yup.bool().oneOf([true], "You must certify ownership"),
     renterAgreement: Yup.bool().oneOf(
       [true],
@@ -253,7 +254,13 @@ export default function EditProperty() {
         floor: Yup.string(),
       })
     ),
-  });
+  }).test(
+    'booking-type-required',
+    'Please select a booking type (Instant Booking or Book by Enquiry)',
+    function(value) {
+      return value.instantBooking === true || value.bookByEnquiry === true;
+    }
+  );
 
   const amenitiesList = [
     "Air Conditioning",
@@ -304,8 +311,80 @@ export default function EditProperty() {
     return true;
   };
 
-  const handleSubmit = async (values, { setSubmitting, setErrors, setFieldError }) => {
+  const handleSubmit = async (values, { setSubmitting, setErrors, setFieldError, validateForm }) => {
     try {
+      // First, run validation to get current errors
+      const errors = await validateForm();
+
+      // If there are validation errors, show them and stop
+      if (Object.keys(errors).length > 0) {
+        // Collect all error messages
+        const errorMessages = [];
+        const fieldLabels = {
+          propertyName: 'Property Name',
+          squareFootage: 'Square Footage',
+          description: 'Description',
+          homeType: 'Home Type',
+          bedrooms: 'Bedrooms',
+          bathrooms: 'Bathrooms',
+          kitchens: 'Kitchens',
+          roomType: 'Room Type',
+          kitchenType: 'Kitchen Type',
+          bathroomType: 'Bathroom Type',
+          securityDeposit: 'Security Deposit',
+          ownership: 'Ownership Certification',
+          renterAgreement: 'Renter Agreement',
+          landlordInsurance: 'Landlord Insurance',
+          amenities: 'Amenities',
+          pricing: 'Pricing',
+          location: 'Address',
+          city: 'City',
+          country: 'Country',
+          locality: 'Locality',
+          rentDetails: 'Rent Details',
+          termsOfStay: 'Terms of Stay',
+          cancellationPolicy: 'Cancellation Policy',
+          minimumStayDuration: 'Minimum Stay Duration',
+          availableFrom: 'Available From',
+          photos: 'Photos',
+          'booking-type-required': 'Booking Type',
+        };
+
+        // Process all errors
+        Object.entries(errors).forEach(([field, error]) => {
+          if (field === 'bedroomDetails' && Array.isArray(error)) {
+            error.forEach((bedroomError, index) => {
+              if (bedroomError && typeof bedroomError === 'object') {
+                Object.entries(bedroomError).forEach(([bedroomField, bedroomMsg]) => {
+                  if (bedroomMsg) {
+                    errorMessages.push(`Bedroom ${index + 1} - ${bedroomField}: ${bedroomMsg}`);
+                  }
+                });
+              }
+            });
+          } else if (typeof error === 'string') {
+            const fieldLabel = fieldLabels[field] || field;
+            errorMessages.push(`${fieldLabel}: ${error}`);
+          }
+        });
+
+        // Display comprehensive error message
+        if (errorMessages.length > 0) {
+          const errorCount = errorMessages.length;
+          const displayMessage = errorCount === 1
+            ? errorMessages[0]
+            : `Please fill the following ${errorCount} required fields:\n\n${errorMessages.slice(0, 5).map((msg, i) => `${i + 1}. ${msg}`).join('\n')}${errorCount > 5 ? `\n... and ${errorCount - 5} more fields` : ''}`;
+
+          toast.error(displayMessage, {
+            autoClose: 5000,
+            style: { whiteSpace: 'pre-line' }
+          });
+        }
+
+        setSubmitting(false);
+        return;
+      }
+
       // Validate minimum number of photos
       const totalPhotos = values.photos.filter(photo => photo !== null).length;
       if (totalPhotos < 2) {
@@ -1407,7 +1486,7 @@ export default function EditProperty() {
                 </div>
 
                 <div className={styles.bookingTypeSection}>
-                  <h4 className={styles.sectionTitle}>Booking Type</h4>
+                  <h4 className={styles.sectionTitle}>Booking Type <span style={{ color: 'red' }}>*</span></h4>
                   <div className={styles.bookingTypeOptions}>
                     <label className={styles.radioLabel}>
                       <input
@@ -1435,6 +1514,11 @@ export default function EditProperty() {
                       Book by Enquiry
                     </label>
                   </div>
+                  {!values.instantBooking && !values.bookByEnquiry && errors['booking-type-required'] && (
+                    <div className={styles.error} style={{ marginTop: '5px' }}>
+                      {errors['booking-type-required']}
+                    </div>
+                  )}
                 </div>
               </div>
               {/* Cancellation Policy Section */}
@@ -1850,74 +1934,6 @@ export default function EditProperty() {
                 <button
                   className={styles.submitButton}
                   type="submit"
-                  onClick={(e) => {
-                    // Check for errors before submitting
-                    if (Object.keys(errors).length > 0) {
-                      e.preventDefault();
-
-                      // Collect all error messages
-                      const errorMessages = [];
-                      const fieldLabels = {
-                        propertyName: 'Property Name',
-                        squareFootage: 'Square Footage',
-                        description: 'Description',
-                        homeType: 'Home Type',
-                        bedrooms: 'Bedrooms',
-                        bathrooms: 'Bathrooms',
-                        kitchens: 'Kitchens',
-                        roomType: 'Room Type',
-                        kitchenType: 'Kitchen Type',
-                        bathroomType: 'Bathroom Type',
-                        securityDeposit: 'Security Deposit',
-                        ownership: 'Ownership Certification',
-                        renterAgreement: 'Renter Agreement',
-                        landlordInsurance: 'Landlord Insurance',
-                        amenities: 'Amenities',
-                        pricing: 'Pricing',
-                        location: 'Address',
-                        city: 'City',
-                        country: 'Country',
-                        locality: 'Locality',
-                        rentDetails: 'Rent Details',
-                        termsOfStay: 'Terms of Stay',
-                        cancellationPolicy: 'Cancellation Policy',
-                        minimumStayDuration: 'Minimum Stay Duration',
-                        availableFrom: 'Available From',
-                        photos: 'Photos',
-                      };
-
-                      // Process all errors
-                      Object.entries(errors).forEach(([field, error]) => {
-                        if (field === 'bedroomDetails' && Array.isArray(error)) {
-                          error.forEach((bedroomError, index) => {
-                            if (bedroomError && typeof bedroomError === 'object') {
-                              Object.entries(bedroomError).forEach(([bedroomField, bedroomMsg]) => {
-                                if (bedroomMsg) {
-                                  errorMessages.push(`Bedroom ${index + 1} - ${bedroomField}: ${bedroomMsg}`);
-                                }
-                              });
-                            }
-                          });
-                        } else if (typeof error === 'string') {
-                          const fieldLabel = fieldLabels[field] || field;
-                          errorMessages.push(`${fieldLabel}: ${error}`);
-                        }
-                      });
-
-                      // Display comprehensive error message
-                      if (errorMessages.length > 0) {
-                        const errorCount = errorMessages.length;
-                        const displayMessage = errorCount === 1
-                          ? errorMessages[0]
-                          : `Please fill the following ${errorCount} required fields:\n\n${errorMessages.slice(0, 5).map((msg, i) => `${i + 1}. ${msg}`).join('\n')}${errorCount > 5 ? `\n... and ${errorCount - 5} more fields` : ''}`;
-
-                        toast.error(displayMessage, {
-                          autoClose: 5000,
-                          style: { whiteSpace: 'pre-line' }
-                        });
-                      }
-                    }
-                  }}
                   disabled={isSubmitting}
                 >
                   {isSubmitting ? 'Updating...' : 'Save'}
