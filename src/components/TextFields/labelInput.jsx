@@ -2,6 +2,8 @@ import { Input } from "antd";
 import React from "react";
 import { useFormikContext } from "formik";
 
+const { TextArea } = Input;
+
 function LabelInputComponent({
   title,
   className,
@@ -9,6 +11,7 @@ function LabelInputComponent({
   disabledStatus,
   name,
   maxLength,
+  textarea,
   ...rest
 }) {
   const { getFieldProps, setFieldValue, touched, errors } = useFormikContext();
@@ -35,10 +38,12 @@ function LabelInputComponent({
     }
   };
 
+  const InputComponent = textarea ? TextArea : Input;
+
   return (
     <div className={`label-input-component ${className}`}>
       {title && <label htmlFor={name}>{title}</label>}
-      <Input
+      <InputComponent
         id={name} // Use id for better accessibility
         {...getFieldProps(name)}
         placeholder={placeholder}

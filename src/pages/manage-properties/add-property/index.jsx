@@ -299,6 +299,9 @@ export default function AddProperty() {
       // First, run validation to get current errors
       const errors = await validateForm();
 
+      console.log('Validation errors:', errors);
+      console.log('Number of errors:', Object.keys(errors).length);
+
       // If there are validation errors, show them and stop
       if (Object.keys(errors).length > 0) {
         // Collect all error messages
@@ -351,17 +354,24 @@ export default function AddProperty() {
           }
         });
 
+        console.log('Error messages:', errorMessages);
+
         // Display comprehensive error message
         if (errorMessages.length > 0) {
           const errorCount = errorMessages.length;
-          const displayMessage = errorCount === 1
-            ? errorMessages[0]
-            : `Please fill the following ${errorCount} required fields:\n\n${errorMessages.slice(0, 5).map((msg, i) => `${i + 1}. ${msg}`).join('\n')}${errorCount > 5 ? `\n... and ${errorCount - 5} more fields` : ''}`;
+          const firstError = errorMessages[0];
 
-          toast.error(displayMessage, {
-            autoClose: 5000,
-            style: { whiteSpace: 'pre-line' }
+          // Show a simpler toast first to test
+          toast.error(`Validation Error: Please fix ${errorCount} field${errorCount > 1 ? 's' : ''} - ${firstError}`, {
+            position: "top-right",
+            autoClose: 8000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
           });
+
+          console.log('Toast error called with', errorCount, 'errors');
         }
 
         setSubmitting(false);
@@ -561,8 +571,9 @@ export default function AddProperty() {
           enableReinitialize
           validateOnChange={false}
           validateOnBlur={true}
+          validateOnSubmit={false}
         >
-          {({ values, setFieldValue, errors, touched, isSubmitting }) => {
+          {({ values, setFieldValue, errors, touched, isSubmitting, setSubmitting, setErrors, validateForm }) => {
             const handleImageChange = (e) => {
               const files = Array.from(e.target.files);
               const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
@@ -1773,8 +1784,17 @@ export default function AddProperty() {
                 <div className={styles.submitButtonContainer}>
                   <button
                     className={styles.submitButton}
-                    type="submit"
+                    type="button"
                     disabled={isSubmitting}
+                    onClick={async () => {
+                      console.log('Button clicked!');
+                      await handleSubmit(values, {
+                        setSubmitting,
+                        setErrors,
+                        setFieldError: setFieldValue,
+                        validateForm
+                      });
+                    }}
                   >
                     {isSubmitting ? 'Saving...' : 'Save'}
                   </button>

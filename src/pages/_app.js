@@ -8,7 +8,18 @@ export default function App({ Component, pageProps }) {
     <>
       <Provider store={store}>
         <Component {...pageProps} />
-        <ToastContainer />
+        <ToastContainer
+          position="top-right"
+          autoClose={5000}
+          hideProgressBar={false}
+          newestOnTop={true}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="light"
+        />
       </Provider>
     </>
   );
