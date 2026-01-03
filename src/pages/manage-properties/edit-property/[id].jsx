@@ -33,7 +33,9 @@ export default function EditProperty() {
     data: propertyDetails,
     isLoading,
     error,
-  } = useGetPropertiesQuery(id ? { id } : null);
+  } = useGetPropertiesQuery(id ? { id } : null, {
+    skip: !id, // Skip the query if id is not available
+  });
 
   // Assuming propertyDetails is an array, take the first item
   const property = propertyDetails?.[0];
@@ -43,6 +45,13 @@ export default function EditProperty() {
     if (property) {
       setSelectedCity(property.city || "");
       setSelectedCountry(property.country || "");
+      // Log amenities and utilities for debugging
+      console.log("Property loaded:", {
+        amenities: property.amenities,
+        utilities: property.utilities,
+        amenitiesLength: property.amenities?.length,
+        utilitiesLength: property.utilities?.length
+      });
     }
   }, [property]);
 
@@ -138,8 +147,10 @@ export default function EditProperty() {
     setFieldValue("bedrooms", newCount);
   };
 
-  if (isLoading) return <div></div>;
+  // Show loading state while waiting for ID or property data
+  if (!id || isLoading) return <div>Loading property details...</div>;
   if (error) return <div>Error fetching property details</div>;
+  if (!property) return <div>Property not found</div>;
 
   const initialValues = {
     propertyName: property?.title || "",
